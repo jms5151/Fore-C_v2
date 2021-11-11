@@ -47,8 +47,7 @@ source("./codes/Survey_covariates_ocean_color.R")
 # compile predictor data
 source("./codes/Surveys_compile_predictor_data.R")
 
-# filter pseudo-replicated surveys to use as out-of-sample validation 
-source("./codes/Surveys_filter_pseudo_replicates.R")
+## removed file for creating and saving pseudo replicate surveys ## 
 
 # SMOTE
 source("./codes/Surveys_create_smote_datasets.R")

@@ -7,10 +7,10 @@ source("./codes/custom_functions/fun_create_data_frame.R")
 source("./codes/custom_functions/fun_qf_custom_functions.R")
 
 # set where results will be stored
-results_dir <- "./model_selection_results/"
+results_dir <- "../model_selection_results/"
 
 # list smote datafiles
-filenames <- list.files("./compiled_data/survey_data/smote_datasets/", full.names = TRUE)
+filenames <- list.files("../compiled_data/survey_data/smote_datasets/", full.names = TRUE)
 
 # run model selection
 for(i in 1:length(filenames)){

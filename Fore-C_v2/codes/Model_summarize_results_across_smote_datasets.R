@@ -3,7 +3,7 @@ library(ggplot2)
 library(tidyverse)
 
 # load data
-x <- read.csv("./model_selection_summary_results/qf_smote_summary.csv")
+x <- read.csv("../model_selection_summary_results/qf_smote_summary.csv")
 
 # format data for plotting
 x2 <- x %>%

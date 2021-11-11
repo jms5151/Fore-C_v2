@@ -4,14 +4,14 @@
 library(tidyverse)
 
 # load predictor data
-filenames <- list.files("./compiled_data/survey_covariate_data/", full.names = TRUE)
+filenames <- list.files("../compiled_data/survey_covariate_data/", full.names = TRUE)
 
 # load files into global environment
 lapply(filenames, load, .GlobalEnv)
 
 # load response data
-load("compiled_data/survey_data/GA.RData")
-load("compiled_data/survey_data/WS.RData")
+load("../compiled_data/survey_data/GA.RData")
+load("../compiled_data/survey_data/WS.RData")
 
 # Growth anomalies ---------------------------------------------------------------
 GA_data_with_all_predictors <- ga %>%
@@ -31,7 +31,7 @@ GA_data_with_all_predictors$Month <- as.numeric(format(GA_data_with_all_predicto
 GA_data_with_all_predictors$Year_Month <- format(GA_data_with_all_predictors$Date, "%Y-%m")
 
 # save
-save(GA_data_with_all_predictors, file = "./compiled_data/survey_data/GA_data_with_all_predictors.RData")
+save(GA_data_with_all_predictors, file = "../compiled_data/survey_data/GA_data_with_all_predictors.RData")
 
 # White syndromes ----------------------------------------------------------------
 WS_data_with_all_predictors <- ws %>%
@@ -50,4 +50,4 @@ WS_data_with_all_predictors$Month <- as.numeric(format(WS_data_with_all_predicto
 WS_data_with_all_predictors$Year_Month <- format(WS_data_with_all_predictors$Date, "%Y-%m")
 
 # save
-save(WS_data_with_all_predictors, file = "./compiled_data/survey_data/WS_data_with_all_predictors.RData")
+save(WS_data_with_all_predictors, file = "../compiled_data/survey_data/WS_data_with_all_predictors.RData")

@@ -1,34 +1,49 @@
 # load data
-load("./compiled_data/survey_data/GA_data_with_all_predictors_slim.RData")
-load("./compiled_data/survey_data/WS_data_with_all_predictors_slim.RData")
+load("../compiled_data/survey_data/GA_data_with_all_predictors.RData")
+load("../compiled_data/survey_data/WS_data_with_all_predictors.RData")
 
-# source custom function
+# source custom functions
+source("codes/custom_functions/fun_subset_and_filter_pseudo_replicate_surveys.R")
 source("codes/custom_functions/fun_create_smote_datasets.R")
 
 # source co-variates to test
 source("codes/Initial_covariates_to_test_by_disease_and_region.R")
 
 # set destination directory for smote datasets
-dest_dir <- "./compiled_data/survey_data/smote_datasets/"
+dest_dir <- "../compiled_data/survey_data/smote_datasets/"
 
-# subset data by region and family
-ga_pac <- subset(GA_data_with_all_predictors_slim, 
-                 Region != "GBR" & 
-                   Family == "Poritidae"
-                 )
+# subset survey data
+ga_pac <- subset_and_filter_pseudo_replicates(df = GA_data_with_all_predictors, 
+                                              regionGBR = FALSE, 
+                                              family = "Poritidae", 
+                                              yvar = "p", 
+                                              dz_vars = ga_pac_vars
+                                              )
 
-ga_gbr <- subset(GA_data_with_all_predictors_slim, 
-                 Region == "GBR"
-                 )
 
-ws_pac_acr <- subset(WS_data_with_all_predictors_slim, 
-                     Region != "GBR" & 
-                       Family == "Acroporidae"
-                     )
+ga_gbr <- subset_and_filter_pseudo_replicates(df = GA_data_with_all_predictors, 
+                                              regionGBR = TRUE, 
+                                              family = NA, 
+                                              yvar = "Y", 
+                                              dz_vars = ga_gbr_vars
+                                              )
 
-ws_gbr <- subset(WS_data_with_all_predictors_slim, 
-                 Region == "GBR"
-                 )
+ws_pac_acr <- subset_and_filter_pseudo_replicates(df = WS_data_with_all_predictors,
+                                                  regionGBR = FALSE,
+                                                  family = "Acroporidae",
+                                                  yvar = "p",
+                                                  dz_vars = ws_pac_acr_vars
+                                                  )
+
+ws_gbr <- subset_and_filter_pseudo_replicates(df = WS_data_with_all_predictors, 
+                                              regionGBR = TRUE, 
+                                              family = NA, 
+                                              yvar = "Y", 
+                                              dz_vars = ws_gbr_vars
+                                              )
+
+
+
 
 # set data up to loop through 
 dz_dfs <- list(ga_pac,
@@ -55,7 +70,7 @@ region <- rep(c("pac", "gbr"), 2)
 # set threshold levels to loop through, differs by region because of survey design
 prev_thresh_levels <- c(0, 0.05, 0.10, 0.15, 0.20) 
 
-count_thresh_levels <- c(0, 1, 5, 10, 15) 
+count_thresh_levels <- c(0, 5, 10, 15) 
 
 # create SMOTE data sets
 for(i in 1:length(dz_dfs)){
