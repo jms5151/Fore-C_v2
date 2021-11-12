@@ -3,13 +3,13 @@ library(ggplot2)
 library(tidyverse)
 
 # load data
-x <- read.csv("./model_selection_summary_results/qf_smote_summary.csv")
+x <- read.csv("../model_selection_summary_results/qf_smote_summary.csv")
 
 # format data for plotting
 x2 <- x %>%
   gather(key = Sample_type,
          value = R2,
-         AdjR2_insample:AdjR2_out_of_sample)
+         AdjR2_insample:AdjR2_withheld_sample)
 
 x2$Sample_type <- gsub("AdjR2_", "", x2$Sample_type)
 x2$Sample_type <- gsub("_", " ", x2$Sample_type)
@@ -38,6 +38,6 @@ summary_plot <- ggplot(x2,
        )
 
 ggsave(summary_plot,
-       file = "../Figures/Quantile_forests/qf_summary.pdf",
+       file = "../../Figures/Quantile_forests/qf_summary.pdf",
        width = 12,
        height = 6)

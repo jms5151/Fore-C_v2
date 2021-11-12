@@ -60,23 +60,29 @@ source("./codes/Model_selection_with_quantile_forests.R")
 # at each level of smote
 source("./codes/Model_plots_covariates_vs_R2_across_smote_datasets.R")
 
-### Re-run from here ####
 # plot and save R2 for best and most parsimonious models 
 # create csv with R2 and covars for each, to plot against each other
 source("./codes/Model_plots_validation.R")
 
+# plot results across smote thresholds
 source("./codes/Model_plots_summarize_results_across_smote_datasets.R")
 
 source("./codes/Model_summarize_results_across_smote_datasets.R")
 
-### To here ####
-
-# create plots comparing results across smote thresholds
-
 # if creating plots of co-variates, create code here
 # source("./codes/Model_plots_covariates.R")
 
-# Grid and grid co-variate data pre-processing -----------------------
+# Create grid and spatial polygons -----------------------------------
+source("./codes/Create_forec_reef_grid.R")
+
+source("./codes/Create_polygons_reef_grid_5km.R")
+
+source("./codes/Create_polygons_management_areas.R")
+
+source("./codes/List_pixel_IDs_in_polygons.R")
+
+# Data pre-processing for covariates across grid --------------------- 
+
 
 # Forecasting --------------------------------------------------------
 

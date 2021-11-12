@@ -11,5 +11,9 @@ x2 <- x %>%
   group_by(Disease_type) %>%
   filter(AdjR2_withheld_sample == max(AdjR2_withheld_sample))
 
+# sort(strsplit(x2$Covariates[4], ", ")[[1]])
 
-sort(strsplit(x2$Covariates[4], ", ")[[1]])
+# save
+write.csv(x2, 
+          "../model_selection_summary_results/parsimonious_best_models_by_disease_and_region.csv", 
+          row.names = F)

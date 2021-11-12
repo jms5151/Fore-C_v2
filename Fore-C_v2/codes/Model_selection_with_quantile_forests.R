@@ -28,7 +28,7 @@ for(i in 1:length(filenames)){
   # exclude names of columns that are not co-variates
   df_vars <- df_vars[!(df_vars %in% c("Health_status", "p", "Y", "class")) ]
   # create results file name
-  xx <- substr(filenames[i], 44, nchar(filenames[i])-6)
+  xx <- substr(filenames[i], 45, nchar(filenames[i])-6)
   new_filename <- paste0(results_dir, xx, "_results.csv")
   # full model selection code
   mod_select(df = smote_df,

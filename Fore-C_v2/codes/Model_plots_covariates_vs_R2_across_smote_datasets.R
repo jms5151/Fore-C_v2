@@ -1,7 +1,7 @@
 # plot number of covariates vs R2 for all smote datasets --------------
 
 # list files
-modresults <- list.files("./model_selection_results/", full.names = TRUE)
+modresults <- list.files("../model_selection_results/", full.names = TRUE)
 
 # separate files by model type
 ga_gbr_results <- modresults[grep("ga_gbr", modresults)]
@@ -23,7 +23,7 @@ mod_results_names <- c("ga_gbr",
                        "ws_pac")
 
 # create filepath to save plots
-save_file_dir <- "../Figures/Quantile_forests/num_covars_vs_r2/"
+save_file_dir <- "../../Figures/Quantile_forests/num_covars_vs_r2/"
 
 # run loop to create multipanel plots of number of covariates vs R2
 # for each smote data set within each disease type/region
@@ -31,7 +31,7 @@ for(i in 1:length(mod_results_list)){
   num_results <- length(mod_results_list[[i]])
   # this is not generic, but re-orders specific to these data files for plotting
   if(i == 1|i == 3){
-    orderplots <- c(1,2,5,3,4)
+    orderplots <- c(1,4,2,3)
   } else {
     orderplots <- c(1,5,2,3,4)
   }
