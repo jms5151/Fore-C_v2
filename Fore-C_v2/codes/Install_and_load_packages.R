@@ -21,4 +21,5 @@ if (!require("ggplot2")) install.packages("ggplot2"); library(ggplot2)
 if (!require("ggpubr")) install.packages("ggpubr"); library(ggpubr)
 if (!require("ggExtra")) install.packages("ggExtra"); library(ggExtra)
 if (!require("leaflet")) install.packages("leaflet"); library(leaflet)
+if (!require("randomForest")) install.packages("randomForest"); library(randomForest)
 
