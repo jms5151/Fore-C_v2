@@ -81,7 +81,7 @@ source("./codes/Create_polygons_management_areas.R")
 
 source("./codes/List_pixel_IDs_in_polygons.R")
 
-# Data pre-processing for covariates across grid --------------------- 
+# Co-variates data pre-processing for grid --------------------------- 
 
 
 # Forecasting --------------------------------------------------------

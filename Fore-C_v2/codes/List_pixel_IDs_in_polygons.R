@@ -7,7 +7,7 @@ library(raster)
 source("./codes/custom_functions/fun_list_polygon_intersection_ids.R")
 
 # load polygons
-load("../compiled_data/spatial_grid.Rds")
+load("../compiled_data/spatial_data/spatial_grid.Rds")
 load("../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Static_data/polygons_management_areas.Rds")
 load("../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Static_data/polygons_GBRMPA_park_zoning.Rds")
 

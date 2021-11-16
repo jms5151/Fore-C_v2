@@ -28,5 +28,5 @@ leaflet() %>%
   addPolygons(data = polygons_5km)
 
 # save spatial polygon
-save(polygons_5km, file = "../compiled_data/spatial_grid.Rds")
+save(polygons_5km, file = "../compiled_data/spatial_data/spatial_grid.Rds")
 
