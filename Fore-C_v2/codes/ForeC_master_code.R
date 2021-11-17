@@ -70,7 +70,7 @@ source("./codes/Model_plots_summarize_results_across_smote_datasets.R")
 source("./codes/Model_summarize_results_across_smote_datasets.R")
 
 # if creating plots of co-variates, create code here
-# source("./codes/Model_plots_covariates.R")
+source("./codes/Model_plots_covariates.R")
 
 # Create grid and spatial polygons -----------------------------------
 source("./codes/Create_forec_reef_grid.R")
@@ -82,6 +82,17 @@ source("./codes/Create_polygons_management_areas.R")
 source("./codes/List_pixel_IDs_in_polygons.R")
 
 # Co-variates data pre-processing for grid --------------------------- 
+
+source("./codes/Grid_covariates_sst_metrics.R")
+
+source("./codes/Grid_covariates_nighttime_lights.R")
+
+source("./codes/Grid_covariates_fish_and_benthos.R")
+
+source("./codes/Survey_covariates_ocean_color.R")
+
+# compile predictor data
+source("./codes/Grid_concat_static_covariates.R")
 
 
 # Forecasting --------------------------------------------------------
