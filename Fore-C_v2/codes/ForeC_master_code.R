@@ -98,3 +98,4 @@ source("./codes/Grid_concat_static_covariates.R")
 # Forecasting --------------------------------------------------------
 
 # Create shiny outputs -----------------------------------------------
+## updated "cast" to "ensemble" in plots and sst forecasts
