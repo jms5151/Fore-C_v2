@@ -81,7 +81,7 @@ for(i in 1:length(nowcast_days)){
   x <- hs_nowcast[, i]
   x[is.na(x)] <- mean(x, na.rm = T)
   tmp_df <- data.frame("ID" = hs_id,
-                       "Date" = firstday + i,
+                       "Date" = firstday + nowcast_days[i],
                        "Hot_snaps" = x,
                        "ensemble" = 0,
                        "type" = "nowcast")

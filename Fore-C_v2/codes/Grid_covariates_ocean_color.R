@@ -42,9 +42,9 @@ ltkd90 <- ncvar_get(oc, varid = "long_term_kd490_90th")
 Long_Term_Kd_90th <- extract_oc_data(variableMatrix = ltkd90,
                                      reefgrid = grid_lt_oc)
 # Long term kd variability
-grid_lt_oc$Long_Term_Kd_Variability <- Long_Term_Kd_90th - grid_lt_oc$Long_Term_Kd_Median
+reef_grid_lt_oc$Long_Term_Kd_Variability <- Long_Term_Kd_90th - grid_lt_oc$Long_Term_Kd_Median
 
-save(grid_lt_oc, file = "../compiled_data/grid_covariate_data/grid_with_long_term_oc_metrics.RData")
+save(reef_grid_lt_oc, file = "../compiled_data/grid_covariate_data/grid_with_long_term_oc_metrics.RData")
 
 # Extract seasonal ocean color data by pixel -----------------------------------
 
@@ -102,7 +102,7 @@ tw_metrics <- TW_median %>%
 
 tw_metrics$Three_Week_Kd_Variability <- tw_metrics$Three_Week_Kd_90th - tw_metrics$Three_Week_Kd_Median
 
-grid_tw_oc <- tw_metrics[, c("Longitude",
+reef_grid_tw_oc <- tw_metrics[, c("Longitude",
                              "Latitude",
                              "Region",
                              "ID",
@@ -110,4 +110,4 @@ grid_tw_oc <- tw_metrics[, c("Longitude",
                              "Three_Week_Kd_Median",
                              "Three_Week_Kd_Variability")]
 
-save(grid_tw_oc, file = "../compiled_data/grid_covariate_data/grid_with_three_week_oc_metrics.RData")
+save(reef_grid_tw_oc, file = "../compiled_data/grid_covariate_data/grid_with_three_week_oc_metrics.RData")

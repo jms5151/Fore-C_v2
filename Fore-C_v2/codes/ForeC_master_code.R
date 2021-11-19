@@ -94,6 +94,8 @@ source("./codes/Grid_covariates_ocean_color.R")
 # compile predictor data
 source("./codes/Grid_concat_static_covariates.R")
 
+source("./codes/Grid_concat_dynamic_covariates.R")
+
 # Forecasting --------------------------------------------------------
 
 # Create shiny outputs -----------------------------------------------
