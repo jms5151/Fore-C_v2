@@ -16,7 +16,7 @@ extract_oc_data <- function(variableMatrix, reefgrid){
     crs = CRS("+init=epsg:4326")
   )
   # extract data from raster to reef grid
-  x <- extract(r, cbind(reefgrid$Longitude, reefgrid$Latitude))
+  x <- raster::extract(r, cbind(reefgrid$Longitude, reefgrid$Latitude))
   # replace NAs with median value - need to check this assumption with team
   x[is.na(x)] <- median(x, na.rm = T)
   # add extracted ocean color data to reef grid
