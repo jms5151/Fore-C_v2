@@ -89,11 +89,10 @@ source("./codes/Grid_covariates_nighttime_lights.R")
 
 source("./codes/Grid_covariates_fish_and_benthos.R")
 
-source("./codes/Survey_covariates_ocean_color.R")
+source("./codes/Grid_covariates_ocean_color.R")
 
 # compile predictor data
 source("./codes/Grid_concat_static_covariates.R")
-
 
 # Forecasting --------------------------------------------------------
 

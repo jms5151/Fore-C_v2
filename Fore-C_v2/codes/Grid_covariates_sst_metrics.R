@@ -23,9 +23,6 @@ sst90dMean_url = "ftp://ftp.star.nesdis.noaa.gov/pub/sod/mecb/gliu/caldwell/2021
 download.file(sst90dMean_url, destfile = paste0(crw_dir, "SST90dMean.nc"))
 
 # load data --------------------------------------------------------------------
-# load reef grid
-load("../compiled_data/spatial_data/grid.RData")
-
 # load SST metrics (downloaded above)
 wc <- nc_open(paste0(crw_dir, "WC.nc"))
 
@@ -37,6 +34,9 @@ sst90d <- nc_open(paste0(crw_dir, "SST90dMean.nc"))
 # this is a single value for each reef pixel
 wc_id <- wc$dim$reef_id$vals
 wc_vals <- ncvar_get(wc, varid = "daily_winter_conditions")
+
+# fill in NAs with mean values
+wc_vals[is.na(wc_vals)] <- mean(wc_vals, na.rm = T)
 
 wc <- data.frame("ID" = wc_id,
                  "Winter_condition" = wc_vals)
