@@ -1,8 +1,7 @@
 # Initial co-variates to test in models for each disease and region
 
 # Growth anomalies Pacific -----------------------
-ga_pac_vars <- c("p",
-                 "Month",
+ga_pac_vars <- c("Month",
                  "Median_colony_size",
                  "CV_colony_size",
                  "Poritidae_mean_cover",
@@ -15,8 +14,7 @@ ga_pac_vars <- c("p",
                  )
 
 # Growth anomalies GBR --------------------------
-ga_gbr_vars <- c("Y",
-                 "Month",
+ga_gbr_vars <- c("Month",
                  "Coral_cover",
                  "Fish_abund",
                  "SST_90dMean",
@@ -29,8 +27,7 @@ ga_gbr_vars <- c("Y",
                  )
 
 # White syndromes Pacific (Acroporidae) -------
-ws_pac_acr_vars <- c("p",
-                     "Month",
+ws_pac_acr_vars <- c("Month",
                      "Median_colony_size",
                      "Winter_condition",
                      "Long_Term_Kd_Median",
@@ -38,8 +35,7 @@ ws_pac_acr_vars <- c("p",
                      )
 
 # White syndreoms GBR -------------------------
-ws_gbr_vars <- c("Y", 
-                 "Month", 
+ws_gbr_vars <- c("Month", 
                  "Coral_cover", 
                  "Fish_abund", 
                  "Winter_condition",

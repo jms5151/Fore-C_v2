@@ -14,7 +14,8 @@ grid_with_dynamic_predictors <- reef_grid_sst %>%
             by = c("ID", 
                    "Longitude", 
                    "Latitude", 
-                   "Region"))
+                   "Region")) %>%
+  mutate("Month" = as.numeric(format(Date, "%m")))
 
 # create vector of prediction weeks
 prediction_dates <- sort(unique(grid_with_dynamic_predictors$Date))
@@ -23,9 +24,9 @@ prediction_week <- seq(from = 1,
                        by = 1)
 
 # save data separately by prediction week and ensemble
-forecast_data_dir <- "../compiled_data/forecast_data/"
+forecast_data_dir <- "../compiled_data/forecast_inputs/"
 
-# The split function is faster and more concise, but I'm not sure there 
+# The split function is faster and more concise, but I'm not sure there
 # is a python equivalent, so just using a loop here, still fairly fast
 for(i in 1:length(prediction_dates)){
   x <- subset(grid_with_dynamic_predictors, Date == prediction_dates[i])
@@ -33,8 +34,8 @@ for(i in 1:length(prediction_dates)){
   for(j in ensembles){ # ensemble
     weekly_grid <- subset(x, ensemble == j)
     save(weekly_grid,
-         file = paste0(forecast_data_dir, 
-                       "grid_week_", 
+         file = paste0(forecast_data_dir,
+                       "grid_week_",
                        prediction_week[i],
                        "_ensemble_",
                        j))
