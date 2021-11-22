@@ -98,3 +98,26 @@ save(ws_forecast_aggregated_to_management_zones,
 #                                                                   zone_polygon_with_id = management_area_poly_pix_ids)
 # save(ws_forecast_aggregated_to_management_zones, 
 #      file = paste0(forecast_file_dir, "ws_forecast_aggregated_to_management_zones.RData"))
+
+# FUNCTION TO CREATE POLYGONS
+# this doesn't work because management areas don't have lat/lon and 
+# that's what's needed for this code
+create_drisk_polygons <- function(reef_forecast){
+  # create raster from point data
+  reefsDF2 <- rasterFromXYZ(reef_forecast[,c("Longitude", 
+                                             "Latitude", 
+                                             "PolygonID")], 
+                            crs = "+init=epsg:4326")
+  
+  rr <- rasterize(reef_forecast[,c("Longitude", "Latitude")], 
+                  reefsDF2, 
+                  field = reef_forecast[,c("PolygonID", "drisk")])
+  
+  # create spatial polygon from raster
+  as(rr, "SpatialPolygonsDataFrame") # reefsDF2 go back to this when removing simulated prevalence
+}
+
+polygons_management_area <- create_drisk_polygons(reef_forecast = ga_forecast_aggregated_to_management_zones)
+
+# save spatial polygon
+save(polygons_5km, file = "../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Forecasts/polygons_5km.Rds")

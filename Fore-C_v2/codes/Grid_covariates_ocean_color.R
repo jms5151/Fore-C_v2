@@ -23,7 +23,7 @@ source("./codes/custom_functions/fun_extract_oc_data_from_netcdf.R")
 
 # load data --------------------------------------------------------------------
 # load ocean color data
-oc_filepath <- "../raw_data/covariate_data/ocean_color/long_term_metrics.nc"
+oc_filepath <- "../raw_data/covariate_data/ocean_color/long_term_metrics_20211121.nc"
 oc <- nc_open(oc_filepath)
 
 # load reef grid
