@@ -75,6 +75,7 @@ source("./codes/Model_plots_covariates.R")
 # Create grid and spatial polygons -----------------------------------
 source("./codes/Create_forec_reef_grid.R")
 
+# are the polygon codes needed here?
 source("./codes/Create_polygons_reef_grid_5km.R")
 
 source("./codes/Create_polygons_management_areas.R")
@@ -97,10 +98,17 @@ source("./codes/Grid_concat_static_covariates.R")
 source("./codes/Grid_concat_dynamic_covariates.R")
 
 # Forecasting --------------------------------------------------------
+# After first forecast, each week only need to update two weeks of predictions
 source("./codes/Run_model_forecasts.R")
 
+# create code to update forecasts?
+# source("./codes/Update_model_forecasts.R")
+
+# run scenarios
 # source("./codes/Run_scenarios.R")
 
 # Create shiny outputs -----------------------------------------------
+source("./codes/Shiny_inputs_aggregate_predictions.R")
 ## updated "cast" to "ensemble" in plots and sst forecasts
+
 source("./codes/Shiny_inputs_update_polygons.R")

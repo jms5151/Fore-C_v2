@@ -6,10 +6,10 @@ source("./codes/custom_functions/fun_quant_forest_predict.R")
 # best_mods_summary <- read.csv("../model_selection_summary_results/parsimonious_best_models_by_disease_and_region.csv")
 
 # open model objects
-# GA_GBR_Model <- readRDS("../model_objects/ga_gbr_parsimonious_best_smote_0.rds")
+GA_GBR_Model <- readRDS("../model_objects/ga_gbr_parsimonious_best_smote_0.rds")
 # GA_Pacific_Model <- readRDS("../model_objects/ga_pac_parsimonious_best_smote_5.rds")
 WS_GBR_Model <- readRDS("../model_objects/ws_gbr_parsimonious_best_smote_0.rds")
-WS_PAC_Model <- readRDS("../model_objects/ws_pac_acr_parsimonious_best_smote_0.rds")
+# WS_PAC_Model <- readRDS("../model_objects/ws_pac_acr_parsimonious_best_smote_0.rds")
 
 # set up directory filepaths
 forecast_dir <- "../compiled_data/forecast_inputs/"

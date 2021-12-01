@@ -1,25 +1,47 @@
-# update polygons_5km.RDS
-library(raster)
+# load libraries
 library(tidyverse)
+library(raster)
+
+# load data
+load("../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Static_data/polygons_GBRMPA_park_zoning.Rds")
+load("../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Static_data/polygons_management_areas.Rds")
+
+load("../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Static_data/pixels_in_management_areas_polygons.RData")
+load("../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Static_data/pixels_in_gbrmpa_park_zones_polygons.RData")
 
 load("../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Forecasts/ga_forecast.RData")
 load("../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Forecasts/ws_forecast.RData")
 
-ga_nowcast <- ga_forecast %>%
-  filter(Date == "2021-11-29") %>%
-  mutate("ga" = Upr) %>%
-  select(-c("Date", "Lwr", "value", "Upr"))
+# set destination directory
+forecast_file_dir <- "../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Forecasts/"
 
-ws_nowcast <- ws_forecast %>%
-  filter(Date == "2021-11-29") %>%
-  mutate("ws" = Upr) %>%
-  select(-c("Date", "Lwr", "value", "Upr"))
+# 5 km predictions to polygons -------------------------------------------------
+# summarize forecasts 
+reef_forecast <- bind_rows(ga_forecast, ws_forecast) %>%
+  group_by(ID,
+           Latitude,
+           Longitude,
+           Region) %>%
+  summarize("risk" = max(value)) %>%
+  mutate("drisk" = NA)
 
-reef_forecast <- ga_nowcast %>%
-  left_join(ws_nowcast) %>%
-  mutate("drisk" = pmax(ga, ws))
+# format risk by stress status:
+# 0 = No stress
+# 1 = Watch
+# 2 = Warning
+# 3 = Alert Level 1
+# 4 = Alert Level 2
 
-# reef_forecast$drisk[reef_forecast$Region == "gbr"] <- reef_forecast$drisk[reef_forecast$Region == "gbr"]/5
+reef_forecast$drisk[reef_forecast$risk == 0] <- 0
+reef_forecast$drisk[reef_forecast$Region == "gbr" & reef_forecast$risk > 0 & reef_forecast$risk <= 1] <- 1
+reef_forecast$drisk[reef_forecast$Region == "gbr" & reef_forecast$risk > 1 & reef_forecast$risk <= 5] <- 2
+reef_forecast$drisk[reef_forecast$Region == "gbr" & reef_forecast$risk > 5 & reef_forecast$risk <= 10] <- 3
+reef_forecast$drisk[reef_forecast$Region == "gbr" & reef_forecast$risk > 10] <- 4
+
+reef_forecast$drisk[reef_forecast$Region != "gbr" & reef_forecast$risk > 0 & reef_forecast$risk <= 0.01] <- 1
+reef_forecast$drisk[reef_forecast$Region != "gbr" & reef_forecast$risk > 0.01 & reef_forecast$risk <= 0.05] <- 2
+reef_forecast$drisk[reef_forecast$Region != "gbr" & reef_forecast$risk > 0.05 & reef_forecast$risk <= 0.10] <- 3
+reef_forecast$drisk[reef_forecast$Region != "gbr" & reef_forecast$risk > 0.10] <- 4
 
 # to display over antimeridian in leaflap maps, add +360 to longitudes below zero
 reef_forecast$Longitude <- ifelse(reef_forecast$Longitude < 0, reef_forecast$Longitude + 360, reef_forecast$Longitude) 
@@ -38,86 +60,51 @@ rr <- rasterize(reef_forecast[,c("Longitude", "Latitude")],
 polygons_5km <- as(rr, "SpatialPolygonsDataFrame") # reefsDF2 go back to this when removing simulated prevalence
 
 # save spatial polygon
-save(polygons_5km, file = "../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Forecasts/polygons_5km.Rds")
-
-# aggregate to maangement zones --------------------------------
-load("../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Static_data/pixels_in_management_areas_polygons.RData")
-load("../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Static_data/pixels_in_gbrmpa_park_zones_polygons.RData")
-
-load("../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Forecasts/ga_forecast.RData")
-load("../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Forecasts/ws_forecast.RData")
-
-forecast_file_dir <- "../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Forecasts/"
-
-agg_to_manage_zones <- function(forecast, zone_polygon_with_id, fileName){
-  aggregated_forecast <- merge(forecast,
-                               zone_polygon_with_id,
-                               by.x = "ID",
-                               by.y = "PixelID")
-  
-  aggregated_forecast_to_management_zone <- aggregated_forecast %>%
-    group_by(PolygonID, Date, ensemble, type) %>%
-    summarise_at(vars(value, Upr, Lwr), mean)
-  
-  as.data.frame(aggregated_forecast_to_management_zone)
-  
-}
-
-# ga gbr
-ga_forecast_aggregated_to_gbrmpa_park_zones <- agg_to_manage_zones(forecast = ga_forecast,
-                                                                   zone_polygon_with_id = gbrmpa_park_zones_poly_pix_ids)
-save(ga_forecast_aggregated_to_gbrmpa_park_zones, 
-     file = paste0(forecast_file_dir, "ga_forecast_aggregated_to_gbrmpa_park_zones.RData"))
+save(polygons_5km, 
+     file = paste0(forecast_file_dir, "polygons_5km.Rds"))
 
 
-ga_forecast_aggregated_to_management_zones <- agg_to_manage_zones(forecast = ga_forecast,
-                                                                  zone_polygon_with_id = management_area_poly_pix_ids)
-save(ga_forecast_aggregated_to_management_zones,
-     file = paste0(forecast_file_dir, "ga_forecast_aggregated_to_management_zones.RData"))
+# 5 km predictions aggregated to management area polygons ----------------------
+reef_forecast2 <- bind_rows(ga_forecast, ws_forecast)
+
+reef_forecast_aggregated_to_management_zones <- agg_to_manage_zones(forecast = reef_forecast2,
+                                                                    zone_polygon_with_id = management_area_poly_pix_ids)
+
+reef_forecast_aggregated_to_management_zones <- reef_forecast_aggregated_to_management_zones %>%
+  group_by(PolygonID) %>%
+  summarize("drisk" = max(value))
+
+polygons_management_zoning_drisk <- merge(polygons_management_areas,
+                                          reef_forecast_aggregated_to_management_zones,
+                                          by.x = "ID",
+                                          by.y = "PolygonID"
+                                          )
 
 
-# ws gbr
-ws_forecast_aggregated_to_gbrmpa_park_zones <- agg_to_manage_zones(forecast = ws_forecast,
-                                                                   zone_polygon_with_id = gbrmpa_park_zones_poly_pix_ids)
-save(ws_forecast_aggregated_to_gbrmpa_park_zones, 
-     file = paste0(forecast_file_dir, "ws_forecast_aggregated_to_gbrmpa_park_zones.RData"))
+save(polygons_management_zoning_drisk,
+     file = paste0(forecast_file_dir, "polygons_management_zoning_drisk.Rds"))
 
-ws_forecast_aggregated_to_management_zones <- agg_to_manage_zones(forecast = ws_forecast,
-                                                                  zone_polygon_with_id = management_area_poly_pix_ids)
-save(ws_forecast_aggregated_to_management_zones,
-     file = paste0(forecast_file_dir, "ws_forecast_aggregated_to_management_zones.RData"))
 
-# ga  pacific
-# ga_forecast_aggregated_to_management_zones <- agg_to_manage_zones(forecast = ga_forecast,
-#                                                                   zone_polygon_with_id = management_area_poly_pix_ids)
-# save(ga_forecast_aggregated_to_management_zones, 
-#      file = paste0(forecast_file_dir, "ga_forecast_aggregated_to_management_zones.RData"))
-# 
-# # ws  pacific
-# ws_forecast_aggregated_to_management_zones <- agg_to_manage_zones(forecast = ws_forecast,
-#                                                                   zone_polygon_with_id = management_area_poly_pix_ids)
-# save(ws_forecast_aggregated_to_management_zones, 
-#      file = paste0(forecast_file_dir, "ws_forecast_aggregated_to_management_zones.RData"))
+# 5 km predictions aggregated to gbrmpa zone polygons --------------------------
+reef_forecast_aggregated_to_gbrmpa_park_zones <- agg_to_manage_zones(forecast = reef_forecast2,
+                                                                     zone_polygon_with_id = gbrmpa_park_zones_poly_pix_ids)
 
-# FUNCTION TO CREATE POLYGONS
-# this doesn't work because management areas don't have lat/lon and 
-# that's what's needed for this code
-create_drisk_polygons <- function(reef_forecast){
-  # create raster from point data
-  reefsDF2 <- rasterFromXYZ(reef_forecast[,c("Longitude", 
-                                             "Latitude", 
-                                             "PolygonID")], 
-                            crs = "+init=epsg:4326")
-  
-  rr <- rasterize(reef_forecast[,c("Longitude", "Latitude")], 
-                  reefsDF2, 
-                  field = reef_forecast[,c("PolygonID", "drisk")])
-  
-  # create spatial polygon from raster
-  as(rr, "SpatialPolygonsDataFrame") # reefsDF2 go back to this when removing simulated prevalence
-}
+reef_forecast_aggregated_to_gbrmpa_park_zones <- reef_forecast_aggregated_to_gbrmpa_park_zones %>%
+  group_by(PolygonID) %>%
+  summarize("drisk" = max(value))
 
-polygons_management_area <- create_drisk_polygons(reef_forecast = ga_forecast_aggregated_to_management_zones)
+polygons_GBRMPA_park_zoning_drisk <- merge(polygons_GBRMPA_park_zoning,
+                                           reef_forecast_aggregated_to_gbrmpa_park_zones,
+                                           by.x = "ID",
+                                           by.y = "PolygonID"
+                                           )
 
-# save spatial polygon
-save(polygons_5km, file = "../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Forecasts/polygons_5km.Rds")
+
+save(polygons_GBRMPA_park_zoning_drisk,
+     file = paste0(forecast_file_dir, "polygons_GBRMPA_park_zoning_drisk.Rds"))
+
+
+
+
+
+
