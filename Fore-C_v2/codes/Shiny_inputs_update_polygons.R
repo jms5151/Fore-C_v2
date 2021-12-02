@@ -2,9 +2,11 @@
 library(tidyverse)
 library(raster)
 
+source("./codes/custom_functions/fun_pixels_to_management_zones.R")
+
 # load data
-load("../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Static_data/polygons_GBRMPA_park_zoning.Rds")
-load("../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Static_data/polygons_management_areas.Rds")
+load("../compiled_data/spatial_data/polygons_GBRMPA_park_zoning.Rds")
+load("../compiled_data/spatial_data/polygons_management_areas.Rds")
 
 load("../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Static_data/pixels_in_management_areas_polygons.RData")
 load("../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Static_data/pixels_in_gbrmpa_park_zones_polygons.RData")
@@ -74,15 +76,15 @@ reef_forecast_aggregated_to_management_zones <- reef_forecast_aggregated_to_mana
   group_by(PolygonID) %>%
   summarize("drisk" = max(value))
 
-polygons_management_zoning_drisk <- merge(polygons_management_areas,
-                                          reef_forecast_aggregated_to_management_zones,
-                                          by.x = "ID",
-                                          by.y = "PolygonID"
-                                          )
+polygons_management_zoning <- merge(polygons_management_areas,
+                                    reef_forecast_aggregated_to_management_zones,
+                                    by.x = "ID",
+                                    by.y = "PolygonID"
+                                    )
 
 
-save(polygons_management_zoning_drisk,
-     file = paste0(forecast_file_dir, "polygons_management_zoning_drisk.Rds"))
+save(polygons_management_zoning,
+     file = paste0(forecast_file_dir, "polygons_management_zoning.Rds"))
 
 
 # 5 km predictions aggregated to gbrmpa zone polygons --------------------------
@@ -93,18 +95,12 @@ reef_forecast_aggregated_to_gbrmpa_park_zones <- reef_forecast_aggregated_to_gbr
   group_by(PolygonID) %>%
   summarize("drisk" = max(value))
 
-polygons_GBRMPA_park_zoning_drisk <- merge(polygons_GBRMPA_park_zoning,
-                                           reef_forecast_aggregated_to_gbrmpa_park_zones,
-                                           by.x = "ID",
-                                           by.y = "PolygonID"
-                                           )
+polygons_GBRMPA_park_zoning <- merge(polygons_GBRMPA_park_zoning,
+                                     reef_forecast_aggregated_to_gbrmpa_park_zones,
+                                     by.x = "ID",
+                                     by.y = "PolygonID"
+                                     )
 
 
-save(polygons_GBRMPA_park_zoning_drisk,
-     file = paste0(forecast_file_dir, "polygons_GBRMPA_park_zoning_drisk.Rds"))
-
-
-
-
-
-
+save(polygons_GBRMPA_park_zoning,
+     file = paste0(forecast_file_dir, "polygons_GBRMPA_park_zoning.Rds"))

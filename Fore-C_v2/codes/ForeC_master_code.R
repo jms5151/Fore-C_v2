@@ -70,12 +70,11 @@ source("./codes/Model_plots_summarize_results_across_smote_datasets.R")
 source("./codes/Model_summarize_results_across_smote_datasets.R")
 
 # if creating plots of co-variates, create code here
-source("./codes/Model_plots_covariates.R")
+# source("./codes/Model_plots_covariates.R")
 
 # Create grid and spatial polygons -----------------------------------
 source("./codes/Create_forec_reef_grid.R")
 
-# are the polygon codes needed here?
 source("./codes/Create_polygons_reef_grid_5km.R")
 
 source("./codes/Create_polygons_management_areas.R")
@@ -109,6 +108,5 @@ source("./codes/Run_model_forecasts.R")
 
 # Create shiny outputs -----------------------------------------------
 source("./codes/Shiny_inputs_aggregate_predictions.R")
-## updated "cast" to "ensemble" in plots and sst forecasts
 
 source("./codes/Shiny_inputs_update_polygons.R")

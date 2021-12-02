@@ -47,9 +47,8 @@ polygons_GBRMPA_park_zoning <- spTransform(gbr_park_zoning, CRS("+init=epsg:4326
 #   addPolygons(data = polygons_GBRMPA_park_zoning)
 
 # save data
-save(polygons_GBRMPA_park_zoning, 
-     file = "../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Static_data/polygons_GBRMPA_park_zoning.Rds")
-
+save(polygons_GBRMPA_park_zoning,
+     file = "../compiled_data/spatial_data/polygons_GBRMPA_park_zoning.Rds")
 
 # GUAM ------------------------------------------------------------------------
 # Guam MPA layer from https://www.oc.nps.edu/CMSP/Guam/
@@ -112,4 +111,4 @@ polygons_management_areas <- do.call(rbind, management_zone_polys_list)
 
 # save data
 save(polygons_management_areas, 
-     file = "../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Static_data/polygons_management_areas.Rds")
+     file = "../compiled_data/spatial_data/polygons_management_areas.Rds")
