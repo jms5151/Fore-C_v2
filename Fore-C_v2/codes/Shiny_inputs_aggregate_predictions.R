@@ -5,8 +5,11 @@ library(tidyverse)
 source("./codes/custom_functions/fun_pixels_to_management_zones.R")
 
 # load data
-load("../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Forecasts/ga_forecast.RData")
-load("../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Forecasts/ws_forecast.RData")
+load("../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ga_forecast.RData")
+load("../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ws_forecast.RData")
+
+# set destination directory
+forecast_file_dir <- "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/"
 
 # aggregate to management zones --------------------------------
 

@@ -76,8 +76,8 @@ aggregate_predictions <- function(outputs_list){
 
 # ga forecasts
 ga_forecast <- aggregate_predictions(ga_outputs)
-save(ga_forecast, file = "../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Forecasts/ga_forecast.RData")
+save(ga_forecast, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ga_forecast.RData")
 
 # ws forecasts
 ws_forecast <- aggregate_predictions(ws_outputs)
-save(ws_forecast, file = "../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Forecasts/ws_forecast.RData")
+save(ws_forecast, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ws_forecast.RData")

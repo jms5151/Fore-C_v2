@@ -8,14 +8,14 @@ source("./codes/custom_functions/fun_pixels_to_management_zones.R")
 load("../compiled_data/spatial_data/polygons_GBRMPA_park_zoning.Rds")
 load("../compiled_data/spatial_data/polygons_management_areas.Rds")
 
-load("../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Static_data/pixels_in_management_areas_polygons.RData")
-load("../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Static_data/pixels_in_gbrmpa_park_zones_polygons.RData")
+load("../uh-noaa-shiny-app/forec_shiny_app_data/Static_data/pixels_in_management_areas_polygons.RData")
+load("../uh-noaa-shiny-app/forec_shiny_app_data/Static_data/pixels_in_gbrmpa_park_zones_polygons.RData")
 
-load("../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Forecasts/ga_forecast.RData")
-load("../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Forecasts/ws_forecast.RData")
+load("../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ga_forecast.RData")
+load("../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ws_forecast.RData")
 
 # set destination directory
-forecast_file_dir <- "../../uh-noaa-shiny-app (jamie.sziklay@gmail.com)/forec_shiny_app_data/Forecasts/"
+forecast_file_dir <- "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/"
 
 # 5 km predictions to polygons -------------------------------------------------
 # summarize forecasts 

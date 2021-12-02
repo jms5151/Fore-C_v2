@@ -9,10 +9,34 @@ Created by Jamie M. Caldwell. Contact: jamie.sziklay@gmail.com
 # language       Python
 # version.string Python version 3.8.8 (2021-12-02)
 """
+
 # # Load libraries -----------------------------------------------------
 # source("./codes/Install_and_load_packages.R")
+# pip install dplython
+import os
+import pandas as pd
+import dplython
 
 # create model ---------------------------------------------------------
+
+library(tidyverse)
+
+# load data
+x = pd.read_csv("../model_selection_summary_results/qf_smote_summary.csv")
+
+# https://stmorse.github.io/journal/tidyverse-style-pandas.html
+# format data for plotting
+# x2 = x %>%
+#   filter(selection == "parsimonious_best") %>%
+#   group_by(Disease_type) %>%
+#   filter(AdjR2_withheld_sample == max(AdjR2_withheld_sample))
+
+x2 = (x 
+  .filter([selection == "parsimonious_best"]) 
+  .groupby(Disease_type) 
+  .filter([AdjR2_withheld_sample == AdjR2_withheld_sample.max])
+  )
+
 
 # # Co-variates data pre-processing for grid --------------------------- 
 
