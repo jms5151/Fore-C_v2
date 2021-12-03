@@ -16,27 +16,14 @@ Created by Jamie M. Caldwell. Contact: jamie.sziklay@gmail.com
 import os
 import pandas as pd
 import dplython
+import numpy as np
+import runpy
+
+# summarize model results
+# not sure if runpy is the best way to do this yet
+runpy.run_path(path_name = './codes/Model_summarize_results_across_smote_datasets.py')
 
 # create model ---------------------------------------------------------
-
-library(tidyverse)
-
-# load data
-x = pd.read_csv("../model_selection_summary_results/qf_smote_summary.csv")
-
-# https://stmorse.github.io/journal/tidyverse-style-pandas.html
-# format data for plotting
-# x2 = x %>%
-#   filter(selection == "parsimonious_best") %>%
-#   group_by(Disease_type) %>%
-#   filter(AdjR2_withheld_sample == max(AdjR2_withheld_sample))
-
-x2 = (x 
-  .filter([selection == "parsimonious_best"]) 
-  .groupby(Disease_type) 
-  .filter([AdjR2_withheld_sample == AdjR2_withheld_sample.max])
-  )
-
 
 # # Co-variates data pre-processing for grid --------------------------- 
 
