@@ -1,4 +1,4 @@
-# Run forecasts using quantil regression models
+# Run forecasts using quantile regression models
 
 source("./codes/custom_functions/fun_quant_forest_predict.R")
 

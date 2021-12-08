@@ -12,6 +12,9 @@ source("codes/Initial_covariates_to_test_by_disease_and_region.R")
 # set destination directory for smote datasets
 dest_dir <- "../compiled_data/survey_data/smote_datasets/"
 
+# load library
+library(tidyverse)
+
 # subset survey data
 ga_pac <- subset_and_filter_pseudo_replicates(df = GA_data_with_all_predictors, 
                                               regionGBR = FALSE, 
@@ -89,14 +92,15 @@ for(i in 1:length(dz_dfs)){
                          dz_names[i], 
                          "_with_predictors_smote_", 
                          thresh_levels[j], 
-                         "_count.RData"
+                         "_count"
                          )
+      
     } else {
       fileName <- paste0(dest_dir, 
                          dz_names[i], 
                          "_with_predictors_smote_", 
                          thresh_levels[j] * 100, 
-                         "_prev.RData"
+                         "_prev"
                          )
     }
 
@@ -105,8 +109,12 @@ for(i in 1:length(dz_dfs)){
                                 dz_vars = dzVars[[i]],
                                 responseVar = response,
                                 threshold = thresh_levels[j])
-    # save
-    save(smote_df, file = fileName)
+    # save as .Rdata file
+    fileName1 <- paste0(fileName, ".RData")
+    save(smote_df, file = fileName1)
+    # save as .csv
+    fileName2 <- paste0(fileName, ".csv")
+    write.csv(smote_df, file = fileName2, row.names = F)
   }
 }
 
