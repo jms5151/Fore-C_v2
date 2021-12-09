@@ -51,7 +51,7 @@ runpy.run_path(path_name = './codes/Model_selection_with_quantile_forests.py')
 
 # # Forecasting --------------------------------------------------------
 # # After first forecast, each week only need to update two weeks of predictions
-# source("./codes/Run_model_forecasts.R")
+runpy.run_path(path_name = "./codes/Run_model_forecasts.py")
 
 # # create code to update forecasts?
 # # source("./codes/Update_model_forecasts.R")
