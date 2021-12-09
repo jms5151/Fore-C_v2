@@ -38,6 +38,16 @@ for(i in 1:length(prediction_dates)){
                        "grid_week_",
                        prediction_week[i],
                        "_ensemble_",
-                       j))
+                       j,
+                       ".RData"))
+    
+    write.csv(weekly_grid,
+         file = paste0(forecast_data_dir,
+                       "grid_week_",
+                       prediction_week[i],
+                       "_ensemble_",
+                       j,
+                       ".csv"))
+    
   }
 }

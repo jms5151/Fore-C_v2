@@ -11,19 +11,21 @@ Created by Jamie M. Caldwell. Contact: jamie.sziklay@gmail.com
 """
 
 # # Load libraries -----------------------------------------------------
-# source("./codes/Install_and_load_packages.R")
-# pip install dplython
-import os
-import pandas as pd
-import dplython
-import numpy as np
+# import os
+# import pandas as pd
+# import dplython
+# import numpy as np
+# from sklearn.ensemble import RandomForestRegressor
+# from sklearn.model_selection import train_test_split
+# import joblib
+
 import runpy
 
 # summarize model results
 # not sure if runpy is the best way to do this yet
 runpy.run_path(path_name = './codes/Model_summarize_results_across_smote_datasets.py')
 
-# create model ---------------------------------------------------------
+# create models ---------------------------------------------------------
 runpy.run_path(path_name = './codes/Model_selection_with_quantile_forests.py')
 
 
@@ -42,6 +44,9 @@ runpy.run_path(path_name = './codes/Model_selection_with_quantile_forests.py')
 # # compile predictor data
 # source("./codes/Grid_concat_static_covariates.R")
 
+###############################################################
+###### Save this output as csv in R and then continue ? #######
+###############################################################
 # source("./codes/Grid_concat_dynamic_covariates.R")
 
 # # Forecasting --------------------------------------------------------
