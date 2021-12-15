@@ -31,7 +31,7 @@ runpy.run_path(path_name = './codes/Model_selection_with_quantile_forests.py')
 
 # # Co-variates data pre-processing for grid --------------------------- 
 
-# source("./codes/Grid_covariates_sst_metrics.R")
+runpy.run_path(path_name = "./codes/Grid_covariates_sst_metrics.py")
 
 ## not sure these are needed because they are not changing
 # source("./codes/Grid_covariates_nighttime_lights.R")
