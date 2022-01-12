@@ -1,4 +1,4 @@
-# Initial co-variates to test in models for each disease and region
+# Final co-variates in models for each disease and region
 
 # Growth anomalies Pacific -----------------------
 ga_pac_vars <- c("Month",

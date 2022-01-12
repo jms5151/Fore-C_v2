@@ -11,6 +11,7 @@ results_dir <- "../model_selection_results/"
 
 # list smote datafiles
 filenames <- list.files("../compiled_data/survey_data/smote_datasets/", full.names = TRUE)
+filenames <- filenames[filenames %like% '.RData'] # keep only .RData files
 
 # run model selection
 for(i in 1:length(filenames)){

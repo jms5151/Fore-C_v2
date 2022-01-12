@@ -17,7 +17,7 @@ load("../compiled_data/survey_data/WS.RData")
 GA_data_with_all_predictors <- ga %>%
   left_join(benthic_and_fish_data, by = c("Latitude", "Longitude")) %>%
   left_join(reef_nightlights, by = c("Latitude", "Longitude")) %>%
-  left_join(sst_90d, by = c("Date", "Latitude", "Longitude"))  %>%
+  left_join(sst_90d, by = c("Date", "Latitude", "Longitude")) %>%
   left_join(sst_metrics, by = c("Latitude", "Longitude", "Date")) %>%
   left_join(wave_energy, by = c("Latitude", "Longitude")) %>%
   left_join(ocean_color, by = c("Date", "Latitude", "Longitude")) %>%

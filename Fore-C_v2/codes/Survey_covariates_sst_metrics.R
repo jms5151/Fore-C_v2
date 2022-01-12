@@ -7,7 +7,7 @@
 # library(RANN)
 
 # load surey data
-load("compiled_data/survey_data/Survey_points_with_dates.RData")
+load("../compiled_data/survey_data/Survey_points_with_dates.RData")
 
 # expand dataframe to include row for all 90 days prior to survey date  ----------------------------
 surveys$Survey_Date <- surveys$Date
@@ -162,15 +162,38 @@ getSSTmetric <- function(df, df_points){
   df$sst_name[nearTable$nn.idx]
 }
 
-
 # be patient, this function takes some time too
 surveys$Winter_condition <- getSSTmetric(WC, surveys)
 surveys$Hot_snaps <- getSSTmetric(HS, surveys)
 surveys$cold_snaps <- getSSTmetric(CS, surveys)
 
+# add region, then update winter condition based on region
+surveys$Region[surveys$Longitude >= 140 & surveys$Longitude <= 155 & surveys$Latitude >= -28 & surveys$Latitude <= -7] <- "gbr"
+surveys$Region[surveys$Longitude >= -180 & surveys$Longitude <= -152 & surveys$Latitude >= 18 & surveys$Latitude <= 30] <- "hawaii"
+surveys$Region[surveys$Longitude >= 143 & surveys$Longitude <= 147 & surveys$Latitude >= 12 & surveys$Latitude <= 21] <- "guam-cnmi"
+surveys$Region[surveys$Longitude >= -174 & surveys$Longitude <= -167 & surveys$Latitude >= -16 & surveys$Latitude <= -10] <- "samoas"
+surveys$Region[surveys$Longitude >= 165 & surveys$Longitude <= 168 & surveys$Latitude >= 18 & surveys$Latitude <= 21] <- "wake"
+surveys$Region[surveys$Longitude >= -171 & surveys$Longitude <= -168 & surveys$Latitude >= 15 & surveys$Latitude <= 18] <- "johnston"
+surveys$Region[surveys$Longitude >= -178 & surveys$Longitude <= -175 & surveys$Latitude >= -1 & surveys$Latitude <= 2] <- "howland-baker"
+surveys$Region[surveys$Longitude >= -161 & surveys$Longitude <= -159 & surveys$Latitude >= -2 & surveys$Latitude <= 1] <- "jarvis"
+surveys$Region[surveys$Longitude >= -164 & surveys$Longitude <= -161 & surveys$Latitude >= 4 & surveys$Latitude <= 8] <- "palmyra-kingman"
+
+surveys$Winter_condition <- ifelse(surveys$Region == 'guam-cnmi', surveys$Winter_condition - 3.73, surveys$Winter_condition)
+surveys$Winter_condition <- ifelse(surveys$Region == 'howland-baker', surveys$Winter_condition - 19.25, surveys$Winter_condition)
+surveys$Winter_condition <- ifelse(surveys$Region == 'johnston', surveys$Winter_condition - 2.85, surveys$Winter_condition)
+surveys$Winter_condition <- ifelse(surveys$Region == 'samoas', surveys$Winter_condition - 4.00, surveys$Winter_condition)
+surveys$Winter_condition <- ifelse(surveys$Region == 'gbr', surveys$Winter_condition - 1.95, surveys$Winter_condition)
+surveys$Winter_condition <- ifelse(surveys$Region == 'hawaii', surveys$Winter_condition - 2.73, surveys$Winter_condition)
+surveys$Winter_condition <- ifelse(surveys$Region == 'jarvis', surveys$Winter_condition - 18.96, surveys$Winter_condition)
+surveys$Winter_condition <- ifelse(surveys$Region == 'palmyra-kingman', surveys$Winter_condition - 7.01, surveys$Winter_condition)
+surveys$Winter_condition <- ifelse(surveys$Region == 'wake', surveys$Winter_condition - 4.01, surveys$Winter_condition)
+
+# remove Region
+surveys$Region <- NULL
+
 # rename and save data
 sst_metrics <- surveys
-save(sst_metrics, file = "compiled_data/survey_covariate_data/surveys_with_CRW_sst_metrics.RData")
+save(sst_metrics, file = "../compiled_data/survey_covariate_data/surveys_with_CRW_sst_metrics.RData")
 
 # extract SST anomaly data -------------------------------------------------------------------------
 dates <- sort(unique(surveys$Date))

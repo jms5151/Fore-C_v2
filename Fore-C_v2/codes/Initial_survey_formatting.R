@@ -8,19 +8,19 @@
 
 # load data ---------------------------
 # NOAA Ecosystem Science Division data
-load("raw_data/survey_data/ESD2008_2012dataFOREC.Rdata")
+load("../raw_data/survey_data/ESD2008_2012dataFOREC.Rdata")
 esd0812 <- x 
 
-load("raw_data/survey_data/ESD2013_2017dataFOREC.Rdata")
+load("../raw_data/survey_data/ESD2013_2017dataFOREC.Rdata")
 esd1317 <- x
 
 # Hawaii Coral Disease Database (HICORDIS) data
-hicordis <- read.csv("raw_data/survey_data/hicordis.csv", head = T, stringsAsFactors = F)
+hicordis <- read.csv("../raw_data/survey_data/hicordis.csv", head = T, stringsAsFactors = F)
 
 # University of Guam data
-guamRaw <- read.csv("raw_data/survey_data/HEALTH_IMPACTS_DATABASE_FOR_NOAA.csv", stringsAsFactors = F, head = T)
-guamCodes <- read.csv("raw_data/survey_data/species_codes.csv", stringsAsFactors = F, head = T)
-guam.gps <- read.csv("raw_data/survey_data/guam_sites_with_gps.csv", stringsAsFactors = F, head = T)
+guamRaw <- read.csv("../raw_data/survey_data/HEALTH_IMPACTS_DATABASE_FOR_NOAA.csv", stringsAsFactors = F, head = T)
+guamCodes <- read.csv("../raw_data/survey_data/species_codes.csv", stringsAsFactors = F, head = T)
+guam.gps <- read.csv("../raw_data/survey_data/guam_sites_with_gps.csv", stringsAsFactors = F, head = T)
 
 # Great Barrier Reef (GBR) Reef Health and Impact Surveys (RHIS) data
 gbr <- read.csv("raw_data/survey_data/GBRMPA_RHIS_01012009-18092020.csv", stringsAsFactors = F, head = T)

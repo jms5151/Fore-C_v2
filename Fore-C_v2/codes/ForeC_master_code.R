@@ -110,3 +110,5 @@ source("./codes/Run_model_forecasts.R")
 source("./codes/Shiny_inputs_aggregate_predictions.R")
 
 source("./codes/Shiny_inputs_update_polygons.R")
+
+source("./codes/Shiny_inputs_gauge_data.R")
