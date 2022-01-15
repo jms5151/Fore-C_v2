@@ -4,6 +4,7 @@ qf_results_filenames <- list.files("../model_selection_results/", full.names = T
 
 # list smote datafiles
 smote_filenames <- list.files("../compiled_data/survey_data/smote_datasets/", full.names = TRUE)
+smote_filenames <- smote_filenames[grepl(".RData", smote_filenames)]
 
 # load functions 
 source("./codes/custom_functions/fun_subset_and_split_df.R")
