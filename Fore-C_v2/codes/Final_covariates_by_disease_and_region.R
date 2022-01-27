@@ -1,45 +1,19 @@
 # Final co-variates in models for each disease and region
 
-# Growth anomalies Pacific -----------------------
-ga_pac_vars <- c("Month",
-                 "Median_colony_size",
-                 "CV_colony_size",
-                 "Poritidae_mean_cover",
-                 "H_abund",
-                 "SST_90dMean",
-                 "Winter_condition",
-                 "Hot_snaps",
-                 "BlackMarble_2016_3km_geo.3",
-                 "Long_Term_Kd_Median"
-                 )
+# open final model objects
+GA_GBR_Model <- readRDS("../model_objects/ga_gbr_parsimonious_best_smote_0.rds")
+GA_Pacific_Model <- readRDS("../model_objects/ga_pac_parsimonious_best_smote_5.rds")
+WS_GBR_Model <- readRDS("../model_objects/ws_gbr_parsimonious_best_smote_0.rds")
+WS_Pacific_Model <- readRDS("../model_objects/ws_pac_acr_parsimonious_best_smote_0.rds")
 
-# Growth anomalies GBR --------------------------
-ga_gbr_vars <- c("Month",
-                 "Coral_cover",
-                 "Fish_abund",
-                 "SST_90dMean",
-                 "Winter_condition",
-                 "Hot_snaps",
-                 "Long_Term_Kd_Median",
-                 "Long_Term_Kd_Variability",
-                 "Three_Week_Kd_Median",
-                 "Three_Week_Kd_Variability"
-                 )
+# Growth anomalies Pacific
+ga_pac_vars <- names(GA_Pacific_Model$importance[,1])
 
-# White syndromes Pacific (Acroporidae) -------
-ws_pac_acr_vars <- c("Month",
-                     "Median_colony_size",
-                     "Winter_condition",
-                     "Long_Term_Kd_Median",
-                     "Three_Week_Kd_Median"
-                     )
+# Growth anomalies GBR 
+ga_gbr_vars <- names(GA_GBR_Model$importance[,1]) 
 
-# White syndreoms GBR -------------------------
-ws_gbr_vars <- c("Month", 
-                 "Coral_cover", 
-                 "Fish_abund", 
-                 "Winter_condition",
-                 "Hot_snaps",
-                 "Three_Week_Kd_Variability"
-                 )
+# White syndromes Pacific (Acroporidae)
+ws_pac_acr_vars <- names(WS_Pacific_Model$importance[,1]) 
 
+# White syndromes GBR 
+ws_gbr_vars <- names(WS_GBR_Model$importance[,1]) 

@@ -104,10 +104,14 @@ source("./codes/Run_model_forecasts.R")
 # source("./codes/Update_model_forecasts.R")
 
 # run scenarios
+# source("./codes/Create_scenarios.R")
 # source("./codes/Run_scenarios.R")
 
 # Create shiny outputs -----------------------------------------------
+### THE INPUTS WILL NEED UPDATING WHEN ALL FOUR MODELS ARE USED ###
 source("./codes/Shiny_inputs_aggregate_predictions.R")
+
+source("./codes/Shiny_inputs_aggregate_scenarios.R")
 
 source("./codes/Shiny_inputs_update_polygons.R")
 

@@ -39,17 +39,25 @@ final_covars <- c(ga_gbr_vars,
 
 final_covars <- unique(final_covars)
 
-final_cols <- colnames(grid_with_static_covariates)[colnames(grid_with_static_covariates) %in% c("Longitude",
-                                                                                                 "Latitude",
-                                                                                                 "Region",
-                                                                                                 "ID",
-                                                                                                 "Median_colony_size_Acroporidae",
-                                                                                                 "Median_colony_size_Poritidae",
-                                                                                                 "CV_colony_size_Acroporidae",
-                                                                                                 "CV_colony_size_Poritidae",
-                                                                                                 "Poritidae_mean_cover",
-                                                                                                 "Acroporidae_mean_cover",
-                                                                                                 final_covars)]
+final_cols <- colnames(
+  grid_with_static_covariates
+  )[
+    colnames(
+      grid_with_static_covariates
+      ) %in% c("Longitude",
+               "Latitude",
+               "Region",
+               "ID",
+               "Median_colony_size_Acroporidae",
+               "Median_colony_size_Poritidae",
+               "CV_colony_size_Acroporidae",
+               "CV_colony_size_Poritidae",
+               "Poritidae_mean_cover",
+               "Acroporidae_mean_cover",
+               final_covars
+               )
+    ]
+
 grid_with_static_covariates <- grid_with_static_covariates[, final_cols]
 
 save(grid_with_static_covariates, file = "../compiled_data/grid_covariate_data/grid_with_static_covariates.RData")
