@@ -22,7 +22,10 @@ agg_to_manage_zones_scenarios <- function(predictions, zone_polygon_with_id, fil
   
   aggregated_forecast_to_management_zone <- aggregated_forecast %>%
     group_by(PolygonID, Region, Response, Response_level) %>%
-    summarise_at(vars(value, estimate, sd, disease_risk_change), median)
+    summarise_at(vars(value, estimate, sd, disease_risk_change), median) %>%
+    mutate(ID = PolygonID) 
+  
+  aggregated_forecast_to_management_zone$PolygonID <- NULL
   
   as.data.frame(aggregated_forecast_to_management_zone)
   

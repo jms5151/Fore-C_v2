@@ -1,162 +1,104 @@
 # Pull SST covariates to grid --------------------------------------------------
 
 # load libraries
-# library(rcurl)
 library(ncdf4)
 library(tidyverse)
 
+# source custom function 
+source("./codes/custom_functions/fun_ftp_download.R")
+
 # set crw forecast directory for downloads
-crw_dir <- "../raw_data/covariate_data/CRW_dz_temp_metrics/crw_temp_forecasts/"
+crw_dir <- "../raw_data/covariate_data/CRW_dz_temp_metrics/crw_weekly_updates/"
+dir.create(crw_dir)
 
-# Download SST metrics from CRW ------------------------------------------------
-# there's a problem with the downloads, can't open as bricks, downloaded manually
-# Winter Condition
-# wc_url = "ftp://ftp.star.nesdis.noaa.gov/pub/sod/mecb/gliu/caldwell/20211113/dz-v2_wdw_gbr_reef-id_20211107.nc"
-# download.file(wc_url, destfile = paste0(crw_dir, "WC.nc"))
-# 
-# # Hot Snaps
-# hs_url = "ftp://ftp.star.nesdis.noaa.gov/pub/sod/mecb/gliu/caldwell/20211111/cfsv2_hotsnap_gbr_reef-id_20211106.nc"
-# download.file(hs_url, destfile = paste0(crw_dir, "HS.nc"))
-# 
-# # 90 day mean SST
-# sst90dMean_url = "ftp://ftp.star.nesdis.noaa.gov/pub/sod/mecb/gliu/caldwell/20211114/cfsv2_mean-90d_gbr_reef-id_20211106_new.nc"
-# download.file(sst90dMean_url, destfile = paste0(crw_dir, "SST90dMean.nc"))
+# download netcdf files from CRW --------------------------------------
+# list files and download
+list_and_download_ftp_files(ftp_path = 'ftp://ftp.star.nesdis.noaa.gov/pub/sod/mecb/gliu/caldwell/weeklyupdate_20220131/'
+                            , dest_dir = crw_dir)
 
-# load data --------------------------------------------------------------------
-# load SST metrics (downloaded above)
-wc <- nc_open(paste0(crw_dir, "WC.nc"))
+list_and_download_ftp_files(ftp_path = 'ftp://ftp.star.nesdis.noaa.gov/pub/sod/mecb/gliu/caldwell/20220124/'
+                            , dest_dir = crw_dir)
 
-hs <- nc_open(paste0(crw_dir, "HS.nc"))
 
-sst90d <- nc_open(paste0(crw_dir, "SST90dMean.nc"))
+# load and format data ------------------------------------------------
 
-# winter condition -------------------------------------------------------------
-# this is a single value for each reef pixel
-wc_id <- wc$dim$reef_id$vals
-wc_vals <- ncvar_get(wc, varid = "daily_winter_conditions")
+# create empty data frame
+sst_metrics <- data.frame()
 
-# fill in NAs with mean values
-wc_vals[is.na(wc_vals)] <- mean(wc_vals, na.rm = T)
+# list files
+nc_files <- list.files(crw_dir)
 
-reef_grid_wc <- data.frame("ID" = wc_id,
-                           "Winter_condition" = wc_vals)
-
-save(reef_grid_wc, file = "../compiled_data/grid_covariate_data/grid_with_wc.RData")
-
-# SST forecasts ----------------------------------------------------------------
-# this code is not streamlined, lots of repeated code between hot snaps and 90 day means
-# list dates/index associated with nowcasts and forecasts
-nowcast_days <- seq(from = 1, to = 8, by = 7) # the first two weeks
-forecast_days <- seq(from = 15, to = 15+(11*7), by = 7) # the following 12 weeks
-
-# Hot Snaps --------------------------------------------------------------------
-hs_df <- data.frame()
-
-hs_id <- hs$dim$reef_id$vals
-
-# dimensions: reef pixel ids x ensemble X days
-hs_vals <- ncvar_get(hs, varid = "daily_hotsnap_prediction")
-
-# This isn't working currently, check with Gang how day id is formatted
-# # get day id
-# day - based on last day of 7-day initial condition period (Oct 31-6), 239 total
-# first day = Nov. 8, 2021
-# julianday <- hs$dim$time$vals[1]
-# # turn into julian day (first 3 numbers)
-# julianday <- as.numeric(substr(julianday, 1, 3))
-# # turn into date
-# firstday <- as.Date(julianday, origin=as.Date("2021-01-01"))
-firstday <- as.Date("2021-11-07", "%Y-%m-%d") # start date is 11/8, but using
-# index to calculate from here, this will all need to be updated and should
-# pull date directly from file
-
-# nowcasts; currently using forecasts, will update in future with satellite observations
-# subset to nowcast days
-hs_nowcast <- hs_vals[,,nowcast_days]
-
-# use median value across all forecasts
-hs_nowcast <- apply(hs_nowcast, c(1,3), median, na.rm = T)
-
-for(i in 1:length(nowcast_days)){
-  x <- hs_nowcast[, i]
-  x[is.na(x)] <- mean(x, na.rm = T)
-  tmp_df <- data.frame("ID" = hs_id,
-                       "Date" = firstday + nowcast_days[i],
-                       "Hot_snaps" = x,
-                       "ensemble" = 0,
-                       "type" = "nowcast")
-  hs_df <- rbind(hs_df,
-                 tmp_df)
-}
-
-# forecasts
-for(j in 1:length(forecast_days)){
-  # for each ensemble
-  for(k in 1:28){
-    x <- hs_vals[, k, forecast_days[j]]
-    x[is.na(x)] <- mean(x, na.rm = T)
-    tmp_df <- data.frame("ID" = hs_id,
-                         "Date" = firstday + forecast_days[j],
-                         "Hot_snaps" = x,
-                         "ensemble" = k,
-                         "type" = "forecast")
-    hs_df <- rbind(hs_df,
-                   tmp_df)
+# open and format data (this should take 1-4 minutes on a standard laptop)
+for(j in nc_files){
+  # open netcdf file
+  x <- nc_open(paste0(crw_dir, j))
+  # get ids
+  ids <- ncvar_get(x, varid = "reef_id")
+  # get date(s)
+  dates <- ncvar_get(x, varid = "data_date")
+  # determine metric name
+  if(grepl('hotsnap|hdw', j) == TRUE){
+    metric_name <- 'Hot_snaps'
+  } else if(grepl('mean-90d', j) == TRUE){
+    metric_name <- 'SST_90dMean'
+  } else {
+    metric_name <- 'Winter_condition'
   }
+  # determine if each file is a cfs forecast (True) or satellite measurement (False) 
+  cfs <- ifelse(grepl('cfsv2', j) == TRUE, TRUE, FALSE)
+  # format forecasts
+  if(cfs == TRUE){
+    metric_array <- ncvar_get(x, varid = names(x$var)[1])
+    tmp_df <- data.frame()
+    for(k in 1:12){ # dates
+      for(l in 1:28){ # ensembles
+        tmp_metric <- metric_array[, l, k]
+        # make flagged values NAs
+        tmp_metric[tmp_metric == 253|tmp_metric == 9999] <- NA
+        # fill in NAs with median values
+        tmp_metric[is.na(tmp_metric)] <- median(tmp_metric, na.rm = T)
+        # create dataframe
+        cfs_df <- data.frame("ID" = ids
+                             , "Date" = dates[k]
+                             , "ensemble" = l
+                             , "type" = "forecast"
+                             , "temp_metric_name" = metric_name
+                             , "value" = tmp_metric
+                             )
+        tmp_df <- rbind(tmp_df, cfs_df)
+        }
+      }
+    # format sst measurements
+    } else if (cfs == FALSE){
+    tmp_metric <- ncvar_get(x, varid = names(x$var)[1])
+    # make flagged values NAs
+    tmp_metric[tmp_metric == 253|tmp_metric == 9999] <- NA
+    # fill in NAs with median values
+    tmp_metric[is.na(tmp_metric)] <- median(tmp_metric, na.rm = T)
+    # create dataframe
+    tmp_df <- data.frame("ID" = ids
+                         , "Date" = dates
+                         , "ensemble" = 0
+                         , "type" = "nowcast"
+                         , "temp_metric_name" = metric_name
+                         , "value" = tmp_metric
+                         )
+    }
+  # combine data
+  sst_metrics <- rbind(sst_metrics
+                       , tmp_df)
+  nc_close(x)
 }
 
+# reshape files ----------------------------------------------
+reef_grid_sst <- sst_metrics %>%
+  spread(temp_metric_name, value) %>%
+  fill(c("Hot_snaps", "SST_90dMean" , "Winter_condition"), .direction = 'updown')
 
-# 90-day SST mean --------------------------------------------------------------
-sst90d_df <- data.frame()
+# save data --------------------------------------------------
+save(reef_grid_sst, 
+     file = "../compiled_data/grid_covariate_data/grid_with_sst_metrics.RData")
 
-sst90d_id <- sst90d$dim$reef_id$vals
-
-# dimensions: reef pixel ids x ensemble X days
-sst90d_vals <- ncvar_get(sst90d, varid = "daily_90day_mean_sst_prediction")
-
-# reuse first day from above, will update later
-
-# nowcasts; currently using forecasts, will update in future with satellite observations
-# subset to nowcast days
-sst90d_nowcast <- sst90d_vals[,,nowcast_days]
-
-# use median value across all forecasts
-sst90d_nowcast <- apply(sst90d_nowcast, c(1,3), median, na.rm = T)
-
-for(i in 1:length(nowcast_days)){
-  x <- sst90d_nowcast[, i]
-  x[is.na(x)|x > 40] <- mean(x, na.rm = T)
-  tmp_df <- data.frame("ID" = sst90d_id,
-                       "Date" = firstday + nowcast_days[i],
-                       "SST_90dMean" = x,
-                       "ensemble" = 0,
-                       "type" = "nowcast")
-  sst90d_df <- rbind(sst90d_df,
-                     tmp_df)
-}
-
-
-# forecasts
-for(j in 1:length(forecast_days)){
-  # for each ensemble
-  for(k in 1:28){
-    x <- sst90d_vals[, k, forecast_days[j]]
-    x[is.na(x)|x > 40] <- mean(x, na.rm = T)
-    tmp_df <- data.frame("ID" = sst90d_id,
-                         "Date" = firstday + forecast_days[j],
-                         "SST_90dMean" = x,
-                         "ensemble" = k,
-                         "type" = "forecast")
-    sst90d_df <- rbind(sst90d_df,
-                   tmp_df)
-  }
-}
-
-
-# combine and save sst metrics -------------------------------------------------
-reef_grid_sst <- hs_df %>%
-  left_join(sst90d_df, 
-            by = c("ID", "Date", "ensemble", "type"))
-
-
-save(reef_grid_sst, file = "../compiled_data/grid_covariate_data/grid_with_sst_metrics.RData")
+# delete nc files --------------------------------------------
+crw_dir2remove <- substr(crw_dir, 1, nchar(crw_dir)-1)
+unlink(crw_dir2remove, recursive = TRUE)

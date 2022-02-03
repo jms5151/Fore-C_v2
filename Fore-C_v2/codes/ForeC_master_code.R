@@ -104,7 +104,7 @@ source("./codes/Run_model_forecasts.R")
 # source("./codes/Update_model_forecasts.R")
 
 # run scenarios
-# source("./codes/Create_scenarios.R")
+source("./codes/Create_scenarios.R")
 # source("./codes/Run_scenarios.R")
 
 # Create shiny outputs -----------------------------------------------
