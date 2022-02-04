@@ -7,7 +7,6 @@ load("../compiled_data/spatial_data/grid.RData")
 load("../compiled_data/grid_covariate_data/grid_with_Night_Lights.RData")
 load("../compiled_data/grid_covariate_data/grid_with_benthic_and_fish_data.RData")
 load("../compiled_data/grid_covariate_data/grid_with_long_term_oc_metrics.RData")
-load("../compiled_data/grid_covariate_data/grid_with_wc.RData")
 
 # join data together
 grid_with_static_covariates <- reefsDF %>%
@@ -25,8 +24,7 @@ grid_with_static_covariates <- reefsDF %>%
             by = c("Latitude", 
                    "Longitude", 
                    "Region", 
-                   "ID")) %>%
-  left_join(reef_grid_wc, by = "ID")
+                   "ID"))
 
 # keep only identifier info and covariates used in final models
 source("./codes/Final_covariates_by_disease_and_region.R")

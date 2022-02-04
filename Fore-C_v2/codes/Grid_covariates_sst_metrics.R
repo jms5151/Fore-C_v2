@@ -95,6 +95,11 @@ reef_grid_sst <- sst_metrics %>%
   spread(temp_metric_name, value) %>%
   fill(c("Hot_snaps", "SST_90dMean" , "Winter_condition"), .direction = 'updown')
 
+# format dates
+reef_grid_sst$Date <- as.Date(reef_grid_sst$Date, "%Y-%m-%d")
+
+### MAY NEED TO OFFSET WINTER CONDITION VALUES ###
+
 # save data --------------------------------------------------
 save(reef_grid_sst, 
      file = "../compiled_data/grid_covariate_data/grid_with_sst_metrics.RData")

@@ -73,7 +73,7 @@ source("./codes/Model_summarize_results_across_smote_datasets.R")
 # source("./codes/Model_plots_covariates.R")
 
 # Create grid and spatial polygons -----------------------------------
-source("./codes/Create_forec_reef_grid.R")
+source("./codes/Create_forec_reef_grid.R") # add creation date
 
 source("./codes/Create_polygons_reef_grid_5km.R")
 
@@ -83,17 +83,22 @@ source("./codes/List_pixel_IDs_in_polygons.R")
 
 # Co-variates data pre-processing for grid --------------------------- 
 
-source("./codes/Grid_covariates_sst_metrics.R")
-
+# aggregate static variables
 source("./codes/Grid_covariates_nighttime_lights.R")
 
 source("./codes/Grid_covariates_fish_and_benthos.R")
 
-source("./codes/Grid_covariates_ocean_color.R")
+source("./codes/Grid_covariates_ocean_color_static.R")
 
-# compile predictor data
+# compile static predictor data
 source("./codes/Grid_concat_static_covariates.R")
 
+# aggregate dynamic variables
+source("./codes/Grid_covariates_sst_metrics.R")
+
+source("./codes/Grid_covariates_ocean_color_dynamic.R")
+
+# compile static and dynamic covariates
 source("./codes/Grid_concat_dynamic_covariates.R")
 
 # Forecasting --------------------------------------------------------
@@ -105,7 +110,8 @@ source("./codes/Run_model_forecasts.R")
 
 # run scenarios
 source("./codes/Create_scenarios.R")
-# source("./codes/Run_scenarios.R")
+
+source("./codes/Run_model_scenarios.R")
 
 # Create shiny outputs -----------------------------------------------
 ### THE INPUTS WILL NEED UPDATING WHEN ALL FOUR MODELS ARE USED ###

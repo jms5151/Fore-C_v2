@@ -4,18 +4,17 @@ library(tidyverse)
 # load custom functions
 source("./codes/custom_functions/fun_pixels_to_management_zones.R")
 
-# load data
-load("../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ga_pac_scenarios.RData")
-load("../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ws_pac_scenarios.RData")
-load("../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ga_gbr_scenarios.RData")
-load("../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ws_gbr_scenarios.RData")
+# load datam, set input/destination folder
+scenarios_file_dir <- "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/"
+
+# load(paste0(scenarios_file_dir, "ga_pac_scenarios.RData"))
+# load(paste0(scenarios_file_dir, "ws_pac_scenarios.RData"))
+load(paste0(scenarios_file_dir, "ga_gbr_scenarios.RData"))
+load(paste0(scenarios_file_dir, "ws_gbr_scenarios.RData"))
 
 # load pixel information
 load("../uh-noaa-shiny-app/forec_shiny_app_data/Static_data/pixels_in_management_areas_polygons.RData")
 load("../uh-noaa-shiny-app/forec_shiny_app_data/Static_data/pixels_in_gbrmpa_park_zones_polygons.RData")
-
-# set destination directory
-scenarios_file_dir <- "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/"
 
 # aggregate to management zones --------------------------------
 

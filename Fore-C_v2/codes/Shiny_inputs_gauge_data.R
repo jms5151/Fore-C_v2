@@ -4,22 +4,28 @@ library(tidyverse)
 load("../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ga_forecast.RData")
 load("../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ws_forecast.RData")
 
+# figure out which date to use
+nowcast_date_indexes <- which(ga_forecast$Date == max(ga_forecast$Date[ga_forecast$ensemble == 0]))
+current_nowcast_date <- ga_forecast[nowcast_date_indexes[1], "Date"]
+
 # summary disease data to show the max value for each ID within
 # the forecast period
 # perhaps use the most recent nowcast instead
 ga <- ga_forecast %>%
+  filter(Date == current_nowcast_date) %>%
   group_by(ID, Region) %>%
-  summarize("Growth anomalies" = max(value)) 
+  summarize("Growth anomalies" = max(drisk)) 
 
 ws <- ws_forecast %>%
+  filter(Date == current_nowcast_date) %>%
   group_by(ID, Region) %>%
-  summarize("White syndromes" = max(value))
+  summarize("White syndromes" = max(drisk))
 
 # combine
 dz <- ga %>% 
   left_join(ws) %>%
   gather(key = "Disease", 
-         "MaxValue", 
+         "drisk", 
          "Growth anomalies":"White syndromes")
 
 # calculate total number of pixels per region
@@ -33,11 +39,12 @@ ntotals <- ga %>% # doesn't matter which disease we use here, they use the same 
 gauge_data <- dz %>%
   left_join(ntotals) %>%
   group_by(Disease, Region) %>%
-  summarize(No_stress = sum(MaxValue == 0)/unique(ntotal),
-            Watch = sum(MaxValue > 0 & MaxValue <= 1)/unique(ntotal),
-            Warning = sum(MaxValue > 1 & MaxValue <= 5)/unique(ntotal),
-            Alert_Level_1 = sum(MaxValue > 5 & MaxValue <= 10)/unique(ntotal),
-            Alert_Level_2 = sum(MaxValue > 10)/unique(ntotal)) %>%
+  summarize(No_stress = sum(drisk == 0)/unique(ntotal),
+            Watch = sum(drisk == 1)/unique(ntotal),
+            Warning = sum(drisk == 2)/unique(ntotal),
+            Alert_Level_1 = sum(drisk == 3)/unique(ntotal),
+            Alert_Level_2 = sum(drisk == 4)/unique(ntotal)
+            ) %>%
   gather(key = "Alert_Level", "Value", No_stress:Alert_Level_2)
 
 

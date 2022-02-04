@@ -1,0 +1,401 @@
+# create list of scenarios
+library(tidyverse)
+
+# https://www.star.nesdis.noaa.gov/pub/sod/mecb/gliu/caldwell/20220124/
+# ftp://ftp.star.nesdis.noaa.gov/pub/sod/mecb/gliu/caldwell/20220124/
+  
+# create temporary directory
+scenarios_inputs_dir <- "../compiled_data/scenarios_inputs/"
+dir.create(scenarios_inputs_dir)
+
+# load data from most recent week to adjust values for scenarios
+# in the future, this may be subsetting a larger dataset if not
+# separated by weeks
+week_name <- 'grid_week_13_ensemble_0.RData'
+
+load(paste0("../compiled_data/forecast_inputs/", week_name))
+
+# model covariates
+source("./codes/Final_covariates_by_disease_and_region.R")
+
+# custom function for creating scenarios 
+source("./codes/custom_functions/fun_create_scenarios.R")
+
+# load pixel information
+load("../uh-noaa-shiny-app/forec_shiny_app_data/Static_data/pixels_in_management_areas_polygons.RData")
+load("../uh-noaa-shiny-app/forec_shiny_app_data/Static_data/pixels_in_gbrmpa_park_zones_polygons.RData")
+
+# GA Pacific -------------------------------------
+load(paste0("../compiled_data/forecast_outputs/ga_pac_", week_name))
+
+ga_pac <- dz_final
+
+ga_pac <- ga_pac %>%
+  left_join(weekly_grid[, c("ID", "Region", ga_pac_vars)])
+
+# Base values ---------------------
+# Save base values for each pixel for covariates with sliders
+ga_pac_basevals_ID <- ga_pac[, c('ID'
+                                 , 'Median_colony_size'
+                                 , 'mean_cover'
+                                 , 'H_abund'
+                                 , 'BlackMarble_2016_3km_geo.3'
+                                 , 'value')]
+
+ga_pac_basevals_ID$value <- round(ga_pac_basevals_ID$value*100)
+save(ga_pac_basevals_ID, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ga_pac_basevals_ID.RData")
+
+# Save base values for management zones
+ga_pac_basevals_management <- merge(
+  ga_pac_basevals_ID
+  , management_area_poly_pix_ids
+  , by.x = "ID"
+  , by.y = "PixelID"
+  ) 
+
+ga_pac_basevals_management <- ga_pac_basevals_management %>%
+  mutate(ID = NULL,
+         ID = PolygonID,
+         PolygonID = NULL) %>%
+  group_by(ID) %>%
+  summarise_all(mean) %>%
+  as.data.frame()
+
+save(ga_pac_basevals_management, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ga_pac_basevals_management.RData")
+
+# create scenarios ---------------------
+
+ga_pac_scenarios <- data.frame()
+
+# Colony size
+ga_pac_coral_size_levels <- seq(from = 5, to = 55, by = 10) 
+
+ga_pac_scenarios <- add_scenario_levels(
+  df = ga_pac
+  , scenario_levels = ga_pac_coral_size_levels
+  , col_name = 'Median_colony_size'
+  , response_name = 'Coral size'
+  , scenarios_df = ga_pac_scenarios
+)
+
+# coral cover
+ga_pac_coral_cover_levels <- seq(from = 5, to = 45, by = 10) 
+
+ga_pac_scenarios <- add_scenario_levels(
+  df = ga_pac
+  , scenario_levels = ga_pac_coral_cover_levels
+  , col_name = 'mean_cover'
+  , response_name = 'Coral cover'
+  , scenarios_df = ga_pac_scenarios
+)
+
+# herbivorous fish
+ga_pac_herb_fish_levels <- seq(from = 0.1, to = 0.7, by = 0.2)
+
+ga_pac_scenarios <- add_scenario_levels(
+  df = ga_pac
+  , scenario_levels = ga_pac_herb_fish_levels
+  , col_name = 'H_abund'
+  , response_name = 'Fish'
+  , scenarios_df = ga_pac_scenarios
+)
+
+# coastal development
+ga_pac_development_levels <- seq(from = 1, to = 255, by = 85)# seq(from = 0.1, to = 0.9, by = 0.3)
+
+ga_pac_scenarios <- add_scenario_levels(
+  df = ga_pac
+  , scenario_levels = ga_pac_development_levels
+  , col_name = 'BlackMarble_2016_3km_geo.3'
+  , response_name = 'Development'
+  , scenarios_df = ga_pac_scenarios
+)
+
+save(ga_pac_scenarios
+     , file = paste0(scenarios_inputs_dir, "ga_pac_scenarios.RData"))
+
+## USE LATER ## ---------------------------------------------
+# pre-calculate disease risk change
+ga_pac_scenarios$disease_risk_change <- round((ga_pac_scenarios$estimate - ga_pac_scenarios$value) * 100)
+ga_pac_scenarios$disease_risk_change[ga_pac_scenarios$disease_risk_change < -100] <- 0
+# save data to run and then replace with same name
+save(ga_pac_scenarios, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ga_pac_scenarios.RData")
+## -----------------------------------------------------------
+
+# WS Pacific -------------------------------------
+load(paste0("../compiled_data/forecast_outputs/ws_pac_", week_name))
+
+ws_pac <- dz_final
+
+ws_pac <- ws_pac %>%
+  left_join(weekly_grid[, c("ID", "Region", ws_pac_acr_vars)])
+
+# Base values ----------------------------
+# Save base values for each pixel for covariates with sliders
+ws_pac_basevals_ID <- ws_pac[, c('ID'
+                                 , 'Median_colony_size'
+                                 , 'Long_Term_Kd_Median'
+                                 , 'Parrotfish_abund'
+                                 , 'H_abund'
+                                 , 'value')]
+
+ws_pac_basevals_ID$value <- round(ws_pac_basevals_ID$value*100)
+save(ws_pac_basevals_ID, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ws_pac_basevals_ID.RData")
+
+# Save base values for management zones
+ws_pac_basevals_management <- merge(
+  ws_pac_basevals_ID
+  , management_area_poly_pix_ids
+  , by.x = "ID"
+  , by.y = "PixelID"
+) 
+
+ws_pac_basevals_management <- ws_pac_basevals_management %>%
+  mutate(ID = NULL,
+         ID = PolygonID,
+         PolygonID = NULL) %>%
+  group_by(ID) %>%
+  summarise_all(mean) %>%
+  as.data.frame()
+
+save(ws_pac_basevals_management, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ws_pac_basevals_management.RData")
+
+# create scenarios ---------------------
+
+ws_pac_scenarios <- data.frame()
+
+# colony size
+ws_pac_coral_size_levels <- seq(from = 5, to = 55, by = 10) 
+
+ws_pac_scenarios <- add_scenario_levels(
+  df = ws_pac
+  , scenario_levels = ws_pac_coral_size_levels
+  , col_name = 'Median_colony_size'
+  , response_name = 'Coral size'
+  , scenarios_df = ws_pac_scenarios
+  )
+
+# turbidity
+ws_pac_turbidity_levels <- seq(from = 0, to = 2, by = 0.5) 
+
+ws_pac_scenarios <- add_scenario_levels(
+  df = ws_pac
+  , scenario_levels = ws_pac_turbidity_levels
+  , col_name = 'Long_Term_Kd_Median'
+  , response_name = 'Turbidity'
+  , scenarios_df = ws_pac_scenarios
+)
+
+# parrotfish
+ws_pac_parrotfish_levels <- seq(from = 0.0, to = 0.06, by = 0.02)
+
+ws_pac_scenarios <- add_scenario_levels(
+  df = ws_pac
+  , scenario_levels = ws_pac_parrotfish_levels
+  , col_name = 'Parrotfish_abund'
+  , response_name = 'Parrotfish'
+  , scenarios_df = ws_pac_scenarios
+)
+
+# herbivorous fish
+ws_pac_herb_fish_levels <- seq(from = 0.0, to = 0.6, by = 0.2)
+
+ws_pac_scenarios <- add_scenario_levels(
+  df = ws_pac
+  , scenario_levels = ws_pac_herb_fish_levels
+  , col_name = 'H_abund'
+  , response_name = 'Herb. fish'
+  , scenarios_df = ws_pac_scenarios
+)
+
+save(ws_pac_scenarios
+     , file = paste0(scenarios_inputs_dir, "ws_pac_scenarios.RData"))
+
+# GA GBR -----------------------------------------
+load(paste0("../compiled_data/forecast_outputs/ga_gbr_", week_name))
+
+ga_gbr <- dz_final
+
+ga_gbr <- ga_gbr %>%
+  left_join(weekly_grid[, c("ID", "Region", ga_gbr_vars)])
+
+# Base values ---------------
+# Save base values for each pixel for covariates with sliders
+ga_gbr_basevals_ID <- ga_gbr[, c('ID'
+                                 , 'Fish_abund'
+                                 , 'Three_Week_Kd_Variability'
+                                 , 'Coral_cover'
+                                 , 'value')]
+
+save(ga_gbr_basevals_ID, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ga_gbr_basevals_ID.RData")
+
+# Save base values for gbrmpa zones
+ga_gbr_basevals_gbrmpa <- merge(
+  ga_gbr_basevals_ID
+  , gbrmpa_park_zones_poly_pix_ids
+  , by.x = "ID"
+  , by.y = "PixelID"
+)
+
+ga_gbr_basevals_gbrmpa <- ga_gbr_basevals_gbrmpa %>%
+  mutate(ID = NULL,
+         ID = PolygonID,
+         PolygonID = NULL) %>%
+  group_by(ID) %>%
+  summarise_all(mean) %>%
+  as.data.frame()
+
+save(ga_gbr_basevals_gbrmpa, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ga_gbr_basevals_gbrmpa.RData")
+
+# Save base values for management zones
+ga_gbr_basevals_management <- merge(
+  ga_gbr_basevals_ID
+  , management_area_poly_pix_ids
+  , by.x = "ID"
+  , by.y = "PixelID"
+)
+
+ga_gbr_basevals_management <- ga_gbr_basevals_management %>%
+  mutate(ID = NULL,
+         ID = PolygonID,
+         PolygonID = NULL) %>%
+  group_by(ID) %>%
+  summarise_all(mean) %>%
+  as.data.frame()
+
+save(ga_gbr_basevals_management, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ga_gbr_basevals_management.RData")
+
+# create scenarios --------------------------------
+
+ga_gbr_scenarios <- data.frame()
+
+# Fish abundance
+ga_gbr_fish_levels <- seq(from = 400, to = 800, by = 100)
+
+ga_gbr_scenarios <- add_scenario_levels(
+  df = ga_gbr
+  , scenario_levels = ga_gbr_fish_levels
+  , col_name = 'Fish_abund'
+  , response_name = 'Fish'
+  , scenarios_df = ga_gbr_scenarios
+)
+
+# turbidity
+ga_gbr_turbidity_levels <- seq(from = 0, to = 2, by = 0.5) 
+
+ga_gbr_scenarios <- add_scenario_levels(
+  df = ga_gbr
+  , scenario_levels = ga_gbr_turbidity_levels
+  , col_name = 'Three_Week_Kd_Variability'
+  , response_name = 'Turbidity'
+  , scenarios_df = ga_gbr_scenarios
+)
+
+# coral cover
+ga_gbr_coral_cover_levels <- seq(from = 5, to = 95, by = 15) 
+
+ga_gbr_scenarios <- add_scenario_levels(
+  df = ga_gbr
+  , scenario_levels = ga_gbr_coral_cover_levels
+  , col_name = 'Coral_cover'
+  , response_name = 'Coral cover'
+  , scenarios_df = ga_gbr_scenarios
+)
+
+save(ga_gbr_scenarios
+     , file = paste0(scenarios_inputs_dir, "ga_gbr_scenarios.RData"))
+
+# WS GBR -----------------------------------------
+load(paste0("../compiled_data/forecast_outputs/ws_gbr_", week_name))
+
+ws_gbr <- dz_final
+
+ws_gbr <- ws_gbr %>%
+  left_join(weekly_grid[, c("ID", "Region", ws_gbr_vars)])
+
+# Base values -----------------------
+# Save base values for each pixel for covariates with sliders
+ws_gbr_basevals_ID <- ws_gbr[, c('ID'
+                                 , 'Coral_cover'
+                                 , 'Fish_abund'
+                                 , 'Three_Week_Kd_Variability'
+                                 , 'value')]
+
+save(ws_gbr_basevals_ID, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ws_gbr_basevals_ID.RData")
+
+# Save base values for gbrmpa zones
+ws_gbr_basevals_gbrmpa <- merge(
+  ws_gbr_basevals_ID
+  , gbrmpa_park_zones_poly_pix_ids
+  , by.x = "ID"
+  , by.y = "PixelID"
+)
+
+ws_gbr_basevals_gbrmpa <- ws_gbr_basevals_gbrmpa %>%
+  mutate(ID = NULL,
+         ID = PolygonID,
+         PolygonID = NULL) %>%
+  group_by(ID) %>%
+  summarise_all(mean) %>%
+  as.data.frame()
+
+save(ws_gbr_basevals_gbrmpa, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ws_gbr_basevals_gbrmpa.RData")
+
+# Save base values for management zones
+ws_gbr_basevals_management <- merge(
+  ws_gbr_basevals_ID
+  , management_area_poly_pix_ids
+  , by.x = "ID"
+  , by.y = "PixelID"
+)
+
+ws_gbr_basevals_management <- ws_gbr_basevals_management %>%
+  mutate(ID = NULL,
+         ID = PolygonID,
+         PolygonID = NULL) %>%
+  group_by(ID) %>%
+  summarise_all(mean) %>%
+  as.data.frame()
+
+
+save(ws_gbr_basevals_management, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ws_gbr_basevals_management.RData")
+
+# create scenarios ------------------------
+
+ws_gbr_scenarios <- data.frame()
+
+# coral cover
+ws_gbr_coral_cover_levels <- seq(from = 5, to = 95, by = 15) 
+
+ws_gbr_scenarios <- add_scenario_levels(
+  df = ws_gbr
+  , scenario_levels = ws_gbr_coral_cover_levels
+  , col_name = 'Coral_cover'
+  , response_name = 'Coral cover'
+  , scenarios_df = ws_gbr_scenarios
+)
+
+# Fish abundance
+ws_gbr_fish_levels <- seq(from = 400, to = 800, by = 100)
+
+ws_gbr_scenarios <- add_scenario_levels(
+  df = ws_gbr
+  , scenario_levels = ws_gbr_fish_levels
+  , col_name = 'Fish_abund'
+  , response_name = 'Fish'
+  , scenarios_df = ws_gbr_scenarios
+)
+
+# turbidity
+ws_gbr_turbidity_levels <- seq(from = 0, to = 2, by = 0.5) 
+
+ws_gbr_scenarios <- add_scenario_levels(
+  df = ws_gbr
+  , scenario_levels = ws_gbr_turbidity_levels
+  , col_name = 'Three_Week_Kd_Variability'
+  , response_name = 'Turbidity'
+  , scenarios_df = ws_gbr_scenarios
+)
+
+save(ws_gbr_scenarios
+     , file = paste0(scenarios_inputs_dir, "ws_gbr_scenarios.RData"))

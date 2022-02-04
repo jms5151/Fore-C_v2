@@ -24,26 +24,8 @@ reef_forecast <- bind_rows(ga_forecast, ws_forecast) %>%
            Latitude,
            Longitude,
            Region) %>%
-  summarize("risk" = max(value)) %>%
-  mutate("drisk" = NA)
+  summarize("drisk" = max(drisk)) 
 
-# format risk by stress status:
-# 0 = No stress
-# 1 = Watch
-# 2 = Warning
-# 3 = Alert Level 1
-# 4 = Alert Level 2
-
-reef_forecast$drisk[reef_forecast$risk == 0] <- 0
-reef_forecast$drisk[reef_forecast$Region == "gbr" & reef_forecast$risk > 0 & reef_forecast$risk <= 1] <- 1
-reef_forecast$drisk[reef_forecast$Region == "gbr" & reef_forecast$risk > 1 & reef_forecast$risk <= 5] <- 2
-reef_forecast$drisk[reef_forecast$Region == "gbr" & reef_forecast$risk > 5 & reef_forecast$risk <= 10] <- 3
-reef_forecast$drisk[reef_forecast$Region == "gbr" & reef_forecast$risk > 10] <- 4
-
-reef_forecast$drisk[reef_forecast$Region != "gbr" & reef_forecast$risk > 0 & reef_forecast$risk <= 0.01] <- 1
-reef_forecast$drisk[reef_forecast$Region != "gbr" & reef_forecast$risk > 0.01 & reef_forecast$risk <= 0.05] <- 2
-reef_forecast$drisk[reef_forecast$Region != "gbr" & reef_forecast$risk > 0.05 & reef_forecast$risk <= 0.10] <- 3
-reef_forecast$drisk[reef_forecast$Region != "gbr" & reef_forecast$risk > 0.10] <- 4
 
 # to display over antimeridian in leaflap maps, add +360 to longitudes below zero
 reef_forecast$Longitude <- ifelse(reef_forecast$Longitude < 0, reef_forecast$Longitude + 360, reef_forecast$Longitude) 
@@ -69,12 +51,12 @@ save(polygons_5km,
 # 5 km predictions aggregated to management area polygons ----------------------
 reef_forecast2 <- bind_rows(ga_forecast, ws_forecast)
 
-reef_forecast_aggregated_to_management_zones <- agg_to_manage_zones(forecast = reef_forecast2,
+reef_forecast_aggregated_to_management_zones <- agg_to_manage_zones_forecasts(forecast = reef_forecast2,
                                                                     zone_polygon_with_id = management_area_poly_pix_ids)
 
 reef_forecast_aggregated_to_management_zones <- reef_forecast_aggregated_to_management_zones %>%
   group_by(PolygonID) %>%
-  summarize("drisk" = max(value))
+  summarize("drisk" = ceiling(max(drisk)))
 
 polygons_management_zoning <- merge(polygons_management_areas,
                                     reef_forecast_aggregated_to_management_zones,
@@ -88,12 +70,12 @@ save(polygons_management_zoning,
 
 
 # 5 km predictions aggregated to gbrmpa zone polygons --------------------------
-reef_forecast_aggregated_to_gbrmpa_park_zones <- agg_to_manage_zones(forecast = reef_forecast2,
+reef_forecast_aggregated_to_gbrmpa_park_zones <- agg_to_manage_zones_forecasts(forecast = reef_forecast2,
                                                                      zone_polygon_with_id = gbrmpa_park_zones_poly_pix_ids)
 
 reef_forecast_aggregated_to_gbrmpa_park_zones <- reef_forecast_aggregated_to_gbrmpa_park_zones %>%
   group_by(PolygonID) %>%
-  summarize("drisk" = max(value))
+  summarize("drisk" = ceiling(max(drisk)))
 
 polygons_GBRMPA_park_zoning <- merge(polygons_GBRMPA_park_zoning,
                                      reef_forecast_aggregated_to_gbrmpa_park_zones,

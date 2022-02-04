@@ -24,6 +24,8 @@ prediction_week <- seq(from = 1,
                        by = 1)
 
 # save data separately by prediction week and ensemble
+# the main reason to do this is a standard laptop cannot predict
+# on the full data set (grid_with_dynamic_predictors) at once
 forecast_data_dir <- "../compiled_data/forecast_inputs/"
 
 # The split function is faster and more concise, but I'm not sure there
