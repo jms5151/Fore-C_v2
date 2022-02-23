@@ -1,17 +1,56 @@
 library(tidyverse)
 
-agg_to_manage_zones_forecasts <- function(forecast, zone_polygon_with_id, fileName){
-  aggregated_forecast <- merge(forecast,
-                               zone_polygon_with_id,
-                               by.x = "ID",
-                               by.y = "PixelID")
+agg_to_manage_zones_forecasts <- function(forecast, zone_polygon_with_id, diseaseRegion, fileName){
+  x <- merge(
+    forecast
+    , zone_polygon_with_id
+    , by.x = "ID"
+    , by.y = "PixelID"
+    )
   
-  aggregated_forecast_to_management_zone <- aggregated_forecast %>%
-    group_by(PolygonID, Region, Date, ensemble, type) %>%
-    summarise_at(vars(value, Upr, Lwr, drisk), median)
+  x_agg <- x %>%
+    group_by(
+      PolygonID
+      , Region
+      , Date
+      , type
+      ) %>%
+    summarise(
+      Lwr = quantile(Lwr, 0.90)
+      , value = quantile(value, 0.90)
+      , Upr = quantile(Upr, 0.90)
+      )
   
-  as.data.frame(aggregated_forecast_to_management_zone)
+  if(diseaseRegion == "ga_gbr"){
+    nostress_threshold <- 5
+    watch_threshold <- 10
+    warning_threshold <- 15
+    alert1_threshold <- 25
+  } else if(diseaseRegion == "ga_pac"){
+    nostress_threshold <- 0.05
+    watch_threshold <- 0.10
+    warning_threshold <- 0.15
+    alert1_threshold <- 0.25
+  } else if(diseaseRegion == "ws_gbr"){
+    nostress_threshold <- 1
+    watch_threshold <- 5
+    warning_threshold <- 10
+    alert1_threshold <- 20
+  } else if(diseaseRegion == "ws_pac"){
+    nostress_threshold <- 0.01
+    watch_threshold <- 0.05
+    warning_threshold <- 0.10
+    alert1_threshold <- 0.15
+  } 
   
+  x_agg$drisk <- NA
+  x_agg$drisk[x_agg$value >= 0 & x_agg$value <= nostress_threshold] <- 0
+  x_agg$drisk[x_agg$value > nostress_threshold & x_agg$value <= watch_threshold] <- 1
+  x_agg$drisk[x_agg$value > watch_threshold & x_agg$value <= warning_threshold] <- 2
+  x_agg$drisk[x_agg$value > warning_threshold & x_agg$value <= alert1_threshold] <- 3
+  x_agg$drisk[x_agg$value > alert1_threshold] <- 4
+  
+  as.data.frame(x_agg)
 }
 
 agg_to_manage_zones_scenarios <- function(predictions, zone_polygon_with_id, fileName){

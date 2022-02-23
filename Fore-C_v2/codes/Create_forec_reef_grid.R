@@ -43,5 +43,11 @@ reefsDF <- do.call(rbind, list(gbr,
                                wake)
                    )
 
+# add CRW sub-region
+reefsDF$CRW_disease_region <- reefsDF$Region
+reefsDF$CRW_disease_region[reefsDF$ID >= 1050001 & reefsDF$ID <= 1050012] <- "howland_baker"
+reefsDF$CRW_disease_region[reefsDF$ID >= 1050013 & reefsDF$ID <= 1050030] <- "palmyra_kingman"
+reefsDF$CRW_disease_region[reefsDF$ID >= 1050031 & reefsDF$ID <= 1050032] <- "jarvis"
+
 # save grid as csv
 save(reefsDF, file = "../compiled_data/spatial_data/grid.RData")

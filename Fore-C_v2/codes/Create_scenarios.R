@@ -6,14 +6,27 @@ library(tidyverse)
   
 # create temporary directory
 scenarios_inputs_dir <- "../compiled_data/scenarios_inputs/"
-dir.create(scenarios_inputs_dir)
+if(dir.exists(scenarios_inputs_dir) == FALSE){
+  dir.create(scenarios_inputs_dir)
+}
 
-# load data from most recent week to adjust values for scenarios
+# load data 
+load("../compiled_data/forecast_inputs/grid_with_dynamic_predictors.RData")
+load("../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ga_forecast.RData")
+load("../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ws_forecast.RData")
+
+# get current data date
+current_nowcast_date <- max(grid_with_dynamic_predictors$Date[grid_with_dynamic_predictors$type == "nowcast"])
+
+# subset data
+nowcast_predictor_data <- subset(grid_with_dynamic_predictors, Date == current_nowcast_date)
+ga_nowcast <- subset(ga_forecast, Date == current_nowcast_date)
+
 # in the future, this may be subsetting a larger dataset if not
 # separated by weeks
-week_name <- 'grid_week_13_ensemble_0.RData'
-
-load(paste0("../compiled_data/forecast_inputs/", week_name))
+# week_name <- 'grid_week_11_ensemble_0.RData'
+# 
+# load(paste0("../compiled_data/forecast_inputs/", week_name))
 
 # model covariates
 source("./codes/Final_covariates_by_disease_and_region.R")
@@ -31,7 +44,9 @@ load(paste0("../compiled_data/forecast_outputs/ga_pac_", week_name))
 ga_pac <- dz_final
 
 ga_pac <- ga_pac %>%
-  left_join(weekly_grid[, c("ID", "Region", ga_pac_vars)])
+  left_join(weekly_grid)
+
+colnames(ga_pac) <- gsub("Poritidae_|_Poritidae", "", colnames(ga_pac))
 
 # Base values ---------------------
 # Save base values for each pixel for covariates with sliders
@@ -68,7 +83,7 @@ save(ga_pac_basevals_management, file = "../uh-noaa-shiny-app/forec_shiny_app_da
 ga_pac_scenarios <- data.frame()
 
 # Colony size
-ga_pac_coral_size_levels <- seq(from = 5, to = 55, by = 10) 
+ga_pac_coral_size_levels <- seq(from = 5, to = 65, by = 10) 
 
 ga_pac_scenarios <- add_scenario_levels(
   df = ga_pac
@@ -79,7 +94,7 @@ ga_pac_scenarios <- add_scenario_levels(
 )
 
 # coral cover
-ga_pac_coral_cover_levels <- seq(from = 5, to = 45, by = 10) 
+ga_pac_coral_cover_levels <- seq(from = 5, to = 65, by = 10) 
 
 ga_pac_scenarios <- add_scenario_levels(
   df = ga_pac
@@ -90,7 +105,7 @@ ga_pac_scenarios <- add_scenario_levels(
 )
 
 # herbivorous fish
-ga_pac_herb_fish_levels <- seq(from = 0.1, to = 0.7, by = 0.2)
+ga_pac_herb_fish_levels <- seq(from = 0.1, to = 0.7, by = 0.1)
 
 ga_pac_scenarios <- add_scenario_levels(
   df = ga_pac
@@ -101,11 +116,14 @@ ga_pac_scenarios <- add_scenario_levels(
 )
 
 # coastal development
-ga_pac_development_levels <- seq(from = 1, to = 255, by = 85)# seq(from = 0.1, to = 0.9, by = 0.3)
+ga_pac_development_levels_scaled <- seq(from = 0.1, to = 1, by = 0.1)
+ga_pac_development_levels <- seq(from = 1, to = 255, length.out = length(ga_pac_development_levels_scaled))# 
 
 ga_pac_scenarios <- add_scenario_levels(
   df = ga_pac
   , scenario_levels = ga_pac_development_levels
+  # not sure if this will work, check later
+  , scenario_levels_scaled = ga_pac_development_levels_scaled
   , col_name = 'BlackMarble_2016_3km_geo.3'
   , response_name = 'Development'
   , scenarios_df = ga_pac_scenarios
@@ -114,12 +132,12 @@ ga_pac_scenarios <- add_scenario_levels(
 save(ga_pac_scenarios
      , file = paste0(scenarios_inputs_dir, "ga_pac_scenarios.RData"))
 
-## USE LATER ## ---------------------------------------------
-# pre-calculate disease risk change
-ga_pac_scenarios$disease_risk_change <- round((ga_pac_scenarios$estimate - ga_pac_scenarios$value) * 100)
-ga_pac_scenarios$disease_risk_change[ga_pac_scenarios$disease_risk_change < -100] <- 0
-# save data to run and then replace with same name
-save(ga_pac_scenarios, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ga_pac_scenarios.RData")
+# ## USE LATER ## ---------------------------------------------
+# # pre-calculate disease risk change
+# ga_pac_scenarios$disease_risk_change <- round((ga_pac_scenarios$estimate - ga_pac_scenarios$value) * 100)
+# ga_pac_scenarios$disease_risk_change[ga_pac_scenarios$disease_risk_change < -100] <- 0
+# # save data to run and then replace with same name
+# save(ga_pac_scenarios, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ga_pac_scenarios.RData")
 ## -----------------------------------------------------------
 
 # WS Pacific -------------------------------------
@@ -128,7 +146,10 @@ load(paste0("../compiled_data/forecast_outputs/ws_pac_", week_name))
 ws_pac <- dz_final
 
 ws_pac <- ws_pac %>%
-  left_join(weekly_grid[, c("ID", "Region", ws_pac_acr_vars)])
+  left_join(weekly_grid)
+
+# not sure if we want to do this - problems with predicting scenarios
+colnames(ws_pac) <- gsub("Acroporidae_|_Acroporidae", "", colnames(ws_pac))
 
 # Base values ----------------------------
 # Save base values for each pixel for covariates with sliders
@@ -165,7 +186,7 @@ save(ws_pac_basevals_management, file = "../uh-noaa-shiny-app/forec_shiny_app_da
 ws_pac_scenarios <- data.frame()
 
 # colony size
-ws_pac_coral_size_levels <- seq(from = 5, to = 55, by = 10) 
+ws_pac_coral_size_levels <- seq(from = 5, to = 65, by = 10) 
 
 ws_pac_scenarios <- add_scenario_levels(
   df = ws_pac
@@ -176,7 +197,7 @@ ws_pac_scenarios <- add_scenario_levels(
   )
 
 # turbidity
-ws_pac_turbidity_levels <- seq(from = 0, to = 2, by = 0.5) 
+ws_pac_turbidity_levels <- seq(from = 0, to = 2, by = 0.1) 
 
 ws_pac_scenarios <- add_scenario_levels(
   df = ws_pac
@@ -187,7 +208,7 @@ ws_pac_scenarios <- add_scenario_levels(
 )
 
 # parrotfish
-ws_pac_parrotfish_levels <- seq(from = 0.0, to = 0.06, by = 0.02)
+ws_pac_parrotfish_levels <- seq(from = 0.0, to = 0.06, by = 0.01)
 
 ws_pac_scenarios <- add_scenario_levels(
   df = ws_pac
@@ -198,7 +219,7 @@ ws_pac_scenarios <- add_scenario_levels(
 )
 
 # herbivorous fish
-ws_pac_herb_fish_levels <- seq(from = 0.0, to = 0.6, by = 0.2)
+ws_pac_herb_fish_levels <- seq(from = 0.0, to = 0.6, by = 0.1)
 
 ws_pac_scenarios <- add_scenario_levels(
   df = ws_pac
@@ -270,7 +291,7 @@ save(ga_gbr_basevals_management, file = "../uh-noaa-shiny-app/forec_shiny_app_da
 ga_gbr_scenarios <- data.frame()
 
 # Fish abundance
-ga_gbr_fish_levels <- seq(from = 400, to = 800, by = 100)
+ga_gbr_fish_levels <- seq(from = 400, to = 800, by = 50)
 
 ga_gbr_scenarios <- add_scenario_levels(
   df = ga_gbr
@@ -281,7 +302,7 @@ ga_gbr_scenarios <- add_scenario_levels(
 )
 
 # turbidity
-ga_gbr_turbidity_levels <- seq(from = 0, to = 2, by = 0.5) 
+ga_gbr_turbidity_levels <- seq(from = 0, to = 2, by = 0.1) 
 
 ga_gbr_scenarios <- add_scenario_levels(
   df = ga_gbr
@@ -292,7 +313,7 @@ ga_gbr_scenarios <- add_scenario_levels(
 )
 
 # coral cover
-ga_gbr_coral_cover_levels <- seq(from = 5, to = 95, by = 15) 
+ga_gbr_coral_cover_levels <- seq(from = 5, to = 95, by = 10) 
 
 ga_gbr_scenarios <- add_scenario_levels(
   df = ga_gbr
@@ -365,7 +386,7 @@ save(ws_gbr_basevals_management, file = "../uh-noaa-shiny-app/forec_shiny_app_da
 ws_gbr_scenarios <- data.frame()
 
 # coral cover
-ws_gbr_coral_cover_levels <- seq(from = 5, to = 95, by = 15) 
+ws_gbr_coral_cover_levels <- seq(from = 5, to = 95, by = 10) 
 
 ws_gbr_scenarios <- add_scenario_levels(
   df = ws_gbr
@@ -376,7 +397,7 @@ ws_gbr_scenarios <- add_scenario_levels(
 )
 
 # Fish abundance
-ws_gbr_fish_levels <- seq(from = 400, to = 800, by = 100)
+ws_gbr_fish_levels <- seq(from = 400, to = 800, by = 50)
 
 ws_gbr_scenarios <- add_scenario_levels(
   df = ws_gbr
@@ -387,7 +408,7 @@ ws_gbr_scenarios <- add_scenario_levels(
 )
 
 # turbidity
-ws_gbr_turbidity_levels <- seq(from = 0, to = 2, by = 0.5) 
+ws_gbr_turbidity_levels <- seq(from = 0, to = 2, by = 0.1) 
 
 ws_gbr_scenarios <- add_scenario_levels(
   df = ws_gbr
@@ -399,3 +420,4 @@ ws_gbr_scenarios <- add_scenario_levels(
 
 save(ws_gbr_scenarios
      , file = paste0(scenarios_inputs_dir, "ws_gbr_scenarios.RData"))
+

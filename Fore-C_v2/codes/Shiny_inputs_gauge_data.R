@@ -28,8 +28,12 @@ dz <- ga %>%
          "drisk", 
          "Growth anomalies":"White syndromes")
 
+# update region
+dz$Region[dz$Region == "wake" | dz$Region == "johnston"] <- "prias"
+
 # calculate total number of pixels per region
-ntotals <- ga %>% # doesn't matter which disease we use here, they use the same grid 
+ntotals <- dz %>%
+  filter(Disease == "Growth anomalies") %>% # doesn't matter which disease we use here, they use the same grid 
   group_by(Region) %>%
   summarize("ntotal" = length(Region))
 
@@ -78,41 +82,41 @@ save(gauge_gbr_ws,
      file = "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/gauge_data_gbr_ws.RData")
 
 # Hawaii - GA
-gauge_hi_ga <- subset(gauge_data, Disease == "Growth anomalies" & Region == "gbr")
+gauge_hi_ga <- subset(gauge_data, Disease == "Growth anomalies" & Region == "hawaii")
 save(gauge_hi_ga, 
      file = "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/gauge_data_hi_ga.RData")
 
 # Hawaii - WS
-gauge_hi_ws <- subset(gauge_data, Disease == "White syndromes" & Region == "gbr")
+gauge_hi_ws <- subset(gauge_data, Disease == "White syndromes" & Region == "hawaii")
 save(gauge_hi_ws, 
      file = "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/gauge_data_hi_ws.RData")
 
 # PRIAs - GA
-gauge_prias_ga <- subset(gauge_data, Disease == "Growth anomalies" & Region == "gbr")
+gauge_prias_ga <- subset(gauge_data, Disease == "Growth anomalies" & Region == "prias")
 save(gauge_prias_ga, 
      file = "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/gauge_data_prias_ga.RData")
 
 # PRIAs - WS
-gauge_prias_ws <- subset(gauge_data, Disease == "White syndromes" & Region == "gbr")
+gauge_prias_ws <- subset(gauge_data, Disease == "White syndromes" & Region == "prias")
 save(gauge_prias_ws, 
      file = "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/gauge_data_prias_ws.RData")
 
 # Samoas - GA
-gauge_samoas_ga <- subset(gauge_data, Disease == "Growth anomalies" & Region == "gbr")
+gauge_samoas_ga <- subset(gauge_data, Disease == "Growth anomalies" & Region == "samoas")
 save(gauge_samoas_ga, 
      file = "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/gauge_data_samoas_ga.RData")
 
 # Samoas - WS
-gauge_samoas_ws <- subset(gauge_data, Disease == "White syndromes" & Region == "gbr")
+gauge_samoas_ws <- subset(gauge_data, Disease == "White syndromes" & Region == "samoas")
 save(gauge_samoas_ws, 
      file = "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/gauge_data_samoas_ws.RData")
 
 # Guam/CNMI - GA
-gauge_cnmi_ga <- subset(gauge_data, Disease == "Growth anomalies" & Region == "gbr")
+gauge_cnmi_ga <- subset(gauge_data, Disease == "Growth anomalies" & Region == "guam_cnmi")
 save(gauge_cnmi_ga, 
      file = "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/gauge_data_cnmi_ga.RData")
 
 # Guam/CNMI - WS
-gauge_cnmi_ws <- subset(gauge_data, Disease == "White syndromes" & Region == "gbr")
+gauge_cnmi_ws <- subset(gauge_data, Disease == "White syndromes" & Region == "guam_cnmi")
 save(gauge_cnmi_ws, 
      file = "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/gauge_data_cnmi_ws.RData")

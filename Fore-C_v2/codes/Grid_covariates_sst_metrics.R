@@ -3,35 +3,38 @@
 # load libraries
 library(ncdf4)
 library(tidyverse)
+library(httr)
 
 # source custom function 
 source("./codes/custom_functions/fun_ftp_download.R")
 
-# set crw forecast directory for downloads
-crw_dir <- "../raw_data/covariate_data/CRW_dz_temp_metrics/crw_weekly_updates/"
-dir.create(crw_dir)
+# list weekly SST files -----------------------------------------------
 
-# download netcdf files from CRW --------------------------------------
-# list files and download
-list_and_download_ftp_files(ftp_path = 'ftp://ftp.star.nesdis.noaa.gov/pub/sod/mecb/gliu/caldwell/weeklyupdate_20220131/'
-                            , dest_dir = crw_dir)
+# this is the only line that will likely change each week
+parent_ftp_filepath <- 'ftp://ftp.star.nesdis.noaa.gov/pub/sod/mecb/crw/data/for_forec/shiny_app/'
 
-list_and_download_ftp_files(ftp_path = 'ftp://ftp.star.nesdis.noaa.gov/pub/sod/mecb/gliu/caldwell/20220124/'
-                            , dest_dir = crw_dir)
+# list directories, named by date
+files <- list_ftp_files(ftp_path = parent_ftp_filepath)
 
+parent_file <- max(as.numeric(files), na.rm = T)
 
+child_ftp_filepath <- paste0(parent_ftp_filepath, parent_file, '/')
+
+files <- list_ftp_files(ftp_path = child_ftp_filepath)
+
+# remove after tonight!
+files <- files[!grepl("cfs", files)]
 # load and format data ------------------------------------------------
 
 # create empty data frame
 sst_metrics <- data.frame()
 
-# list files
-nc_files <- list.files(crw_dir)
-
 # open and format data (this should take 1-4 minutes on a standard laptop)
-for(j in nc_files){
-  # open netcdf file
-  x <- nc_open(paste0(crw_dir, j))
+for(j in files){
+  # open data
+  ftp_path_tmp <- paste0(child_ftp_filepath, j)
+  res <- GET(ftp_path_tmp, write_disk(basename(ftp_path_tmp), overwrite = TRUE))
+  x <- nc_open(res$request$output$path)
   # get ids
   ids <- ncvar_get(x, varid = "reef_id")
   # get date(s)
@@ -88,22 +91,47 @@ for(j in nc_files){
   sst_metrics <- rbind(sst_metrics
                        , tmp_df)
   nc_close(x)
+  file.remove(j)
+  cat("finished ", j, '\n')
 }
 
 # reshape files ----------------------------------------------
 reef_grid_sst <- sst_metrics %>%
-  spread(temp_metric_name, value) %>%
+  spread(key = temp_metric_name, value = value) %>%
   fill(c("Hot_snaps", "SST_90dMean" , "Winter_condition"), .direction = 'updown')
 
 # format dates
 reef_grid_sst$Date <- as.Date(reef_grid_sst$Date, "%Y-%m-%d")
 
-### MAY NEED TO OFFSET WINTER CONDITION VALUES ###
+# Add regions and offset wdw here
+# add region, then update winter condition based on region
+load('../compiled_data/spatial_data/grid.RData')
+reef_grid_sst <- reef_grid_sst %>%
+  left_join(reefsDF)
+
+reef_grid_sst$Region[reef_grid_sst$Longitude >= 140 & reef_grid_sst$Longitude <= 155 & reef_grid_sst$Latitude >= -28 & reef_grid_sst$Latitude <= -7] <- "gbr"
+reef_grid_sst$Region[reef_grid_sst$Longitude >= -180 & reef_grid_sst$Longitude <= -152 & reef_grid_sst$Latitude >= 18 & reef_grid_sst$Latitude <= 30] <- "hawaii"
+reef_grid_sst$Region[reef_grid_sst$Longitude >= 143 & reef_grid_sst$Longitude <= 147 & reef_grid_sst$Latitude >= 12 & reef_grid_sst$Latitude <= 21] <- "guam-cnmi"
+reef_grid_sst$Region[reef_grid_sst$Longitude >= -174 & reef_grid_sst$Longitude <= -167 & reef_grid_sst$Latitude >= -16 & reef_grid_sst$Latitude <= -10] <- "samoas"
+reef_grid_sst$Region[reef_grid_sst$Longitude >= 165 & reef_grid_sst$Longitude <= 168 & reef_grid_sst$Latitude >= 18 & reef_grid_sst$Latitude <= 21] <- "wake"
+reef_grid_sst$Region[reef_grid_sst$Longitude >= -171 & reef_grid_sst$Longitude <= -168 & reef_grid_sst$Latitude >= 15 & reef_grid_sst$Latitude <= 18] <- "johnston"
+reef_grid_sst$Region[reef_grid_sst$Longitude >= -178 & reef_grid_sst$Longitude <= -175 & reef_grid_sst$Latitude >= -1 & reef_grid_sst$Latitude <= 2] <- "howland-baker"
+reef_grid_sst$Region[reef_grid_sst$Longitude >= -161 & reef_grid_sst$Longitude <= -159 & reef_grid_sst$Latitude >= -2 & reef_grid_sst$Latitude <= 1] <- "jarvis"
+reef_grid_sst$Region[reef_grid_sst$Longitude >= -164 & reef_grid_sst$Longitude <= -161 & reef_grid_sst$Latitude >= 4 & reef_grid_sst$Latitude <= 8] <- "palmyra-kingman"
+
+reef_grid_sst$Winter_condition <- ifelse(reef_grid_sst$Region == 'guam-cnmi', reef_grid_sst$Winter_condition - 3.73, reef_grid_sst$Winter_condition)
+reef_grid_sst$Winter_condition <- ifelse(reef_grid_sst$Region == 'howland-baker', reef_grid_sst$Winter_condition - 19.25, reef_grid_sst$Winter_condition)
+reef_grid_sst$Winter_condition <- ifelse(reef_grid_sst$Region == 'johnston', reef_grid_sst$Winter_condition - 2.85, reef_grid_sst$Winter_condition)
+reef_grid_sst$Winter_condition <- ifelse(reef_grid_sst$Region == 'samoas', reef_grid_sst$Winter_condition - 4.00, reef_grid_sst$Winter_condition)
+reef_grid_sst$Winter_condition <- ifelse(reef_grid_sst$Region == 'gbr', reef_grid_sst$Winter_condition - 1.95, reef_grid_sst$Winter_condition)
+reef_grid_sst$Winter_condition <- ifelse(reef_grid_sst$Region == 'hawaii', reef_grid_sst$Winter_condition - 2.73, reef_grid_sst$Winter_condition)
+reef_grid_sst$Winter_condition <- ifelse(reef_grid_sst$Region == 'jarvis', reef_grid_sst$Winter_condition - 18.96, reef_grid_sst$Winter_condition)
+reef_grid_sst$Winter_condition <- ifelse(reef_grid_sst$Region == 'palmyra-kingman', reef_grid_sst$Winter_condition - 7.01, reef_grid_sst$Winter_condition)
+reef_grid_sst$Winter_condition <- ifelse(reef_grid_sst$Region == 'wake', reef_grid_sst$Winter_condition - 4.01, reef_grid_sst$Winter_condition)
+
+# remove Region
+reef_grid_sst$Region <- NULL
 
 # save data --------------------------------------------------
 save(reef_grid_sst, 
      file = "../compiled_data/grid_covariate_data/grid_with_sst_metrics.RData")
-
-# delete nc files --------------------------------------------
-crw_dir2remove <- substr(crw_dir, 1, nchar(crw_dir)-1)
-unlink(crw_dir2remove, recursive = TRUE)

@@ -7,8 +7,8 @@ source("./codes/custom_functions/fun_pixels_to_management_zones.R")
 # load datam, set input/destination folder
 scenarios_file_dir <- "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/"
 
-# load(paste0(scenarios_file_dir, "ga_pac_scenarios.RData"))
-# load(paste0(scenarios_file_dir, "ws_pac_scenarios.RData"))
+load(paste0(scenarios_file_dir, "ga_pac_scenarios.RData"))
+load(paste0(scenarios_file_dir, "ws_pac_scenarios.RData"))
 load(paste0(scenarios_file_dir, "ga_gbr_scenarios.RData"))
 load(paste0(scenarios_file_dir, "ws_gbr_scenarios.RData"))
 

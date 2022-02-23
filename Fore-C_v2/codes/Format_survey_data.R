@@ -143,7 +143,7 @@ ws$HS_ID <- seq(1, nrow(ws), 1)
 ws$HS_ID <- paste0("WS_", ws$HS_ID)
 
 # save data
-save(ws, file = "compiled_data/survey_data/WS.RData")
+save(ws, file = "../compiled_data/survey_data/WS.RData")
 
 # growth anomalies ------------------------------------------ 
 # NOAA Ecosystem Science Division data
@@ -263,4 +263,4 @@ ga$HS_ID <- seq(1, nrow(ga), 1)
 ga$HS_ID <- paste0("GA_", ga$HS_ID)
 
 # save data
-save(ga, file = "compiled_data/survey_data/GA.RData")
+save(ga, file = "../compiled_data/survey_data/GA.RData")

@@ -15,86 +15,112 @@ load("../uh-noaa-shiny-app/forec_shiny_app_data/Static_data/pixels_in_gbrmpa_par
 # set destination directory
 forecast_file_dir <- "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/"
 
+# Nowcasts ---------------------------------------------------------------------
+# subset data to most up to date nowcast
+# ga_forecast <- ga_forecast[which(ga_forecast$Date == max(ga_forecast$Date[ga_forecast$type == "nowcast"])), ]
+# ws_forecast <- ws_forecast[which(ws_forecast$Date == max(ws_forecast$Date[ws_forecast$type == "nowcast"])), ]
+
 # aggregate to GBRMPA zones --------------------------------
 
 # ga gbr gbrmpa zones -----
-ga_gbr_forecast_aggregated_to_gbrmpa_park_zones <- agg_to_manage_zones_forecasts(
+ga_gbr_nowcast_aggregated_to_gbrmpa_park_zones <- agg_to_manage_zones_forecasts(
         forecast = ga_forecast,
-        zone_polygon_with_id = gbrmpa_park_zones_poly_pix_ids
+        zone_polygon_with_id = gbrmpa_park_zones_poly_pix_ids,
+        diseaseRegion = "ga_gbr"
         )
 
-save(ga_gbr_forecast_aggregated_to_gbrmpa_park_zones,
+save(ga_gbr_nowcast_aggregated_to_gbrmpa_park_zones,
      file = paste0(forecast_file_dir, 
-                   "ga_gbr_forecast_aggregated_to_gbrmpa_park_zones.RData"
+                   "ga_gbr_nowcast_aggregated_to_gbrmpa_park_zones.RData"
                    )
      )
 
 # ws gbr gbrmpa zones -----
-ws_gbr_forecast_aggregated_to_gbrmpa_park_zones <- agg_to_manage_zones_forecasts(
+ws_gbr_nowcast_aggregated_to_gbrmpa_park_zones <- agg_to_manage_zones_forecasts(
         forecast = ws_forecast,
-        zone_polygon_with_id = gbrmpa_park_zones_poly_pix_ids
+        zone_polygon_with_id = gbrmpa_park_zones_poly_pix_ids,
+        diseaseRegion = "ws_gbr"
         )
 
-save(ws_gbr_forecast_aggregated_to_gbrmpa_park_zones, 
+save(ws_gbr_nowcast_aggregated_to_gbrmpa_park_zones, 
      file = paste0(forecast_file_dir, 
-                   "ws_gbr_forecast_aggregated_to_gbrmpa_park_zones.RData"
+                   "ws_gbr_nowcast_aggregated_to_gbrmpa_park_zones.RData"
                    )
      )
 
 # Management zones ----------------------------------
 # ga pacific management zones -----
-ga_pac_forecast_aggregated_to_management_zones <- agg_to_manage_zones_forecasts(
+ga_pac_nowcast_aggregated_to_management_zones <- agg_to_manage_zones_forecasts(
         forecast = ga_forecast,
-        zone_polygon_with_id = management_area_poly_pix_ids
+        zone_polygon_with_id = management_area_poly_pix_ids,
+        diseaseRegion = "ga_pac"
         )
+
+save(ga_pac_nowcast_aggregated_to_management_zones, 
+     file = paste0(forecast_file_dir, 
+                   "ga_pac_nowcast_aggregated_to_management_zones.RData"
+     )
+)
 
 # ga gbr management zones -----
-ga_gbr_forecast_aggregated_to_management_zones <- agg_to_manage_zones_forecasts(
+ga_gbr_nowcast_aggregated_to_management_zones <- agg_to_manage_zones_forecasts(
         forecast = ga_forecast,
-        zone_polygon_with_id = management_area_poly_pix_ids
+        zone_polygon_with_id = management_area_poly_pix_ids,
+        diseaseRegion = "ga_gbr"
         )
 
+save(ga_gbr_nowcast_aggregated_to_management_zones, 
+     file = paste0(forecast_file_dir, 
+                   "ga_gbr_nowcast_aggregated_to_management_zones.RData"
+     )
+)
 # bind and save for growth anomalies:
-# until we get pacific data:
-ga_forecast_aggregated_to_management_zones <- ga_gbr_forecast_aggregated_to_management_zones
-# after use below
-ga_forecast_aggregated_to_management_zones <- rbind(
-        ga_pac_forecast_aggregated_to_management_zones
-        , ga_gbr_forecast_aggregated_to_management_zones
+ga_nowcast_aggregated_to_management_zones <- rbind(
+        ga_pac_nowcast_aggregated_to_management_zones
+        , ga_gbr_nowcast_aggregated_to_management_zones
         )
 
 # save
-save(ga_forecast_aggregated_to_management_zones,
+save(ga_nowcast_aggregated_to_management_zones,
      file = paste0(forecast_file_dir, 
-                   "ga_forecast_aggregated_to_management_zones.RData"
+                   "ga_nowcast_aggregated_to_management_zones.RData"
                    )
      )
 
 # ws pacific management zones ----
-ws_pac_forecast_aggregated_to_management_zones <- agg_to_manage_zones_forecasts(
+ws_pac_nowcast_aggregated_to_management_zones <- agg_to_manage_zones_forecasts(
         forecast = ws_forecast,
-        zone_polygon_with_id = management_area_poly_pix_ids
+        zone_polygon_with_id = management_area_poly_pix_ids,
+        diseaseRegion = "ws_pac"
+)
+
+save(ws_pac_nowcast_aggregated_to_management_zones,
+     file = paste0(forecast_file_dir, 
+                   "ws_pac_nowcast_aggregated_to_management_zones.RData"
+     )
 )
 
 # ws gbr management zones -----
-ws_gbr_forecast_aggregated_to_management_zones <- agg_to_manage_zones_forecasts(
+ws_gbr_nowcast_aggregated_to_management_zones <- agg_to_manage_zones_forecasts(
         forecast = ws_forecast,
-        zone_polygon_with_id = management_area_poly_pix_ids
+        zone_polygon_with_id = management_area_poly_pix_ids,
+        diseaseRegion = "ws_gbr"
         )
 
-
+save(ws_gbr_nowcast_aggregated_to_management_zones,
+     file = paste0(forecast_file_dir, 
+                   "ws_gbr_nowcast_aggregated_to_management_zones.RData"
+     )
+)
 # bind and save for white syndromes 
-# until we get pacific data:
-ws_forecast_aggregated_to_management_zones <- ws_gbr_forecast_aggregated_to_management_zones
-# after use below
-ws_forecast_aggregated_to_management_zones <- rbind(
-        ws_pac_forecast_aggregated_to_management_zones
-        , ws_gbr_forecast_aggregated_to_management_zones
+ws_nowcast_aggregated_to_management_zones <- rbind(
+        ws_pac_nowcast_aggregated_to_management_zones
+        , ws_gbr_nowcast_aggregated_to_management_zones
         )
 
 # save
-save(ws_forecast_aggregated_to_management_zones,
+save(ws_nowcast_aggregated_to_management_zones,
      file = paste0(forecast_file_dir, 
-                   "ws_forecast_aggregated_to_management_zones.RData"
+                   "ws_nowcast_aggregated_to_management_zones.RData"
      )
 )

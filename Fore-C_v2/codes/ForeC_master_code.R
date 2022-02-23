@@ -27,6 +27,9 @@ source("./codes/Calculate_colony_size_metrics_by_island_and_family.R")
 
 source("./codes/Format_survey_data.R")
 
+# creates information for shiny app historical data page 
+source("./codes/Format_data_for_historical_map.R") 
+
 source("./codes/Format_unique_survey_properties.R")
 
 # format co-variate data
@@ -93,9 +96,11 @@ source("./codes/Grid_covariates_ocean_color_static.R")
 # compile static predictor data
 source("./codes/Grid_concat_static_covariates.R")
 
+##### Updating predictions and shiny app starts here #####
 # aggregate dynamic variables
 source("./codes/Grid_covariates_sst_metrics.R")
 
+# this code is a little slow, may want to optimize
 source("./codes/Grid_covariates_ocean_color_dynamic.R")
 
 # compile static and dynamic covariates
@@ -105,16 +110,12 @@ source("./codes/Grid_concat_dynamic_covariates.R")
 # After first forecast, each week only need to update two weeks of predictions
 source("./codes/Run_model_forecasts.R")
 
-# create code to update forecasts?
-# source("./codes/Update_model_forecasts.R")
-
 # run scenarios
 source("./codes/Create_scenarios.R")
 
 source("./codes/Run_model_scenarios.R")
 
 # Create shiny outputs -----------------------------------------------
-### THE INPUTS WILL NEED UPDATING WHEN ALL FOUR MODELS ARE USED ###
 source("./codes/Shiny_inputs_aggregate_predictions.R")
 
 source("./codes/Shiny_inputs_aggregate_scenarios.R")
@@ -122,3 +123,7 @@ source("./codes/Shiny_inputs_aggregate_scenarios.R")
 source("./codes/Shiny_inputs_update_polygons.R")
 
 source("./codes/Shiny_inputs_gauge_data.R")
+
+# Create CRW outputs -------------------------------------------------
+# this code needs updating
+source("./codes/Output_forecasts_for_CRW.R")
