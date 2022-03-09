@@ -60,7 +60,7 @@ ga_gbr_polygons_5km <- ga_forecast %>%
 
 ga_gbr_nowcast_polygons_5km <- df_to_5km_polygon(df = ga_gbr_polygons_5km) 
 
-save(ga_gbr_nowcast_polygons_5km, file = paste0(forecast_file_dir, "ga_gbr_nowcast_polygons_5km.Rds"))
+# save(ga_gbr_nowcast_polygons_5km, file = paste0(forecast_file_dir, "ga_gbr_nowcast_polygons_5km.Rds"))
 
 # ga pac
 ga_pac_polygons_5km <- ga_forecast %>%
@@ -68,7 +68,7 @@ ga_pac_polygons_5km <- ga_forecast %>%
 
 ga_pac_nowcast_polygons_5km <- df_to_5km_polygon(df = ga_pac_polygons_5km) 
 
-save(ga_pac_nowcast_polygons_5km, file = paste0(forecast_file_dir, "ga_pac_nowcast_polygons_5km.Rds"))
+# save(ga_pac_nowcast_polygons_5km, file = paste0(forecast_file_dir, "ga_pac_nowcast_polygons_5km.Rds"))
 
 # ws gbr
 ws_gbr_polygons_5km <- ws_forecast %>%
@@ -76,7 +76,7 @@ ws_gbr_polygons_5km <- ws_forecast %>%
 
 ws_gbr_nowcast_polygons_5km <- df_to_5km_polygon(df = ws_gbr_polygons_5km) 
 
-save(ws_gbr_nowcast_polygons_5km, file = paste0(forecast_file_dir, "ws_gbr_nowcast_polygons_5km.Rds"))
+# save(ws_gbr_nowcast_polygons_5km, file = paste0(forecast_file_dir, "ws_gbr_nowcast_polygons_5km.Rds"))
 
 # ws pac
 ws_pac_polygons_5km <- ws_forecast %>%
@@ -84,7 +84,7 @@ ws_pac_polygons_5km <- ws_forecast %>%
 
 ws_pac_nowcast_polygons_5km <- df_to_5km_polygon(df = ws_pac_polygons_5km) 
 
-save(ws_pac_nowcast_polygons_5km, file = paste0(forecast_file_dir, "ws_pac_nowcast_polygons_5km.Rds"))
+# save(ws_pac_nowcast_polygons_5km, file = paste0(forecast_file_dir, "ws_pac_nowcast_polygons_5km.Rds"))
 
 # 5km one month forecasts ------------------------------------- 
 # summarize 
@@ -100,8 +100,8 @@ reef_forecast_one_month <- reef_forecast %>%
 one_month_forecast_polygons_5km <- df_to_5km_polygon(df = reef_forecast_one_month) 
 
 # save 
-save(one_month_forecast_polygons_5km, 
-     file = paste0(forecast_file_dir, "one_month_forecast_polygons_5km.Rds"))
+# save(one_month_forecast_polygons_5km, 
+#      file = paste0(forecast_file_dir, "one_month_forecast_polygons_5km.Rds"))
 
 # 5km two month forecasts ------------------------------------- 
 # summarize 
@@ -117,8 +117,8 @@ reef_forecast_two_month <- reef_forecast %>%
 two_month_forecast_polygons_5km <- df_to_5km_polygon(df = reef_forecast_two_month) 
 
 # save 
-save(two_month_forecast_polygons_5km, 
-     file = paste0(forecast_file_dir, "two_month_forecast_polygons_5km.Rds"))
+# save(two_month_forecast_polygons_5km, 
+#      file = paste0(forecast_file_dir, "two_month_forecast_polygons_5km.Rds"))
 
 # 5km three month forecasts ------------------------------------- 
 # summarize 
@@ -134,8 +134,8 @@ reef_forecast_three_month <- reef_forecast %>%
 three_month_forecast_polygons_5km <- df_to_5km_polygon(df = reef_forecast_three_month) 
 
 # save 
-save(three_month_forecast_polygons_5km, 
-     file = paste0(forecast_file_dir, "three_month_forecast_polygons_5km.Rds"))
+# save(three_month_forecast_polygons_5km, 
+#      file = paste0(forecast_file_dir, "three_month_forecast_polygons_5km.Rds"))
 
 # Management area nowcast polygons ---------------------------------------------
 # summarize data
@@ -157,8 +157,8 @@ polygons_management_zoning <- df_to_zone_polygons(
   , gbrOnly = FALSE
   )
 
-save(polygons_management_zoning,
-     file = paste0(forecast_file_dir, "polygons_management_zoning.Rds"))
+# save(polygons_management_zoning,
+#      file = paste0(forecast_file_dir, "polygons_management_zoning.Rds"))
 
 # save by region
 # ga gbr
@@ -171,8 +171,8 @@ ga_gbr_polygons_management_zoning <- df_to_zone_polygons_region_specific(
   , zones_polygons = polygons_management_areas
 )
 
-save(ga_gbr_polygons_management_zoning,
-     file = paste0(forecast_file_dir, "ga_gbr_polygons_management_zoning.Rds"))
+# save(ga_gbr_polygons_management_zoning,
+#      file = paste0(forecast_file_dir, "ga_gbr_polygons_management_zoning.Rds"))
 
 # ga pac
 ga_pac_polygons_management_zoning <- df_to_zone_polygons_region_specific(
@@ -184,8 +184,8 @@ ga_pac_polygons_management_zoning <- df_to_zone_polygons_region_specific(
   , zones_polygons = polygons_management_areas
 )
 
-save(ga_pac_polygons_management_zoning,
-     file = paste0(forecast_file_dir, "ga_pac_polygons_management_zoning.Rds"))
+# save(ga_pac_polygons_management_zoning,
+#      file = paste0(forecast_file_dir, "ga_pac_polygons_management_zoning.Rds"))
 
 # ws gbr
 ws_gbr_polygons_management_zoning <- df_to_zone_polygons_region_specific(
@@ -197,8 +197,8 @@ ws_gbr_polygons_management_zoning <- df_to_zone_polygons_region_specific(
   , zones_polygons = polygons_management_areas
 )
 
-save(ws_gbr_polygons_management_zoning,
-     file = paste0(forecast_file_dir, "ws_gbr_polygons_management_zoning.Rds"))
+# save(ws_gbr_polygons_management_zoning,
+#      file = paste0(forecast_file_dir, "ws_gbr_polygons_management_zoning.Rds"))
 
 # ws pac
 ws_pac_polygons_management_zoning <- df_to_zone_polygons_region_specific(
@@ -210,8 +210,8 @@ ws_pac_polygons_management_zoning <- df_to_zone_polygons_region_specific(
   , zones_polygons = polygons_management_areas
 )
 
-save(ws_pac_polygons_management_zoning,
-     file = paste0(forecast_file_dir, "ws_pac_polygons_management_zoning.Rds"))
+# save(ws_pac_polygons_management_zoning,
+#      file = paste0(forecast_file_dir, "ws_pac_polygons_management_zoning.Rds"))
 
 # GBRMPA zones -------
 # subset data to only gbr
@@ -224,8 +224,8 @@ polygons_GBRMPA_zoning <- df_to_zone_polygons(
   , gbrOnly = TRUE
   )
 
-save(polygons_GBRMPA_zoning,
-     file = paste0(forecast_file_dir, "polygons_GBRMPA_zoning.Rds"))
+# save(polygons_GBRMPA_zoning,
+#      file = paste0(forecast_file_dir, "polygons_GBRMPA_zoning.Rds"))
 
 # save by disease
 # ga
@@ -238,8 +238,8 @@ ga_gbr_polygons_GBRMPA_zoning <- df_to_zone_polygons_region_specific(
   , zones_polygons = polygons_GBRMPA_park_zoning
 )
 
-save(ga_gbr_polygons_GBRMPA_zoning,
-     file = paste0(forecast_file_dir, "ga_gbr_polygons_GBRMPA_zoning.Rds"))
+# save(ga_gbr_polygons_GBRMPA_zoning,
+#      file = paste0(forecast_file_dir, "ga_gbr_polygons_GBRMPA_zoning.Rds"))
 
 # ws
 ws_gbr_polygons_GBRMPA_zoning <- df_to_zone_polygons_region_specific(
@@ -251,7 +251,7 @@ ws_gbr_polygons_GBRMPA_zoning <- df_to_zone_polygons_region_specific(
   , zones_polygons = polygons_GBRMPA_park_zoning
 )
 
-save(ws_gbr_polygons_GBRMPA_zoning,
-     file = paste0(forecast_file_dir, "ws_gbr_polygons_GBRMPA_zoning.Rds"))
+# save(ws_gbr_polygons_GBRMPA_zoning,
+#      file = paste0(forecast_file_dir, "ws_gbr_polygons_GBRMPA_zoning.Rds"))
 
 

@@ -85,7 +85,6 @@ ws_pac_results <- predict_on_list(
   , modName = WS_Pacific_Model
 )
 
-
 # Check if previous predictions exist, and if so, load and rename
 ga_filepath <- "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ga_forecast.RData"
 ws_filepath <- "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ws_forecast.RData"
@@ -132,12 +131,12 @@ ga_forecast$drisk[ga_forecast$Region != "gbr" & ga_forecast$value > 0.10 & ga_fo
 ga_forecast$drisk[ga_forecast$Region != "gbr" & ga_forecast$value > 0.15 & ga_forecast$value <= 0.25] <- 3
 ga_forecast$drisk[ga_forecast$Region != "gbr" & ga_forecast$value > 0.25] <- 4
 
-### check that this works correctly ###
 if(exists("ga_forecast_old") == TRUE){
   minDate <- min(ga_forecast_old$Date)
-  minForecastDate <- min(ga_forecast_old$Date[ga_forecast_old$type == "forecast"])
+  maxNowcastDate <- max(ga_forecast_old$Date[ga_forecast_old$type == "nowcast"])
   ga_forecast_old <- ga_forecast_old %>%
-    filter(Date > minDate & Date < minForecastDate)
+    filter(Date > minDate & Date <= maxNowcastDate)
+  ga_forecast <- subset(ga_forecast, Date > maxNowcastDate)
   ga_forecast <- bind_rows(ga_forecast_old, ga_forecast)
 }
 
@@ -172,9 +171,10 @@ ws_forecast$drisk[ws_forecast$Region != "gbr" & ws_forecast$value > 0.15] <- 4
 
 if(exists("ws_forecast_old") == TRUE){
   minDate <- min(ws_forecast_old$Date)
-  minForecastDate <- min(ws_forecast_old$Date[ws_forecast_old$type == "forecast"])
+  maxNowcastDate <- max(ws_forecast_old$Date[ws_forecast_old$type == "nowcast"])
   ws_forecast_old <- ws_forecast_old %>%
-    filter(Date > minDate & Date < minForecastDate)
+    filter(Date > minDate & Date <= maxNowcastDate)
+  ws_forecast <- subset(ws_forecast, Date > maxNowcastDate)
   ws_forecast <- bind_rows(ws_forecast_old, ws_forecast)
 }
 

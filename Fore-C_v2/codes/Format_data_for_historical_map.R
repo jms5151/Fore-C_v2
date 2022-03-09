@@ -3,6 +3,7 @@ rm(list=ls()) #remove previous variable assignments
 
 # load library
 library(tidyverse)
+library(leaflet)
 
 # load data
 load("../compiled_data/survey_data/GA.RData")
@@ -49,4 +50,22 @@ historical_data$survey_text <- paste0("<h3> <b> Location: </b>", historical_data
 historical_data$Longitude <- ifelse(historical_data$Longitude>0, historical_data$Longitude-360, historical_data$Longitude)
 
 # save data
-save(historical_data, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Static_data/historical_surveys.RData")
+# save(historical_data, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Static_data/historical_surveys.RData")
+
+# create map -------------------------------------------------------------------
+source("./codes/custom_functions/fun_add_scalebar_to_map.R")
+
+historicalMap = leaflet() %>%
+  addTiles(urlTemplate = "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}") %>%
+  addCircleMarkers(data = historical_data, 
+                   lat = ~Latitude, 
+                   lng = ~Longitude, 
+                   radius = ~sqrt(N), 
+                   color = ~'white', 
+                   popup = ~survey_text, 
+                   clusterOptions = markerClusterOptions()) %>%
+  addScaleBar() %>%
+  setView(lng = -180, lat = 16.4502 , zoom = 3)
+
+# save data
+save(historicalMap, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Static_data/historicalMap.Rds")

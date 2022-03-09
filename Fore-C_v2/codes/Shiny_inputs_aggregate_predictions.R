@@ -74,6 +74,7 @@ save(ga_gbr_nowcast_aggregated_to_management_zones,
                    "ga_gbr_nowcast_aggregated_to_management_zones.RData"
      )
 )
+
 # bind and save for growth anomalies:
 ga_nowcast_aggregated_to_management_zones <- rbind(
         ga_pac_nowcast_aggregated_to_management_zones

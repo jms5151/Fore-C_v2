@@ -5,19 +5,18 @@ library(tidyverse)
 load("../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ga_forecast.RData")
 load("../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ws_forecast.RData")
 
-ga_forecast$type[ga_forecast$Date == "2022-02-20"] <- "forecast"
-ws_forecast$type[ws_forecast$Date == "2022-02-20"] <- "forecast"
 # output directory
 output_dir <- "../Compiled_data/output_for_crw/"
 
 # figure out which dates to use
-nowcast_date_indexes <- which(ga_forecast$Date == max(ga_forecast$Date[ga_forecast$type == "nowcast"]))
-current_nowcast_date <- ga_forecast[nowcast_date_indexes[1], "Date"][[1]]
+prediction_dates <- unique(ga_forecast$Date)
 
-foreast_dates <- unique(ga_forecast$Date[ga_forecast$type == "forecast"])
-one_month_forecast_date <- foreast_dates[which(foreast_dates == current_nowcast_date) + 4]
-two_month_forecast_date <- foreast_dates[which(foreast_dates == current_nowcast_date) + 8]
-three_month_forecast_date <- foreast_dates[which(foreast_dates == current_nowcast_date) + 12]
+current_nowcast_date <- ga_forecast$Date[which(ga_forecast$Date == max(ga_forecast$Date[ga_forecast$type == "nowcast"]))[1]]
+nowcast_id <- which(prediction_dates == current_nowcast_date)
+
+one_month_forecast_date <- prediction_dates[nowcast_id + 4]
+two_month_forecast_date <- prediction_dates[nowcast_id + 8]
+three_month_forecast_date <- prediction_dates[nowcast_id + 12]
 
 # summarize forecasts ----------------------------------------------------------
 reef_forecast <- bind_rows(ga_forecast, ws_forecast) %>%
@@ -57,9 +56,9 @@ format_ts_predictions <- function(df, diseaseName, filter_date, nowcast_date_cut
     filter(Data_date >= filter_date) %>%
     group_by(Region,
              Data_date) %>%
-    summarize(value = quantile(Lwr, 0.90)
-              , lwr = quantile(value, 0.90)
-              , upr = quantile(Upr, 0.90)
+    summarize(value = quantile(Lwr, 0.90, na.rm = T)
+              , lwr = quantile(value, 0.90, na.rm = T)
+              , upr = quantile(Upr, 0.90, na.rm = T)
               )
   colnames(x)[3:5] <- c(paste0(diseaseName, "50")
                         , paste0(diseaseName, "75")
@@ -91,7 +90,7 @@ for(i in regions){
     x_old <- read.csv(ts_filepath)
     x_old <- subset(x_old, Prediction == "Nowcast")
     x_old$Data_date <- as.Date(x_old$Data_date, "%Y-%m-%d")
-    max_x_old_date <- max(x_old$Data_date)
+    max_x_old_date <- max(x_old$Data_date[x_old$Prediction == "Nowcast"])
     x_new <- subset(x, Data_date > max_x_old_date)
     x <- bind_rows(x_old, x)
   }

@@ -1,9 +1,6 @@
 # create list of scenarios
 library(tidyverse)
 
-# https://www.star.nesdis.noaa.gov/pub/sod/mecb/gliu/caldwell/20220124/
-# ftp://ftp.star.nesdis.noaa.gov/pub/sod/mecb/gliu/caldwell/20220124/
-  
 # create temporary directory
 scenarios_inputs_dir <- "../compiled_data/scenarios_inputs/"
 if(dir.exists(scenarios_inputs_dir) == FALSE){
@@ -21,12 +18,7 @@ current_nowcast_date <- max(grid_with_dynamic_predictors$Date[grid_with_dynamic_
 # subset data
 nowcast_predictor_data <- subset(grid_with_dynamic_predictors, Date == current_nowcast_date)
 ga_nowcast <- subset(ga_forecast, Date == current_nowcast_date)
-
-# in the future, this may be subsetting a larger dataset if not
-# separated by weeks
-# week_name <- 'grid_week_11_ensemble_0.RData'
-# 
-# load(paste0("../compiled_data/forecast_inputs/", week_name))
+ws_nowcast <- subset(ws_forecast, Date == current_nowcast_date)
 
 # model covariates
 source("./codes/Final_covariates_by_disease_and_region.R")
@@ -39,12 +31,10 @@ load("../uh-noaa-shiny-app/forec_shiny_app_data/Static_data/pixels_in_management
 load("../uh-noaa-shiny-app/forec_shiny_app_data/Static_data/pixels_in_gbrmpa_park_zones_polygons.RData")
 
 # GA Pacific -------------------------------------
-load(paste0("../compiled_data/forecast_outputs/ga_pac_", week_name))
-
-ga_pac <- dz_final
+ga_pac <- subset(ga_nowcast, Region != "gbr")
 
 ga_pac <- ga_pac %>%
-  left_join(weekly_grid)
+  left_join(nowcast_predictor_data)
 
 colnames(ga_pac) <- gsub("Poritidae_|_Poritidae", "", colnames(ga_pac))
 
@@ -123,7 +113,7 @@ ga_pac_scenarios <- add_scenario_levels(
   df = ga_pac
   , scenario_levels = ga_pac_development_levels
   # not sure if this will work, check later
-  , scenario_levels_scaled = ga_pac_development_levels_scaled
+  # , scenario_levels_scaled = ga_pac_development_levels_scaled
   , col_name = 'BlackMarble_2016_3km_geo.3'
   , response_name = 'Development'
   , scenarios_df = ga_pac_scenarios
@@ -141,12 +131,10 @@ save(ga_pac_scenarios
 ## -----------------------------------------------------------
 
 # WS Pacific -------------------------------------
-load(paste0("../compiled_data/forecast_outputs/ws_pac_", week_name))
-
-ws_pac <- dz_final
+ws_pac <- subset(ws_nowcast, Region != "gbr")
 
 ws_pac <- ws_pac %>%
-  left_join(weekly_grid)
+  left_join(nowcast_predictor_data)
 
 # not sure if we want to do this - problems with predicting scenarios
 colnames(ws_pac) <- gsub("Acroporidae_|_Acroporidae", "", colnames(ws_pac))
@@ -233,12 +221,10 @@ save(ws_pac_scenarios
      , file = paste0(scenarios_inputs_dir, "ws_pac_scenarios.RData"))
 
 # GA GBR -----------------------------------------
-load(paste0("../compiled_data/forecast_outputs/ga_gbr_", week_name))
-
-ga_gbr <- dz_final
+ga_gbr <- subset(ga_nowcast, Region == "gbr")
 
 ga_gbr <- ga_gbr %>%
-  left_join(weekly_grid[, c("ID", "Region", ga_gbr_vars)])
+  left_join(nowcast_predictor_data[, c("ID", "Region", ga_gbr_vars)])
 
 # Base values ---------------
 # Save base values for each pixel for covariates with sliders
@@ -327,12 +313,10 @@ save(ga_gbr_scenarios
      , file = paste0(scenarios_inputs_dir, "ga_gbr_scenarios.RData"))
 
 # WS GBR -----------------------------------------
-load(paste0("../compiled_data/forecast_outputs/ws_gbr_", week_name))
-
-ws_gbr <- dz_final
+ws_gbr <- subset(ws_nowcast, Region == "gbr")
 
 ws_gbr <- ws_gbr %>%
-  left_join(weekly_grid[, c("ID", "Region", ws_gbr_vars)])
+  left_join(nowcast_predictor_data[, c("ID", "Region", ws_gbr_vars)])
 
 # Base values -----------------------
 # Save base values for each pixel for covariates with sliders

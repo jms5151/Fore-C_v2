@@ -100,7 +100,7 @@ source("./codes/Grid_concat_static_covariates.R")
 # aggregate dynamic variables
 source("./codes/Grid_covariates_sst_metrics.R")
 
-# this code is a little slow, may want to optimize
+# this code is really slow, may want to optimize
 source("./codes/Grid_covariates_ocean_color_dynamic.R")
 
 # compile static and dynamic covariates
@@ -120,9 +120,12 @@ source("./codes/Shiny_inputs_aggregate_predictions.R")
 
 source("./codes/Shiny_inputs_aggregate_scenarios.R")
 
-source("./codes/Shiny_inputs_update_polygons.R")
+source("./codes/Shiny_inputs_maps.R")
 
 source("./codes/Shiny_inputs_gauge_data.R")
+
+# only needs to be run once
+# source("./codes/Shiny_inputs_placeholder_plots.R")
 
 # Create CRW outputs -------------------------------------------------
 # this code needs updating

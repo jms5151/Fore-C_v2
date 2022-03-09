@@ -10,7 +10,9 @@ scenario_dir <- "../compiled_data/scenarios_inputs/"
 x <- list.files(scenario_dir, full.names = TRUE)
 
 scenarios_save_dir <- "../compiled_data/scenarios_outputs/"
-dir.create(scenarios_save_dir)
+if(dir.exists(scenarios_save_dir) == FALSE){
+  dir.create(scenarios_save_dir)
+}
 
 # open input files
 lapply(x, load, .GlobalEnv)
@@ -46,21 +48,22 @@ ws_gbr_scenarios$disease_risk_change[ws_gbr_scenarios$disease_risk_change < -100
 save(ws_gbr_scenarios, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ws_gbr_scenarios.RData")
 
 # GA Pacific ---------------------------------
-# I think this isn't going to work, need to update
-ga_pac_development_levels_scaled <- ga_pac_scenarios[, c("ga_pac_development_levels"
-                                                         , "ga_pac_development_levels_scaled")]
-
 ga_pac_scenarios <- qf_predict_scenarios(df = ga_pac_scenarios
                                          , regionGBRtrue = FALSE
                                          , family = "Poritidae"
                                          , final_mod = GA_Pacific_Model
                                          )
 
-# add scaled development response level
-ga_pac_scenarios <- ga_pac_scenarios %>%
-  left_join(ga_pac_development_levels_scaled) %>%
-  select(-ga_pac_development_levels) %>%
-  mutate(ga_pac_development_levels = ga_pac_development_levels_scaled)
+# adjust development levels to match shiny app (scaled values)
+ga_pac_development_levels_scaled <- seq(from = 0.1, to = 1, by = 0.1)
+ga_pac_development_levels <- seq(from = 1, to = 255, length.out = length(ga_pac_development_levels_scaled))# 
+
+for(i in 1:length(ga_pac_development_levels)){
+  ga_pac_scenarios$Response_level[
+    ga_pac_scenarios$Response == "Development" & 
+      ga_pac_scenarios$Response_level == ga_pac_development_levels[i]
+    ] <- ga_pac_development_levels_scaled[i]
+}
 
 # pre-calculate disease risk change
 # may want to use UprEstimate
