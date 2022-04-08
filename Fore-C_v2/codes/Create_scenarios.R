@@ -47,7 +47,8 @@ ga_pac_basevals_ID <- ga_pac[, c('ID'
                                  , 'BlackMarble_2016_3km_geo.3'
                                  , 'value')]
 
-ga_pac_basevals_ID$value <- round(ga_pac_basevals_ID$value*100)
+# ga_pac_basevals_ID$value <- round(ga_pac_basevals_ID$value*100)
+ga_pac_basevals_ID$value <- round(ga_pac_basevals_ID$value)
 save(ga_pac_basevals_ID, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ga_pac_basevals_ID.RData")
 
 # Save base values for management zones
@@ -148,7 +149,8 @@ ws_pac_basevals_ID <- ws_pac[, c('ID'
                                  , 'H_abund'
                                  , 'value')]
 
-ws_pac_basevals_ID$value <- round(ws_pac_basevals_ID$value*100)
+# ws_pac_basevals_ID$value <- round(ws_pac_basevals_ID$value*100)
+ws_pac_basevals_ID$value <- round(ws_pac_basevals_ID$value)
 save(ws_pac_basevals_ID, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ws_pac_basevals_ID.RData")
 
 # Save base values for management zones

@@ -109,6 +109,11 @@ ga_forecast <- bind_rows(ga_gbr_results, ga_pac_results) %>%
     , Upr = quantile(UprEstimate, 0.90)
     )
 
+# Make a percent
+ga_forecast$value[ga_forecast$Region != "gbr"] <- ga_forecast$value[ga_forecast$Region != "gbr"] * 100
+ga_forecast$Lwr[ga_forecast$Region != "gbr"] <- ga_forecast$Lwr[ga_forecast$Region != "gbr"] * 100
+ga_forecast$Upr[ga_forecast$Region != "gbr"] <- ga_forecast$Upr[ga_forecast$Region != "gbr"] * 100
+
 # Add alert levels
 # 0 = No stress
 # 1 = Watch
@@ -116,20 +121,25 @@ ga_forecast <- bind_rows(ga_gbr_results, ga_pac_results) %>%
 # 3 = Alert Level 1
 # 4 = Alert Level 2
 ga_forecast$drisk <- NA
+ga_forecast$drisk[ga_forecast$value >= 0 & ga_forecast$value <= 5] <- 0
+ga_forecast$drisk[ga_forecast$value > 5 & ga_forecast$value <= 10] <- 1
+ga_forecast$drisk[ga_forecast$value > 10 & ga_forecast$value <= 15] <- 2
+ga_forecast$drisk[ga_forecast$value > 15 & ga_forecast$value <= 25] <- 3
+ga_forecast$drisk[ga_forecast$value > 25] <- 4
 
-# GA GBR
-ga_forecast$drisk[ga_forecast$Region == "gbr" & ga_forecast$value >= 0 & ga_forecast$value <= 5] <- 0
-ga_forecast$drisk[ga_forecast$Region == "gbr" & ga_forecast$value > 5 & ga_forecast$value <= 10] <- 1
-ga_forecast$drisk[ga_forecast$Region == "gbr" & ga_forecast$value > 10 & ga_forecast$value <= 15] <- 2
-ga_forecast$drisk[ga_forecast$Region == "gbr" & ga_forecast$value > 15 & ga_forecast$value <= 25] <- 3
-ga_forecast$drisk[ga_forecast$Region == "gbr" & ga_forecast$value > 25] <- 4
-
-# GA Pacific
-ga_forecast$drisk[ga_forecast$Region != "gbr" & ga_forecast$value >= 0.00 & ga_forecast$value <= 0.05] <- 0
-ga_forecast$drisk[ga_forecast$Region != "gbr" & ga_forecast$value > 0.05 & ga_forecast$value <= 0.10] <- 1
-ga_forecast$drisk[ga_forecast$Region != "gbr" & ga_forecast$value > 0.10 & ga_forecast$value <= 0.15] <- 2
-ga_forecast$drisk[ga_forecast$Region != "gbr" & ga_forecast$value > 0.15 & ga_forecast$value <= 0.25] <- 3
-ga_forecast$drisk[ga_forecast$Region != "gbr" & ga_forecast$value > 0.25] <- 4
+# # GA GBR
+# ga_forecast$drisk[ga_forecast$Region == "gbr" & ga_forecast$value >= 0 & ga_forecast$value <= 5] <- 0
+# ga_forecast$drisk[ga_forecast$Region == "gbr" & ga_forecast$value > 5 & ga_forecast$value <= 10] <- 1
+# ga_forecast$drisk[ga_forecast$Region == "gbr" & ga_forecast$value > 10 & ga_forecast$value <= 15] <- 2
+# ga_forecast$drisk[ga_forecast$Region == "gbr" & ga_forecast$value > 15 & ga_forecast$value <= 25] <- 3
+# ga_forecast$drisk[ga_forecast$Region == "gbr" & ga_forecast$value > 25] <- 4
+# 
+# # GA Pacific
+# ga_forecast$drisk[ga_forecast$Region != "gbr" & ga_forecast$value >= 0.00 & ga_forecast$value <= 0.05] <- 0
+# ga_forecast$drisk[ga_forecast$Region != "gbr" & ga_forecast$value > 0.05 & ga_forecast$value <= 0.10] <- 1
+# ga_forecast$drisk[ga_forecast$Region != "gbr" & ga_forecast$value > 0.10 & ga_forecast$value <= 0.15] <- 2
+# ga_forecast$drisk[ga_forecast$Region != "gbr" & ga_forecast$value > 0.15 & ga_forecast$value <= 0.25] <- 3
+# ga_forecast$drisk[ga_forecast$Region != "gbr" & ga_forecast$value > 0.25] <- 4
 
 if(exists("ga_forecast_old") == TRUE){
   minDate <- min(ga_forecast_old$Date)
@@ -152,6 +162,11 @@ ws_forecast <- bind_rows(ws_gbr_results, ws_pac_results) %>%
     , Upr = quantile(UprEstimate, 0.90)
   )
 
+# Make a percent
+ws_forecast$value[ws_forecast$Region != "gbr"] <- ws_forecast$value[ws_forecast$Region != "gbr"] * 100
+ws_forecast$Lwr[ws_forecast$Region != "gbr"] <- ws_forecast$Lwr[ws_forecast$Region != "gbr"] * 100
+ws_forecast$Upr[ws_forecast$Region != "gbr"] <- ws_forecast$Upr[ws_forecast$Region != "gbr"] * 100
+
 # Add alert levels
 ws_forecast$drisk <- NA
 
@@ -163,11 +178,17 @@ ws_forecast$drisk[ws_forecast$Region == "gbr" & ws_forecast$value > 10 & ws_fore
 ws_forecast$drisk[ws_forecast$Region == "gbr" & ws_forecast$value > 20] <- 4
 
 # WS Pacific
-ws_forecast$drisk[ws_forecast$Region != "gbr" & ws_forecast$value >= 0 & ws_forecast$value <= 0.01] <- 0
-ws_forecast$drisk[ws_forecast$Region != "gbr" & ws_forecast$value > 0.01 & ws_forecast$value <= 0.05] <- 1
-ws_forecast$drisk[ws_forecast$Region != "gbr" & ws_forecast$value > 0.05 & ws_forecast$value <= 0.10] <- 2
-ws_forecast$drisk[ws_forecast$Region != "gbr" & ws_forecast$value > 0.10 & ws_forecast$value <= 0.15] <- 3
-ws_forecast$drisk[ws_forecast$Region != "gbr" & ws_forecast$value > 0.15] <- 4
+# ws_forecast$drisk[ws_forecast$Region != "gbr" & ws_forecast$value >= 0 & ws_forecast$value <= 0.01] <- 0
+# ws_forecast$drisk[ws_forecast$Region != "gbr" & ws_forecast$value > 0.01 & ws_forecast$value <= 0.05] <- 1
+# ws_forecast$drisk[ws_forecast$Region != "gbr" & ws_forecast$value > 0.05 & ws_forecast$value <= 0.10] <- 2
+# ws_forecast$drisk[ws_forecast$Region != "gbr" & ws_forecast$value > 0.10 & ws_forecast$value <= 0.15] <- 3
+# ws_forecast$drisk[ws_forecast$Region != "gbr" & ws_forecast$value > 0.15] <- 4
+
+ws_forecast$drisk[ws_forecast$Region != "gbr" & ws_forecast$value >= 0 & ws_forecast$value <= 1] <- 0
+ws_forecast$drisk[ws_forecast$Region != "gbr" & ws_forecast$value > 1 & ws_forecast$value <= 5] <- 1
+ws_forecast$drisk[ws_forecast$Region != "gbr" & ws_forecast$value > 5 & ws_forecast$value <= 0] <- 2
+ws_forecast$drisk[ws_forecast$Region != "gbr" & ws_forecast$value > 10 & ws_forecast$value <= 15] <- 3
+ws_forecast$drisk[ws_forecast$Region != "gbr" & ws_forecast$value > 15] <- 4
 
 if(exists("ws_forecast_old") == TRUE){
   minDate <- min(ws_forecast_old$Date)

@@ -10,7 +10,6 @@ source("./codes/custom_functions/fun_ftp_download.R")
 
 # list weekly SST files -----------------------------------------------
 
-# this is the only line that will likely change each week
 parent_ftp_filepath <- 'ftp://ftp.star.nesdis.noaa.gov/pub/sod/mecb/crw/data/for_forec/shiny_app/'
 
 # list directories, named by date
