@@ -6,15 +6,19 @@ df_to_5km_polygon <- function(df){
   x <- rasterFromXYZ(df[, c("Longitude"
                             , "Latitude" 
                             , "ID" 
+                            , "drisk"
                             )], 
                             crs = "+init=epsg:4326")
   
-  rr <- rasterize(df[,c("Longitude", "Latitude")], 
-                  x, 
-                  field = df[,c("ID", "drisk")])
+  as(x, "SpatialPolygonsDataFrame")
+  
+  
+  # rr <- rasterize(df[,c("Longitude", "Latitude")],
+  #                 x,
+  #                 field = df[,c("ID", "drisk")])
   
   # create spatial polygon from raster
-  as(rr, "SpatialPolygonsDataFrame")
+  # as(rr, "SpatialPolygonsDataFrame")
 }
 
 

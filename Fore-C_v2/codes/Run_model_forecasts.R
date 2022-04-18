@@ -17,7 +17,7 @@ load("../compiled_data/forecast_inputs/grid_with_dynamic_predictors.RData")
 ga_gbr_df_long <- qf_new_data_subset(
   df = grid_with_dynamic_predictors
   , regionGBRtrue = TRUE
-  , family = ""
+  , family = "all"
   , final_mod = GA_GBR_Model
   )
 
@@ -53,7 +53,7 @@ ga_pac_results <- predict_on_list(
 ws_gbr_df_long <- qf_new_data_subset(
   df = grid_with_dynamic_predictors
   , regionGBRtrue = TRUE
-  , family = ""
+  , family = "plating"
   , final_mod = WS_GBR_Model
 )
 

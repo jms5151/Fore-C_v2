@@ -21,7 +21,7 @@ lapply(x, load, .GlobalEnv)
 # GA GBR
 ga_gbr_scenarios <- qf_predict_scenarios(df = ga_gbr_scenarios
                                          , regionGBRtrue = TRUE
-                                         , family = ""
+                                         , family = "all"
                                          , final_mod = GA_GBR_Model
                                          )
 
@@ -36,7 +36,7 @@ save(ga_gbr_scenarios, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Scenari
 # WS GBR -------------------------------------
 ws_gbr_scenarios <- qf_predict_scenarios(df = ws_gbr_scenarios
                                          , regionGBRtrue = TRUE
-                                         , family = ""
+                                         , family = "plating"
                                          , final_mod = WS_GBR_Model
                                          )
 
@@ -67,7 +67,7 @@ for(i in 1:length(ga_pac_development_levels)){
 
 # pre-calculate disease risk change
 # may want to use UprEstimate
-ga_pac_scenarios$disease_risk_change <- round((ga_pac_scenarios$estimate - ga_pac_scenarios$value) * 100)
+ga_pac_scenarios$disease_risk_change <- round((ga_pac_scenarios$estimate * 100) - ga_pac_scenarios$value)
 # can't decrease more than 100%
 ga_pac_scenarios$disease_risk_change[ga_pac_scenarios$disease_risk_change < -100] <- -100
 # save data to run and then replace with same name
@@ -82,7 +82,7 @@ ws_pac_scenarios <- qf_predict_scenarios(df = ws_pac_scenarios
 
 # pre-calculate disease risk change
 # may want to use UprEstimate
-ws_pac_scenarios$disease_risk_change <- round((ws_pac_scenarios$estimate - ws_pac_scenarios$value) * 100)
+ws_pac_scenarios$disease_risk_change <- round((ws_pac_scenarios$estimate * 100) - ws_pac_scenarios$value)
 # can't decrease more than 100%
 ws_pac_scenarios$disease_risk_change[ws_pac_scenarios$disease_risk_change < -100] <- -100
 # save data to run and then replace with same name

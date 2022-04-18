@@ -225,8 +225,11 @@ save(ws_pac_scenarios
 # GA GBR -----------------------------------------
 ga_gbr <- subset(ga_nowcast, Region == "gbr")
 
+ga_gbr_vars <- gsub("Coral_cover", "Coral_cover_all", ga_gbr_vars)
+
 ga_gbr <- ga_gbr %>%
-  left_join(nowcast_predictor_data[, c("ID", "Region", ga_gbr_vars)])
+  left_join(nowcast_predictor_data[, c("ID", "Region", ga_gbr_vars)]) %>%
+  mutate("Coral_cover" = Coral_cover_all)
 
 # Base values ---------------
 # Save base values for each pixel for covariates with sliders
@@ -317,8 +320,11 @@ save(ga_gbr_scenarios
 # WS GBR -----------------------------------------
 ws_gbr <- subset(ws_nowcast, Region == "gbr")
 
+ws_gbr_vars <- gsub("Coral_cover", "Coral_cover_plating", ws_gbr_vars)
+
 ws_gbr <- ws_gbr %>%
-  left_join(nowcast_predictor_data[, c("ID", "Region", ws_gbr_vars)])
+  left_join(nowcast_predictor_data[, c("ID", "Region", ws_gbr_vars)]) %>%
+  mutate("Coral_cover" = Coral_cover_plating)
 
 # Base values -----------------------
 # Save base values for each pixel for covariates with sliders

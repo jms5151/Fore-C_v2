@@ -52,6 +52,8 @@ final_cols <- colnames(
                "CV_colony_size_Poritidae",
                "Poritidae_mean_cover",
                "Acroporidae_mean_cover",
+               "Coral_cover_plating",
+               "Coral_cover_all",
                final_covars
                )
     ]

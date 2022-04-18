@@ -86,14 +86,19 @@ fish <- extract(r, cbind(reefsDF$Longitude, reefsDF$Latitude))
 fish_gbr <- cbind(reefsDF, "Fish_abund" = fish)
 
 # calculate mean coral cover based on RHIS surveys
-reefsDF$Coral_cover <- aggregate_point_values(rhis_surveys, "Plate.Table.Coral....Total.", mean)
+# reefsDF$Coral_cover <- aggregate_point_values(rhis_surveys, "Plate.Table.Coral....Total.", mean)
+
+reefsDF$Coral_cover_plating <- aggregate_point_values(rhis_surveys, "Plate.Table.Coral....Total.", mean)
+reefsDF$Coral_cover_all <- aggregate_point_values(rhis_surveys, "Live.Coral", mean)
 
 gbr_benthic_and_fish <- fish_gbr %>%
   left_join(reefsDF) %>%
   filter(Region == 'gbr') %>%
   # there's no missing data, but for completeness in case of future updates:
   mutate_at("Fish_abund", zoo::na.aggregate) %>%
-  mutate_at("Coral_cover", zoo::na.aggregate) 
+  # mutate_at("Coral_cover", zoo::na.aggregate) 
+  mutate_at("Coral_cover_plating", zoo::na.aggregate) %>%
+  mutate_at("Coral_cover_all", zoo::na.aggregate)
 
 # add columns, bind, and save data --------------------------------------------
 # add missing columns

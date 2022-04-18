@@ -11,5 +11,7 @@ grid_with_dynamic_predictors <- reef_grid_sst %>%
   left_join(grid_with_static_covariates) %>%
   mutate("Month" = as.numeric(format(Date, "%m")))
 
+# add code to screen for unusual values?
+
 # save
 save(grid_with_dynamic_predictors, file = "../compiled_data/forecast_inputs/grid_with_dynamic_predictors.RData")

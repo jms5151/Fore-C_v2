@@ -27,7 +27,8 @@ dz <- ga %>%
   left_join(ws) %>%
   gather(key = "Disease", 
          "drisk", 
-         "Growth anomalies":"White syndromes")
+         "Growth anomalies":"White syndromes") %>%
+  filter(!is.na(drisk))
 
 # update region
 dz$Region[dz$Region == "wake" | dz$Region == "johnston"] <- "prias"

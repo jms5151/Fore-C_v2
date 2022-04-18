@@ -5,6 +5,8 @@ library(quantregForest)
 qf_predict <- function(df, regionGBRtrue, family, final_mod, name, save_dir, fileName2){
   # subset data by region and variables in model
   if(regionGBRtrue == TRUE){
+    coral_cov <- paste0("Coral_cover_", family)
+    df$Coral_cover <- pull(df, coral_cov)
     df2 <- subset(df, Region == "gbr")
   } else {
     col_size <- paste0("Median_colony_size_", family)
@@ -37,6 +39,8 @@ qf_predict <- function(df, regionGBRtrue, family, final_mod, name, save_dir, fil
 qf_predict_scenarios <- function(df, regionGBRtrue, family, final_mod){
   # subset data by region and variables in model
   if(regionGBRtrue == TRUE){
+    coral_cov <- paste0("Coral_cover_", family)
+    df$Coral_cover <- pull(df, coral_cov)
     df2 <- subset(df, Region == "gbr")
   } else {
     # col_size <- paste0("Median_colony_size_", family)
@@ -68,6 +72,8 @@ qf_predict_scenarios <- function(df, regionGBRtrue, family, final_mod){
 qf_new_data_subset <- function(df, regionGBRtrue, family, final_mod){
   # subset data by region and variables in model
   if(regionGBRtrue == TRUE){
+    coral_cov <- paste0("Coral_cover_", family)
+    df$Coral_cover <- pull(df, coral_cov)
     df2 <- subset(df, Region == "gbr")
   } else {
     col_size <- paste0("Median_colony_size_", family)

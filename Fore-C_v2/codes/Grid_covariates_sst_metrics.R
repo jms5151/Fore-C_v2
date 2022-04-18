@@ -96,21 +96,7 @@ for(j in files){
   cat("finished ", j, '\n')
 }
 
-# # reef id subset, hopefully can delete later
-# if(grepl('howland-baker', j) == TRUE){
-#   cfs_df <- subset(ID >= 1050001 & ID <= 1050012)
-# }
-# if(grepl('palmyra-kingman', j) == TRUE){
-#   cfs_df <- subset(ID >= 1050013 & ID <= 1050030)
-# }
-# if(grepl('jarvis', j) == TRUE){
-#   cfs_df <- subset(ID >= 1050031 & ID <= 1050032)
-# }
-
 # reshape files ----------------------------------------------
-# shouldn't be needed, but failsafe
-# sst_metrics <- sst_metrics[!duplicated(sst_metrics), ] 
-
 reef_grid_sst <- sst_metrics %>%
   spread(key = temp_metric_name, value = value) %>%
   fill(c("Hot_snaps", "SST_90dMean" , "Winter_condition"), .direction = 'updown')
