@@ -27,20 +27,20 @@ agg_to_manage_zones_forecasts <- function(forecast, zone_polygon_with_id, diseas
     warning_threshold <- 15
     alert1_threshold <- 25
   } else if(diseaseRegion == "ga_pac"){
-    nostress_threshold <- 0.05
-    watch_threshold <- 0.10
-    warning_threshold <- 0.15
-    alert1_threshold <- 0.25
+    nostress_threshold <- 5
+    watch_threshold <- 10
+    warning_threshold <- 15
+    alert1_threshold <- 25
   } else if(diseaseRegion == "ws_gbr"){
     nostress_threshold <- 1
     watch_threshold <- 5
     warning_threshold <- 10
     alert1_threshold <- 20
   } else if(diseaseRegion == "ws_pac"){
-    nostress_threshold <- 0.01
-    watch_threshold <- 0.05
-    warning_threshold <- 0.10
-    alert1_threshold <- 0.15
+    nostress_threshold <- 1
+    watch_threshold <- 5
+    warning_threshold <- 10
+    alert1_threshold <- 15
   } 
   
   x_agg$drisk <- NA

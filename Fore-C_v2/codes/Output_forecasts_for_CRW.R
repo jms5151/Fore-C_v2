@@ -6,7 +6,7 @@ load("../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ga_forecast.RData")
 load("../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ws_forecast.RData")
 
 # output directory
-output_dir <- "../Compiled_data/output_for_crw/"
+output_dir <- "../compiled_data/output_for_crw/"
 
 # figure out which dates to use
 prediction_dates <- unique(ga_forecast$Date)
@@ -30,7 +30,7 @@ reef_forecast <- bind_rows(ga_forecast, ws_forecast) %>%
            Longitude,
            Region,
            Data_date) %>%
-  summarize("Alert_Level" = max(drisk))
+  summarize("Alert_Level" = max(drisk, na.rm = T))
 
 reef_forecast$Prediction <- NA 
 reef_forecast$Prediction[reef_forecast$Data_date == current_nowcast_date] <- "Nowcast"
@@ -43,8 +43,7 @@ regions <- unique(reef_forecast$Region)
 for(i in regions){
   x <- subset(reef_forecast, Region == i)
   write.csv(x, paste0(output_dir, "forec_5km_nowcasts_and_forcasts_", i, ".csv"), row.names = F)
-  
-}
+  }
 
 # time series ------------------------------------------------------------------
 current_year <- format(Sys.time(), "%Y")

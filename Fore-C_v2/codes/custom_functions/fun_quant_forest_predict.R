@@ -22,7 +22,7 @@ qf_predict <- function(df, regionGBRtrue, family, final_mod, name, save_dir, fil
   xx <- as.data.frame(df2)
   # predict
   xpredict <- predict(final_mod,
-               quantiles = c(0.50, 0.75, 0.90),
+               what = c(0.50, 0.75, 0.90),
                newdata = df2
                )
   x2 <- cbind(df2[,id_vars]
@@ -58,7 +58,7 @@ qf_predict_scenarios <- function(df, regionGBRtrue, family, final_mod){
   xx <- as.data.frame(df2)
   # predict
   xpredict <- predict(final_mod,
-                      quantiles = c(0.50, 0.75, 0.90),
+                      what = c(0.50, 0.75, 0.90),
                       newdata = df2
   )
   x2 <- cbind(df2[,id_vars]
@@ -92,7 +92,7 @@ qf_new_data_subset <- function(df, regionGBRtrue, family, final_mod){
 qf_predict_fun <- function(df, final_mod){
   id_vars <- c("ID", "Latitude", "Longitude", "Region", "Date", "type")
   xpredict <- predict(final_mod,
-                      quantiles = c(0.50, 0.75, 0.95),
+                      what = c(0.50, 0.75, 0.95),
                       newdata = df
   )
   x2 <- cbind(df[,id_vars]
