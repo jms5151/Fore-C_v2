@@ -27,9 +27,8 @@ ga_gbr_scenarios <- qf_predict_scenarios(df = ga_gbr_scenarios
 
 # pre-calculate disease risk change
 # may want to use UprEstimate
-ga_gbr_scenarios$disease_risk_change <- round((ga_gbr_scenarios$estimate - ga_gbr_scenarios$value) * 10)
-# can't decrease more than 100%
-ga_gbr_scenarios$disease_risk_change[ga_gbr_scenarios$disease_risk_change < -100] <- -100
+ga_gbr_scenarios$disease_risk_change <- round(ga_gbr_scenarios$estimate - ga_gbr_scenarios$value)
+
 # save data to run and then replace with same name
 save(ga_gbr_scenarios, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ga_gbr_scenarios.RData")
 
@@ -41,9 +40,7 @@ ws_gbr_scenarios <- qf_predict_scenarios(df = ws_gbr_scenarios
                                          )
 
 # pre-calculate disease risk change
-ws_gbr_scenarios$disease_risk_change <- round((ws_gbr_scenarios$estimate - ws_gbr_scenarios$value) * 10)
-# can't decrease more than 100%
-ws_gbr_scenarios$disease_risk_change[ws_gbr_scenarios$disease_risk_change < -100] <- -100
+ws_gbr_scenarios$disease_risk_change <- round(ws_gbr_scenarios$estimate - ws_gbr_scenarios$value)
 # save data to run and then replace with same name
 save(ws_gbr_scenarios, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ws_gbr_scenarios.RData")
 
@@ -56,7 +53,7 @@ ga_pac_scenarios <- qf_predict_scenarios(df = ga_pac_scenarios
 
 # adjust development levels to match shiny app (scaled values)
 ga_pac_development_levels_scaled <- seq(from = 0.1, to = 1, by = 0.1)
-ga_pac_development_levels <- seq(from = 1, to = 255, length.out = length(ga_pac_development_levels_scaled))# 
+ga_pac_development_levels <- round(seq(from = 1, to = 255, length.out = length(ga_pac_development_levels_scaled)))
 
 for(i in 1:length(ga_pac_development_levels)){
   ga_pac_scenarios$Response_level[

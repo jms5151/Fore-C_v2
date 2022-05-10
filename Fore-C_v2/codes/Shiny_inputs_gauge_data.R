@@ -172,7 +172,7 @@ gauge_ga_prias <- individual_gauges(gauge_prias_ga)
 gauge_ws_prias <- individual_gauges(gauge_prias_ws) %>%
   layout(
     xaxis = list(
-      title = 'Precent of pixels per risk category',
+      title = 'Percent of pixels per risk category',
       showticklabels = TRUE,
       tickformat = ".0%",
       showgrid = FALSE,

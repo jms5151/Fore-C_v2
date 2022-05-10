@@ -5,162 +5,176 @@ Created on Thu Dec  9 14:06:21 2021
 @author: jamie
 """
 import wget
+import os
 import netCDF4 as nc
 import pandas as pd
 import numpy as np
-import datetime as DT
 
+# source custom function
+#import list_ftp_files from ../custom_functions/fun_ftp_download
 
-# set crw forecast directory for downloads
-crw_dir = "../raw_data/covariate_data/CRW_dz_temp_metrics/crw_temp_forecasts/"
+import requests
+from bs4 import BeautifulSoup
 
-# Download SST metrics from CRW ------------------------------------------------
-# Winter Condition
-wc_url = "ftp://ftp.star.nesdis.noaa.gov/pub/sod/mecb/gliu/caldwell/20211113/dz-v2_wdw_gbr_reef-id_20211107.nc"
-wget.download(wc_url, out = crw_dir + 'WC.nc')
+def list_ftp_files(ftp_path):
+    reqs = requests.get(ftp_path)
+    soup = BeautifulSoup(reqs.text, 'html.parser')
+    urls = []
+    for link in soup.find_all('a'): 
+        urls.append(link.get('href'))
+    return urls
 
-# Hot Snaps
-hs_url = "ftp://ftp.star.nesdis.noaa.gov/pub/sod/mecb/gliu/caldwell/20211111/cfsv2_hotsnap_gbr_reef-id_20211106.nc"
-wget.download(hs_url, out = crw_dir + 'HS.nc')
+# list weekly SST files -----------------------------------------------
 
-# 90 day mean SST
-sst90dMean_url = "ftp://ftp.star.nesdis.noaa.gov/pub/sod/mecb/gliu/caldwell/20211114/cfsv2_mean-90d_gbr_reef-id_20211106_new.nc"
-wget.download(sst90dMean_url, out = crw_dir + 'SST90dMean.nc')
+# list directories, named by date
 
-# load data --------------------------------------------------------------------
-# load SST metrics (downloaded above)
-wc = nc.Dataset(crw_dir + 'WC.nc')
+parent_ftp_filepath = 'https://www.star.nesdis.noaa.gov/pub/sod/mecb/crw/data/for_forec/shiny_app/'
 
-hs = nc.Dataset(crw_dir + 'HS.nc')
+files = list_ftp_files(parent_ftp_filepath)
 
-sst90d = nc.Dataset(crw_dir + 'SST90dMean.nc')
+parent_file = [i for i in files if i.startswith('2')][-1]
 
-# winter condition -------------------------------------------------------------
-# this is a single value for each reef pixel
-wc_id = wc.variables['reef_id'][:]
-wc_id = pd.DataFrame(wc_id, columns = ['ID'])
+child_ftp_filepath = parent_ftp_filepath + parent_file
+ 
+files = list_ftp_files(child_ftp_filepath)
 
-wc_vals = wc.variables['daily_winter_conditions'][0,:]
-wc_vals = pd.DataFrame(wc_vals, columns = ['Winter_condition'])
+# remove extraneous file names
+files = [i for i in files if i.startswith('cfs')|i.startswith('dz')|i.startswith('forec')]
 
+# download data ---------------------------------------------
+path = '../crw_weekly_data/'
 
-# fill in NAs with mean values, may need to merge a dataset with ID and region
-# to get means by region rather than overall mean!
-wc_vals['Winter_condition'] = wc_vals.fillna(wc_vals.mean())
+# Check whether the specified path exists or not
+isExist = os.path.exists(path)
 
-# combine id and winter condition in dataframe
-reef_grid_wc = pd.concat([wc_id, wc_vals], axis=1)
+# Create a new directory because it does not exist 
+if not isExist:
+  os.makedirs(path)
 
-# save data
-reef_grid_wc.to_csv('../compiled_data/grid_covariate_data/grid_with_wc.csv', index = False)
+# download nc files
+for jj in files:
+    # download file
+    nc_source_filepath = child_ftp_filepath + jj
+    nc_dest_filepath = path + jj
+    wget.download(nc_source_filepath, out = nc_dest_filepath)
 
-# SST forecasts ----------------------------------------------------------------
-# this code is not streamlined, lots of repeated code between hot snaps and 90 day means
-# list dates/index associated with nowcasts and forecasts
-nowcast_days = list(range(1, 9, 7)) # the first two weeks, python is inclusive with numbers
-forecast_days = list(range(15, 15+(12*7), 7)) # the following 12 weeks
+# format data ------------------------------------------------
 
-# Hot Snaps --------------------------------------------------------------------
-#hs_df <- data.frame()
+# create empty data frame
+sst_metrics = pd.DataFrame()
 
-hs_id = hs.variables['reef_id'][:]
-hs_id = pd.DataFrame(hs_id, columns = ['ID'])
+# open and format data (this should take 1-4 minutes on a standard laptop)
+for j in files:
+    # open file
+    x = nc.Dataset(path + j)
+    # get ids
+    ids = x.variables['reef_id'][:]
+    ids = pd.DataFrame(ids, columns = ['ID'])
+    # get date(s)
+    dates = x.variables['data_date'][:]
+    dates = pd.DataFrame(dates, columns = ['data_date'])
+    # determine metric name
+    if 'hotsnap' in j or 'hdw' in j:
+        metric_name = 'Hot_snaps'
+    elif 'mean-90d' in j: 
+         metric_name = 'SST_90dMean'
+    else: 
+         metric_name = 'Winter_condition'
+    # set variable id
+    variable_dict = x.variables.keys()
+    var_name = list(variable_dict)[2]
+    metric_array = x.variables[var_name][:]
+    metric_array = np.array(metric_array)
+    tmp_df = pd.DataFrame()
+    # format forecasts
+    if 'cfs' in j:
+        for k in range(12): # dates for first 12 weeks of forecasts
+            for l in range(28): # ensembles
+                # dimensions = dates x ids x values
+                tmp_metric = metric_array[k, l, :]
+                # make flagged values NaNs
+                tmp_metric = np.where(tmp_metric == 253, np.nan, tmp_metric)
+                tmp_metric = np.where(tmp_metric == 9999, np.nan, tmp_metric)
+                # fill in NaNs with median values
+                inds = np.where(np.isnan(tmp_metric))
+                tmp_metric[inds] = np.nanmedian(tmp_metric)
+                # create dataframe
+                cfs_df = ids.copy(deep = True)
+                data_date = np.array(dates.iloc[k].repeat(cfs_df.shape[0]))
+                cfs_df['Date'] = data_date
+                cfs_df['ensemble'] = l + 1
+                cfs_df['type'] = 'forecast'
+                cfs_df['temp_metric_name'] = metric_name
+                cfs_df['value'] = tmp_metric
+                tmp_df = tmp_df.append(cfs_df, ignore_index = True)
+    else:
+      tmp_metric = metric_array.copy() 
+      # make flagged values NaNs
+      tmp_metric = np.where(tmp_metric== 253, np.nan, tmp_metric)
+      tmp_metric = np.where(tmp_metric== 9999, np.nan, tmp_metric)
+      # fill in NaNs with median values
+      inds = np.where(np.isnan(tmp_metric))
+      tmp_metric[inds] = np.nanmedian(tmp_metric)
+      # create dataframe
+      tmp_df = ids.copy(deep = True)
+      data_date = np.array(dates.loc[0].repeat(tmp_df.shape[0]))
+      tmp_df['Date'] = data_date
+      tmp_df['ensemble'] = 0
+      tmp_df['type'] = 'nowcast'
+      tmp_df['temp_metric_name'] = metric_name
+      tmp_df['value'] = tmp_metric[0,]
+    # combine data
+    sst_metrics = sst_metrics.append(tmp_df)
+    # close nc file
+    x.close()
+    os.remove(path + j)
+    # print progress
+    print('finished', j)
 
-# dimensions: reef pixel ids x ensemble X days
-hs_vals = hs.variables['daily_hotsnap_prediction'][:]
+# delete directory of weekly CRW files
+# for m in files:
+#     os.remove(path + m)
+os.rmdir(path)
 
-# This isn't working currently, check with Gang how day id is formatted
-# # get day id
-# day - based on last day of 7-day initial condition period (Oct 31-6), 239 total
-# first day = Nov. 8, 2021
-# julianday <- hs$dim$time$vals[1]
-# # turn into julian day (first 3 numbers)
-# julianday <- as.numeric(substr(julianday, 1, 3))
-# # turn into date
-# firstday <- as.Date(julianday, origin=as.Date("2021-01-01"))
-firstday = DT.datetime(2021, 11, 7) # start date is 11/8, but using
-# index to calculate from here, this will all need to be updated and should
-# pull date directly from file
+# sst_metrics.to_csv('../compiled_data/grid_covariate_data/grid_with_sst_metrics.csv', index=False)
 
-# nowcasts; currently using forecasts, will update in future with satellite observations
-# subset to nowcast days
-hs_nowcast = hs_vals[nowcast_days,:,:]
+# reshape file ----------------------------------------------
 
-# use median value across all forecasts to replace missing data
-hs_nowcast_median = np.nanmedian(hs_nowcast)
+# go from long to wide format
+reef_grid_sst = sst_metrics.pivot_table(index = ['ID', 'Date', 'ensemble', 'type']
+                                          , columns = 'temp_metric_name'
+                                          , values = 'value').reset_index()
 
-# fill in NaNs
-hs_nowcast = np.ma.filled(hs_nowcast.astype(float), hs_nowcast_median)
+# Use near-real time Winter Condition for all forecast dates
+# There is only one near-real time date in each update, so we have used mean - 
+# If there are multiple near-real time dates, update code to use most recent date
+reef_grid_sst['Winter_condition'] = reef_grid_sst.groupby('ID').transform(lambda x: x.fillna(x.mean()))
 
-# nowcasts
-# next is to create the nowcasts, but this code is a placeholder in R,
-# so will wait for next iteration of data from Gang in correct format to 
-# complete
-hs_df = pd.DataFrame()
+# save
+reef_grid_sst.to_csv('../compiled_data/grid_covariate_data/grid_with_sst_metrics.csv', index = False)
+# reef_grid_sst = pd.read_csv('../compiled_data/grid_covariate_data/grid_with_sst_metrics.csv')
 
-# forecasts
-for j in range(len(forecast_days)):
-  # for each ensemble
-  for k in range(28):
-      x = hs_vals[forecast_days[j], k, :]
-      x = np.ma.filled(x.astype(float), np.nanmedian(x))
-      
-      # create data frame
-      tmp_df = pd.DataFrame(hs_id)
-      tmp_df['Date'] = firstday + DT.timedelta(days = forecast_days[j])
-      tmp_df['Hot_snaps'] = x
-      tmp_df['ensemble'] = k + 1
-      tmp_df['type'] = 'forecast'
-      
-      # combine data 
-      hs_df = hs_df.append(pd.DataFrame(data = tmp_df), ignore_index=True)
+# load reef grid
+reefsDF = pd.read_csv('../compiled_data/spatial_data/grid.csv')
 
-# 90-day SST mean --------------------------------------------------------------
-# get id
-sst90d_id = sst90d.variables['reef_id'][:]
-sst90d_id = pd.DataFrame(sst90d_id , columns = ['ID'])
+# merge sst data with reef grid
+reef_grid_sst = reef_grid_sst.merge(reefsDF, on = 'ID', how = 'left')
 
-# dimensions: reef pixel ids x ensemble X days
-sst90d_vals = sst90d.variables['daily_90day_mean_sst_prediction'][:]
+# update Winter Condition based on region
+def winter_condition_offset(df, crw_vs_region_name, offset_value):
+    ind = df.index[df.CRW_VS_region == crw_vs_region_name].tolist()
+    df.loc[ind, 'Winter_condition'] = df.loc[ind, 'Winter_condition'] - offset_value
 
-# reuse first day from above, will update later
+winter_condition_offset(df = reef_grid_sst, crw_vs_region_name = 'guam-cnmi', offset_value = 3.73)
+winter_condition_offset(df = reef_grid_sst, crw_vs_region_name = 'howland-baker', offset_value = 19.25)
+winter_condition_offset(df = reef_grid_sst, crw_vs_region_name = 'johnston', offset_value = 2.85)
+winter_condition_offset(df = reef_grid_sst, crw_vs_region_name = 'samoas', offset_value = 4.00)
+winter_condition_offset(df = reef_grid_sst, crw_vs_region_name = 'gbr', offset_value = 1.95)
+winter_condition_offset(df = reef_grid_sst, crw_vs_region_name = 'hawaii', offset_value = 2.73)
+winter_condition_offset(df = reef_grid_sst, crw_vs_region_name = 'jarvis', offset_value = 18.96)
+winter_condition_offset(df = reef_grid_sst, crw_vs_region_name = 'palmyra-kingman', offset_value = 7.01)
+winter_condition_offset(df = reef_grid_sst, crw_vs_region_name = 'wake', offset_value = 4.01)
 
-# nowcasts
-# same as above, create once data is updated
+# save data --------------------------------------------------
+reef_grid_sst.to_csv('../compiled_data/grid_covariate_data/grid_with_sst_metrics.csv', index = False)
 
-# create new data frame
-sst90d_df = pd.DataFrame()
-
-# forecasts
-for j in range(len(forecast_days)):
-  # for each ensemble
-  for k in range(28):
-      x = sst90d_vals[forecast_days[j], k, :]
-      x = np.ma.filled(x.astype(float), np.nanmedian(x))
-      
-      # create data frame
-      tmp_df = pd.DataFrame(sst90d_id)
-      tmp_df['Date'] = firstday + DT.timedelta(days = forecast_days[j])
-      tmp_df['SST_90dMean'] = x
-      tmp_df['ensemble'] = k + 1
-      tmp_df['type'] = 'forecast'
-      
-      # combine data 
-      sst90d_df = sst90d_df.append(pd.DataFrame(data = tmp_df), ignore_index=True)
-
-
-# combine and save sst metrics -------------------------------------------------
-# need to figure out how to join properly
-
-#reef_grid_sst = reef_grid_sst.join(sst90d_df, on = ["ID", "Date", "ensemble", "type"])
-reef_grid_sst = pd.merge(hs_df, 
-                         sst90d_df, 
-                         how = 'left', 
-                         on = ['ID',
-                               'Date',
-                               'ensemble',
-                               'type']
-                         )
-
-reef_grid_sst.to_csv('../compiled_data/grid_covariate_data/grid_with_sst_metrics.csv',
-                     index = False)

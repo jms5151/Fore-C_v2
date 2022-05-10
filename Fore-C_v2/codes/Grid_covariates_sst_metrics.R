@@ -21,10 +21,6 @@ child_ftp_filepath <- paste0(parent_ftp_filepath, parent_file, '/')
 
 files <- list_ftp_files(ftp_path = child_ftp_filepath)
 
-# may need this, seems to be some weird issue with most recent date, check
-# with Gang
-files <- files[grep("reef-id", files)]
-
 # load and format data ------------------------------------------------
 
 # create empty data frame
@@ -95,6 +91,8 @@ for(j in files){
   file.remove(j)
   cat("finished ", j, '\n')
 }
+
+# files <- files[which(files == j):length(files)]
 
 # reshape files ----------------------------------------------
 reef_grid_sst <- sst_metrics %>%
