@@ -6,6 +6,7 @@ load("../compiled_data/survey_data/WS_data_with_all_predictors.RData")
 source("codes/custom_functions/fun_subset_and_filter_pseudo_replicate_surveys.R")
 source("codes/custom_functions/fun_create_smote_datasets.R")
 
+
 # source co-variates to test
 source("codes/Initial_covariates_to_test_by_disease_and_region.R")
 

@@ -9,25 +9,16 @@ import os
 import netCDF4 as nc
 import pandas as pd
 import numpy as np
-
-# source custom function
-#import list_ftp_files from ../custom_functions/fun_ftp_download
-
 import requests
 from bs4 import BeautifulSoup
 
-def list_ftp_files(ftp_path):
-    reqs = requests.get(ftp_path)
-    soup = BeautifulSoup(reqs.text, 'html.parser')
-    urls = []
-    for link in soup.find_all('a'): 
-        urls.append(link.get('href'))
-    return urls
+# source custom functions
+from codes.custom_functions.fun_ftp_download import list_ftp_files
+from codes.custom_functions.fun_winter_condition_offset import winter_condition_offset
 
 # list weekly SST files -----------------------------------------------
 
 # list directories, named by date
-
 parent_ftp_filepath = 'https://www.star.nesdis.noaa.gov/pub/sod/mecb/crw/data/for_forec/shiny_app/'
 
 files = list_ftp_files(parent_ftp_filepath)
@@ -148,6 +139,7 @@ reef_grid_sst = sst_metrics.pivot_table(index = ['ID', 'Date', 'ensemble', 'type
 # Use near-real time Winter Condition for all forecast dates
 # There is only one near-real time date in each update, so we have used mean - 
 # If there are multiple near-real time dates, update code to use most recent date
+# this can also be removed once forecasted WDW are available
 reef_grid_sst['Winter_condition'] = reef_grid_sst.groupby('ID').transform(lambda x: x.fillna(x.mean()))
 
 # save
@@ -161,10 +153,6 @@ reefsDF = pd.read_csv('../compiled_data/spatial_data/grid.csv')
 reef_grid_sst = reef_grid_sst.merge(reefsDF, on = 'ID', how = 'left')
 
 # update Winter Condition based on region
-def winter_condition_offset(df, crw_vs_region_name, offset_value):
-    ind = df.index[df.CRW_VS_region == crw_vs_region_name].tolist()
-    df.loc[ind, 'Winter_condition'] = df.loc[ind, 'Winter_condition'] - offset_value
-
 winter_condition_offset(df = reef_grid_sst, crw_vs_region_name = 'guam-cnmi', offset_value = 3.73)
 winter_condition_offset(df = reef_grid_sst, crw_vs_region_name = 'howland-baker', offset_value = 19.25)
 winter_condition_offset(df = reef_grid_sst, crw_vs_region_name = 'johnston', offset_value = 2.85)

@@ -32,6 +32,7 @@ all_files = os.listdir(forecast_dir)
 csv_files = list(filter(lambda f: f.endswith('.csv'), all_files))
 
 # should run in parallel for faster processing
+# may want to update file saving function, to update rather than fully re-write
 for i in len(csv_files):
     # open file
     dfx = pd.read_csv(forecast_dir + csv_files[i])

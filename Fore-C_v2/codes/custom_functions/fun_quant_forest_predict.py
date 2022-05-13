@@ -27,12 +27,12 @@ def qf_predict(df, regionGBRtrue, covars, family, final_mod, name, fileName2):
     
     for pred in final_mod.estimators_:
         temp = pd.Series(pred.predict(df3).round(2))
-        pred_Q = pd.concat([pred_Q,temp],axis=1)
+        pred_Q = pd.concat([pred_Q,temp], axis=1)
     
     # calculate quantile values
     RF_actual_pred = pd.DataFrame()
     
-    quantiles = [0.05, 0.75, 0.95] # same as used in R, but maybe we want 0.5, 0.75, 0.95?
+    quantiles = [0.50, 0.75, 0.90] 
     
     for q in quantiles:
         s = pred_Q.quantile(q = q, axis = 1)
@@ -47,7 +47,7 @@ def qf_predict(df, regionGBRtrue, covars, family, final_mod, name, fileName2):
     id_vars = ["ID", "Latitude", "Longitude", "Region", "Date", "ensemble", "type"]
     
     # concat original data frame of id vars with predictions
-    dz_final = pd.concat([df2[id_vars], RF_actual_pred], axis=1) 
+    dz_final = pd.concat([df2[id_vars], RF_actual_pred], axis = 1) 
 
     fileName2_full = forecast_save + name + '_' + fileName2
     dz_final.to_csv(fileName2_full, index = False)
