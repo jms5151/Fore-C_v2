@@ -1,121 +1,109 @@
-# load data
-load("../compiled_data/survey_data/GA_data_with_all_predictors.RData")
-load("../compiled_data/survey_data/WS_data_with_all_predictors.RData")
-
-# source custom functions
-source("codes/custom_functions/fun_subset_and_filter_pseudo_replicate_surveys.R")
-source("codes/custom_functions/fun_create_smote_datasets.R")
-
-
-# source co-variates to test
-source("codes/Initial_covariates_to_test_by_disease_and_region.R")
+# Create SMOTE datasets for unbalanced data
 
 # set destination directory for smote datasets
 dest_dir <- "../compiled_data/survey_data/smote_datasets/"
 
-# load library
-library(tidyverse)
+# load data
+load("../compiled_data/survey_data/GA_data_with_all_predictors.RData")
+load("../compiled_data/survey_data/WS_data_with_all_predictors.RData")
 
-# subset survey data
-ga_pac <- subset_and_filter_pseudo_replicates(df = GA_data_with_all_predictors, 
-                                              regionGBR = FALSE, 
-                                              family = "Poritidae", 
-                                              yvar = "p", 
-                                              dz_vars = ga_pac_vars
-                                              )
+# source co-variates to test
+source("codes/Initial_covariates_to_test_by_disease_and_region.R")
 
+# source custom functions
+source("codes/custom_functions/fun_subset_df.R")
+source("codes/custom_functions/fun_filter_pseudo_replicates.R")
+source("codes/custom_functions/fun_create_smote_datasets.R")
+source("codes/custom_functions/fun_split_df_train_test.R")
 
-ga_gbr <- subset_and_filter_pseudo_replicates(df = GA_data_with_all_predictors, 
-                                              regionGBR = TRUE, 
-                                              family = NA, 
-                                              yvar = "Y", 
-                                              dz_vars = ga_gbr_vars
-                                              )
+# combine functions for workflow
+surveys_to_test_train <- function(df, regionGBR, family, dz_vars, yVar, threshold){
+  # Step 1. Subset all surveys
+  x <- subset_df(
+    df = df
+    , regionGBR = regionGBR
+    , family = family
+    , dz_vars = dz_vars
+    )
+  # Step 2. Remove surveys that are conducted too closely in space and time
+  x2 <- filter_pseudo_replicates(df = x)
+  # Step 3. Create SMOTE datasets
+  x3 <- create_smote_df(df = x2, yVar = yVar, threshold = threshold)
+  # Step 4. Split data into training and testing datasets
+  x4 <- split_train_test_dfs(df = x3, yVar = yVar)
+  # return df
+  x4
+}
 
-ws_pac_acr <- subset_and_filter_pseudo_replicates(df = WS_data_with_all_predictors,
-                                                  regionGBR = FALSE,
-                                                  family = "Acroporidae",
-                                                  yvar = "p",
-                                                  dz_vars = ws_pac_acr_vars
-                                                  )
-
-ws_gbr <- subset_and_filter_pseudo_replicates(df = WS_data_with_all_predictors, 
-                                              regionGBR = TRUE, 
-                                              family = NA, 
-                                              yvar = "Y", 
-                                              dz_vars = ws_gbr_vars
-                                              )
-
-
-
-
-# set data up to loop through 
-dz_dfs <- list(ga_pac,
-               ga_gbr,
-               ws_pac_acr,
-               ws_gbr
-               )
-
-dz_names <- list("ga_pac",
-                 "ga_gbr",
-                 "ws_pac_acr",
-                 "ws_gbr"
-                 )
-
-dzVars <- list(ga_pac_vars,
-               ga_gbr_vars,
-               ws_pac_acr_vars,
-               ws_gbr_vars
-               )
-
-
-region <- rep(c("pac", "gbr"), 2)
-
-# set threshold levels to loop through, differs by region because of survey design
-prev_thresh_levels <- c(0, 0.05, 0.10, 0.15, 0.20) 
-
-count_thresh_levels <- c(0, 5, 10, 15) 
-
-# create SMOTE data sets
-for(i in 1:length(dz_dfs)){
-  # use different response variables based on region
-  if(region[i] == "gbr"){
-    thresh_levels <- count_thresh_levels
-    response <- "Y"
-  } else {
-    thresh_levels <- prev_thresh_levels
-    response <- "p"
-  }
-  for(j in 1:length(thresh_levels)){
-    # use different filenames based on region
-    if(region[i] == "gbr"){
-      fileName <- paste0(dest_dir, 
-                         dz_names[i], 
-                         "_with_predictors_smote_", 
-                         thresh_levels[j], 
-                         "_count"
-                         )
-      
+# create function to loop through thresholds
+smote_across_thresholds <- function(df, regionGBR, family, dz_vars, yVar, thresholds, fileName){
+  for(i in thresholds){
+    smote_df = surveys_to_test_train(
+      df = df
+      , regionGBR = regionGBR
+      , family = family
+      , dz_vars = dz_vars
+      , yVar = yVar
+      , threshold = i
+      )
+    
+    # create filenames
+    if(regionGBR == FALSE){
+      thsh = i * 100
     } else {
-      fileName <- paste0(dest_dir, 
-                         dz_names[i], 
-                         "_with_predictors_smote_", 
-                         thresh_levels[j] * 100, 
-                         "_prev"
-                         )
+      thsh = i
     }
-
-    # create smote dataset
-    smote_df <- create_smote_df(df = dz_dfs[[i]],
-                                dz_vars = dzVars[[i]],
-                                responseVar = response,
-                                threshold = thresh_levels[j])
-    # save as .Rdata file
-    fileName1 <- paste0(fileName, ".RData")
-    save(smote_df, file = fileName1)
-    # save as .csv
-    fileName2 <- paste0(fileName, ".csv")
-    write.csv(smote_df, file = fileName2, row.names = F)
+    trainfilename = paste0(dest_dir, fileName, '_smote_train_', thsh, '.csv')
+    testfilename = paste0(dest_dir, fileName, '_smote_test_', thsh, '.csv')
+    
+    # save data
+    write.csv(smote_df[[1]], trainfilename, row.names = F)
+    write.csv(smote_df[[2]], testfilename, row.names = F)
   }
 }
 
+# Create train/test SMOTE datasets for each disease-region-threshold combination  
+
+# GA Pacific 
+smote_across_thresholds(
+  df = GA_data_with_all_predictors
+  , regionGBR = FALSE
+  , family = 'Poritidae'
+  , dz_vars = ga_pac_vars
+  , yVar = 'p'
+  , thresholds = c(0.01, 0.05, 0.10, 0.15, 0.20)
+  , fileName = 'ga_pac'
+)
+
+# WS Pacific 
+smote_across_thresholds(
+  df = WS_data_with_all_predictors
+  , regionGBR = FALSE
+  , family = 'Acroporidae'
+  , dz_vars = ws_pac_acr_vars
+  , yVar = 'p'
+  , thresholds = c(0.01, 0.05, 0.10)
+  , fileName = 'ws_pac_acr'
+)
+
+# GA GBR 
+smote_across_thresholds(
+  df = GA_data_with_all_predictors
+  , regionGBR = TRUE
+  , family = NA
+  , dz_vars = ga_gbr_vars
+  , yVar = 'Y'
+  , thresholds = c(1, 5, 10, 15) 
+  , fileName = 'ga_gbr'
+  )
+
+# WS GBR 
+smote_across_thresholds(
+  df = WS_data_with_all_predictors
+  , regionGBR = TRUE
+  , family = ''
+  , dz_vars = ws_gbr_vars
+  , yVar = 'Y'
+  , thresholds = c(1, 5, 10)
+  , fileName = 'ws_gbr'
+)
