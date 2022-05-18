@@ -59,9 +59,15 @@ source("./codes/Surveys_create_smote_datasets.R")
 # this code takes a long time to run FYI
 source("./codes/Model_selection_with_quantile_forests.R")
 
+# summarize results of model selection
+source("./codes/Model_selection_summarize_results.R")
+
+# re-run final models and save model objects
+
+
 # maybe create code to save and compare output from best models
 # at each level of smote
-source("./codes/Model_plots_covariates_vs_R2_across_smote_datasets.R")
+# source("./codes/Model_plots_covariates_vs_R2_across_smote_datasets.R")
 
 # plot and save R2 for best and most parsimonious models 
 # create csv with R2 and covars for each, to plot against each other

@@ -24,26 +24,32 @@ updated_vars <- function(x, namesToKeep){
 }
 
 # model selection function --------------------------------
-mod_select <- function(df, dz_vars, responseVar, varToKeep, DFfileName){
+mod_select <- function(x_train, y_train, x_test, y_test, dz_vars, DFfileName){
   create_data_frame(DFfileName, c("AdjR2", "Num_vars", "Model_variables"))
-  tt_data <- subset_and_split_sample(df, dz_vars, responseVar)
-  while(length(dz_vars) > 3){
-    x <- var_selection(tt_data[[1]], 
-                       unlist(tt_data[[2]]), 
-                       tt_data[[3]], 
-                       unlist(tt_data[[4]])
-    )
-    
+  
+  while(length(dz_vars) > 2){
+    x <- var_selection(x_train, 
+                       y_train, 
+                       x_test, 
+                       y_test)
+
     tmp_df <- data.frame(x[[2]]$adj.r.squared, length(dz_vars), toString(names(x[[1]])))
+    
     write.table(tmp_df, 
-                file=DFfileName, 
+                file = DFfileName, 
                 row.names = F, 
                 sep = ",", 
                 col.names = !file.exists(DFfileName), 
                 append = T)
     
-    dz_vars <- updated_vars(x[[1]], varToKeep)
-    tt_data <- update_sample_split_vars(tt_data, dz_vars)
+    dz_vars <- updated_vars(x[[1]], 'Month')
+    
+    # update data
+    x_train <- x_train[, dz_vars]
+    x_test <- x_test[, dz_vars]
+    
+    # print progress
+    cat('finished', dz_name, 'with', length(dz_vars), 'vars\n')
   }
 }
 

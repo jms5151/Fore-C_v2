@@ -53,6 +53,11 @@ smote_across_thresholds <- function(df, regionGBR, family, dz_vars, yVar, thresh
     } else {
       thsh = i
     }
+    
+    if(nchar(thsh) == 1){
+      thsh <- as.character(paste0('0', thsh))
+    }
+    
     trainfilename = paste0(dest_dir, fileName, '_smote_train_', thsh, '.csv')
     testfilename = paste0(dest_dir, fileName, '_smote_test_', thsh, '.csv')
     
