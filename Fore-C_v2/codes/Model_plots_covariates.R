@@ -26,6 +26,11 @@ for(i in 1:nrow(mods)){
 }
 
 # model objects to loop through -------------------------
+ga_gbr <- readRDS('../model_objects_new/ga_gbr.rds')
+ga_pac <- readRDS('../model_objects_new/ga_pac.rds')
+ws_gbr <- readRDS('../model_objects_new/ws_gbr.rds')
+ws_pac_acr <- readRDS('../model_objects_new/ws_pac.rds')
+
 mods_list <- list(ga_gbr,
                   ga_pac,
                   ws_gbr,
