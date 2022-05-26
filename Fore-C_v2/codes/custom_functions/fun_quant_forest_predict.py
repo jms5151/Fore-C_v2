@@ -4,30 +4,39 @@ Created on Thu Dec  9 13:16:31 2021
 
 @author: jamie
 """
+import os
 import pandas as pd
 
-# set up directory filepaths
-forecast_save = "../compiled_data/forecast_outputs/"
-
-
-def qf_predict(df, regionGBRtrue, covars, family, final_mod, name, fileName2):
+def qf_new_data_subset(df, regionGBRtrue, family, final_mod):
     # subset data by region and variables in model
     if regionGBRtrue == True:
-        df2 = df.loc[df['Region'].str.contains('gbr')]
-    # need to test this with Pacific data
+        coral_cov = 'Coral_cover_' + family
+        df['Coral_cover'] = df[coral_cov]
+        df = df[df['Region'] == 'gbr']
     else:
-        col_size = "Median_colony_size_" + family
+        col_size = 'Median_colony_size_' + family
         df['Median_colony_size'] = df[col_size]
-        cv_size = "CV_colony_size_" + family
+        cv_size = 'CV_colony_size_' + family
         df['CV_colony_size'] = df[cv_size]
-        df2 = x.loc[~x['Region'].str.contains('gbr')]
-    df3 = df2[covars]
+        df = df[df['Region'] != 'gbr']
+    id_vars = ["ID", "Latitude", "Longitude", "Region", "Date", "ensemble", "type"]
+    list_covars = final_mod.feature_names_in_.tolist()
+    cols_to_keep = id_vars + list_covars
+    df = df[cols_to_keep]
+    df = df.dropna()
+    return df
+
+def qf_predict(df, final_mod):
+    df2 = df.copy(deep = True)
+    list_covars = final_mod.feature_names_in_.tolist()
+    df2 = df2[list_covars]
+    
     # run model
     pred_Q = pd.DataFrame()
     
     for pred in final_mod.estimators_:
-        temp = pd.Series(pred.predict(df3).round(2))
-        pred_Q = pd.concat([pred_Q,temp], axis=1)
+        temp = pd.Series(pred.predict(df2.values).round(2))
+        pred_Q = pd.concat([pred_Q, temp], axis = 1)
     
     # calculate quantile values
     RF_actual_pred = pd.DataFrame()
@@ -39,15 +48,62 @@ def qf_predict(df, regionGBRtrue, covars, family, final_mod, name, fileName2):
         RF_actual_pred = pd.concat([RF_actual_pred, s], axis = 1, sort = False)
     
     # rename columns
-    RF_actual_pred.rename(columns = {0.05:'Lwr',
+    RF_actual_pred.rename(columns = {0.50:'Lwr',
                                      0.75:'value',
-                                     0.95:'Upr'}, 
+                                     0.90:'Upr'}, 
                           inplace = True)
     
     id_vars = ["ID", "Latitude", "Longitude", "Region", "Date", "ensemble", "type"]
     
     # concat original data frame of id vars with predictions
-    dz_final = pd.concat([df2[id_vars], RF_actual_pred], axis = 1) 
+    dz_final = pd.concat([df[id_vars].reset_index(drop=True), RF_actual_pred.reset_index(drop=True)], axis = 1) 
+    
+    return dz_final
 
-    fileName2_full = forecast_save + name + '_' + fileName2
-    dz_final.to_csv(fileName2_full, index = False)
+
+def qf_predict_new(df, regionGBRtrue, family, final_mod):
+    x = qf_new_data_subset(df = df, regionGBRtrue = regionGBRtrue, family = family, final_mod = final_mod)
+    x2 = qf_predict(df = x, final_mod = final_mod)
+    return x2    
+
+def update_forecasts(df_filepath, new_df):
+    # if data already exist, load file
+    if os.path.exists(df_filepath):
+        old_df = pd.read_csv(df_filepath)
+        # if there are 12 dates of NRT predictions, remove earliest
+        nowcast_dates = old_df.Date[(old_df['type'] == 'nowcast')].unique()
+        if len(nowcast_dates) == 12:
+            oldest_prediction_date = nowcast_dates.min()
+            old_df.drop(old_df[old_df['Date'] == oldest_prediction_date].index, inplace = True)
+        # remove forecasts
+        old_df.drop(old_df[old_df['type'] == 'forecast'].index, inplace = True)
+        # add updated forecasts
+        updated_forecast = old_df.append(new_df)
+    else:
+        updated_forecast = new_df
+    return updated_forecast
+
+def combine_regional_forecasts(gbr_df, pac_df):
+    # combine, group, and summarise
+    forecast = gbr_df.append(
+        pac_df
+        ).drop(
+            ['ensemble'], axis=1
+            ).groupby(
+                ['ID', 'Latitude', 'Longitude', 'Region', 'Date', 'type']
+                ).quantile(
+                    q = 0.90
+                    ).reset_index()
+    
+    # format predictions
+    gbr_ind = forecast.index[forecast['Region'] == 'gbr'].tolist()
+    pac_ind = forecast.index[forecast['Region'] != 'gbr'].tolist()
+    
+    # Make values for Pacific model a percent
+    forecast.loc[pac_ind, ('value', 'Lwr', 'Upr')] = forecast.loc[pac_ind, ('value', 'Lwr', 'Upr')].multiply(100).round()
+    
+    # Make values for GBR model integers
+    forecast.loc[gbr_ind, ('value', 'Lwr', 'Upr')] = forecast.loc[gbr_ind, ('value', 'Lwr', 'Upr')].round()
+    
+    # return df
+    return forecast

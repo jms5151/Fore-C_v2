@@ -56,16 +56,19 @@ for i in range(len(oc_doy)):
     # add to ocean color dataset
     oc_metrics = oc_metrics.append(tmp_df)
 
+# add new column for variability
+oc_metrics['Three_Week_Kd_Variability'] = oc_metrics['Three_week_kd490_90th'] - oc_metrics['Three_Week_Kd_Median']
+
 # change pixel ID from float to integer
 oc_metrics['ID'] = oc_metrics['ID'].astype(int)
 
 # fill NaN with pixel-specific mean (across all dates)
 oc_metrics['Three_Week_Kd_Median'] = oc_metrics['Three_Week_Kd_Median'].fillna(oc_metrics.groupby('ID')['Three_Week_Kd_Median'].transform('mean'))
-oc_metrics['Three_week_kd490_90th'] = oc_metrics['Three_week_kd490_90th'].fillna(oc_metrics.groupby('ID')['Three_week_kd490_90th'].transform('mean'))
+oc_metrics['Three_Week_Kd_Variability'] = oc_metrics['Three_Week_Kd_Variability'].fillna(oc_metrics.groupby('ID')['Three_Week_Kd_Variability'].transform('mean'))
 
 # fill remaining NaN with date-specific mean (across all pixels)
 oc_metrics['Three_Week_Kd_Median'] = oc_metrics['Three_Week_Kd_Median'].fillna(oc_metrics.groupby('Date')['Three_Week_Kd_Median'].transform('mean'))
-oc_metrics['Three_week_kd490_90th'] = oc_metrics['Three_week_kd490_90th'].fillna(oc_metrics.groupby('Date')['Three_week_kd490_90th'].transform('mean'))
+oc_metrics['Three_Week_Kd_Variability'] = oc_metrics['Three_Week_Kd_Variability'].fillna(oc_metrics.groupby('Date')['Three_Week_Kd_Variability'].transform('mean'))
 
 # save
 oc_metrics.to_csv('../compiled_data/grid_covariate_data/grid_with_three_week_oc_metrics.csv', index = False)

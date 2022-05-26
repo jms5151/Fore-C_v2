@@ -18,8 +18,6 @@ for(i in 1:nrow(best_models_final)){
   df_test <- read.csv(test_name)
   
   # format
-  df_test$Day <- ifelse(length(df_test$Day) == 2, df_test$Day, paste0('0', df_test$Day))
-  df_test$Month <- ifelse(length(df_test$Month) == 2, df_test$Month, paste0('0', df_test$Month))
   df_test$Date <- paste(df_test$Year, df_test$Month, df_test$Day, sep = '-')
   df_test$Date <- as.Date(df_test$Date, '%Y-%m-%d')
   
@@ -34,7 +32,7 @@ for(i in 1:nrow(best_models_final)){
 validation_df <- validation_df[!duplicated(validation_df), ]
 
 # save 
-write.csv(validation_df, file = paste0(save_dir, 'forec_validation_df.csv'), row.names = F)
+# write.csv(validation_df, file = paste0(save_dir, 'forec_validation_df.csv'), row.names = F)
 
 # find nearest reef grid point -------------------------------------------------
 # library(sp)

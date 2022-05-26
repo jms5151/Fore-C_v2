@@ -13,7 +13,9 @@ create_smote_df <- function(df, yVar, threshold){
     )
   # format
   dz_smote <- as.data.frame(dz_smote$data)
+  dz_smote$Day <- as.integer(round(dz_smote$Day))
   dz_smote$Month <- as.integer(round(dz_smote$Month))
+  dz_smote$Year <- as.integer(round(dz_smote$Year))
   # sum(dz_smote$Health_status == 0)
   # sum(dz_smote$Health_status == 1)
   dz_smote <- dz_smote %>% select(-c(Health_status, class))

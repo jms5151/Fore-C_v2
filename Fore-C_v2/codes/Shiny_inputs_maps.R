@@ -29,7 +29,7 @@ pal <- colorBin(cols,
                 na.color = "transparent"
                 )
 
-legendLabels <- c("No stress", 
+legendLabels <- c("No/low risk", 
                   "Watch", 
                   "Warning", 
                   "Alert Level 1", 

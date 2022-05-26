@@ -186,7 +186,7 @@ ws_forecast$drisk[ws_forecast$Region == "gbr" & ws_forecast$value > 20] <- 4
 
 ws_forecast$drisk[ws_forecast$Region != "gbr" & ws_forecast$value >= 0 & ws_forecast$value <= 1] <- 0
 ws_forecast$drisk[ws_forecast$Region != "gbr" & ws_forecast$value > 1 & ws_forecast$value <= 5] <- 1
-ws_forecast$drisk[ws_forecast$Region != "gbr" & ws_forecast$value > 5 & ws_forecast$value <= 0] <- 2
+ws_forecast$drisk[ws_forecast$Region != "gbr" & ws_forecast$value > 5 & ws_forecast$value <= 10] <- 2
 ws_forecast$drisk[ws_forecast$Region != "gbr" & ws_forecast$value > 10 & ws_forecast$value <= 15] <- 3
 ws_forecast$drisk[ws_forecast$Region != "gbr" & ws_forecast$value > 15] <- 4
 

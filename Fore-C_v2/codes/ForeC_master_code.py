@@ -23,35 +23,25 @@ import runpy
 
 # summarize model results
 # not sure if runpy is the best way to do this yet
-runpy.run_path(path_name = './codes/Model_summarize_results_across_smote_datasets.py')
+#runpy.run_path(path_name = './codes/Model_summarize_results_across_smote_datasets.py')
 
 # create models ---------------------------------------------------------
-runpy.run_path(path_name = './codes/Model_selection_with_quantile_forests.py')
+runpy.run_path(path_name = './codes/Model_save_best.py')
 
+# Co-variates data pre-processing for grid --------------------------- 
 
-# # Co-variates data pre-processing for grid --------------------------- 
+# compile NRT & forecasted SST metrics
+runpy.run_path(path_name = './codes/Grid_covariates_sst_metrics.py')
 
-runpy.run_path(path_name = "./codes/Grid_covariates_sst_metrics.py")
+# compile seasonal ocean color metrics
+runpy.run_path(path_name = './codes/Grid_covariates_ocean_color_dynamic.py')
 
-## not sure these are needed because they are not changing
-# source("./codes/Grid_covariates_nighttime_lights.R")
+# compile predictor data
+runpy.run_path(path_name = './codes/Grid_concat_dynamic_covariates.py')
 
-# source("./codes/Grid_covariates_fish_and_benthos.R")
-##
-
-# source("./codes/Grid_covariates_ocean_color.R")
-
-# # compile predictor data
-# source("./codes/Grid_concat_static_covariates.R")
-
-###############################################################
-###### Save this output as csv in R and then continue ? #######
-###############################################################
-# source("./codes/Grid_concat_dynamic_covariates.R")
-
-# # Forecasting --------------------------------------------------------
+# Forecasting --------------------------------------------------------
 # # After first forecast, each week only need to update two weeks of predictions
-runpy.run_path(path_name = "./codes/Run_model_forecasts.py")
+runpy.run_path(path_name = './codes/Run_model_forecasts.py')
 
 # # create code to update forecasts?
 # # source("./codes/Update_model_forecasts.R")

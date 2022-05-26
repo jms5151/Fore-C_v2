@@ -75,53 +75,33 @@ gauge_data$name <- factor(gauge_data$name,
 # subset and save 
 # GBR - GA
 gauge_gbr_ga <- subset(gauge_data, Disease == "Growth anomalies" & Region == "gbr")
-# save(gauge_gbr_ga, 
-#      file = "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/gauge_data_gbr_ga.RData")
 
 # GBR - WS
 gauge_gbr_ws <- subset(gauge_data, Disease == "White syndromes" & Region == "gbr")
-# save(gauge_gbr_ws, 
-#      file = "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/gauge_data_gbr_ws.RData")
 
 # Hawaii - GA
 gauge_hi_ga <- subset(gauge_data, Disease == "Growth anomalies" & Region == "hawaii")
-# save(gauge_hi_ga, 
-#      file = "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/gauge_data_hi_ga.RData")
 
 # Hawaii - WS
 gauge_hi_ws <- subset(gauge_data, Disease == "White syndromes" & Region == "hawaii")
-# save(gauge_hi_ws, 
-#      file = "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/gauge_data_hi_ws.RData")
 
 # PRIAs - GA
 gauge_prias_ga <- subset(gauge_data, Disease == "Growth anomalies" & Region == "prias")
-# save(gauge_prias_ga, 
-#      file = "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/gauge_data_prias_ga.RData")
 
 # PRIAs - WS
 gauge_prias_ws <- subset(gauge_data, Disease == "White syndromes" & Region == "prias")
-# save(gauge_prias_ws, 
-#      file = "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/gauge_data_prias_ws.RData")
 
 # Samoas - GA
 gauge_samoas_ga <- subset(gauge_data, Disease == "Growth anomalies" & Region == "samoas")
-# save(gauge_samoas_ga, 
-#      file = "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/gauge_data_samoas_ga.RData")
 
 # Samoas - WS
 gauge_samoas_ws <- subset(gauge_data, Disease == "White syndromes" & Region == "samoas")
-# save(gauge_samoas_ws, 
-#      file = "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/gauge_data_samoas_ws.RData")
 
 # Guam/CNMI - GA
 gauge_cnmi_ga <- subset(gauge_data, Disease == "Growth anomalies" & Region == "guam_cnmi")
-# save(gauge_cnmi_ga, 
-#      file = "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/gauge_data_cnmi_ga.RData")
 
 # Guam/CNMI - WS
 gauge_cnmi_ws <- subset(gauge_data, Disease == "White syndromes" & Region == "guam_cnmi")
-# save(gauge_cnmi_ws, 
-#      file = "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/gauge_data_cnmi_ws.RData")
 
 
 # create plots -----------------------------------------------------------------
@@ -184,6 +164,7 @@ gauge_ws_prias <- individual_gauges(gauge_prias_ws) %>%
     )
   )
 
+
 xlab_placement = 0
 ylab_placement = 0.9
 fontSize = 11
@@ -215,8 +196,9 @@ gaugePlots <- subplot(
     ),
   gauge_ws_cnmi %>%
     layout(
-      annotations = c(aList,
-                      text = "Guam/CNMI - white syndromes"
+      annotations = c(
+        aList,
+        text = "Guam/CNMI - white syndromes"
       )
     ),
   gauge_ga_cnmi %>%
@@ -264,17 +246,26 @@ gaugePlots <- subplot(
   gauge_ws_prias %>%
     layout(
       annotations = c(
-        aList, 
+        aList,
         text = "PRIAs - white syndromes"
       )
     ),
   nrows = 10,
   margin = 0.01,
-  heights = rep(0.1, 10),
-  shareX = TRUE
-) %>% 
+  heights = rep(0.1, 10)
+  , titleX = TRUE
+  # , shareX = TRUE
+  ) %>% 
   config(
     displayModeBar = F
-  )
+  ) %>%
+  layout(
+    margin = list(
+      t = 0,
+      b = 60, 
+      l = 0,
+      r = 0
+      )
+  ) 
 
 save(gaugePlots, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/gaugePlots.RData")

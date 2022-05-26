@@ -9,8 +9,6 @@ import os
 import netCDF4 as nc
 import pandas as pd
 import numpy as np
-import requests
-from bs4 import BeautifulSoup
 
 # source custom functions
 from codes.custom_functions.fun_ftp_download import list_ftp_files
@@ -118,14 +116,8 @@ for j in files:
     sst_metrics = sst_metrics.append(tmp_df)
     # close nc file
     x.close()
-    os.remove(path + j)
     # print progress
     print('finished', j)
-
-# delete directory of weekly CRW files
-# for m in files:
-#     os.remove(path + m)
-os.rmdir(path)
 
 # sst_metrics.to_csv('../compiled_data/grid_covariate_data/grid_with_sst_metrics.csv', index=False)
 
@@ -136,15 +128,17 @@ reef_grid_sst = sst_metrics.pivot_table(index = ['ID', 'Date', 'ensemble', 'type
                                           , columns = 'temp_metric_name'
                                           , values = 'value').reset_index()
 
+# check that there are no missing values
+# reef_grid_sst.isnull().sum()
+
 # Use near-real time Winter Condition for all forecast dates
 # There is only one near-real time date in each update, so we have used mean - 
 # If there are multiple near-real time dates, update code to use most recent date
 # this can also be removed once forecasted WDW are available
-reef_grid_sst['Winter_condition'] = reef_grid_sst.groupby('ID').transform(lambda x: x.fillna(x.mean()))
+#reef_grid_sst['Winter_condition'] = reef_grid_sst.groupby('ID').transform(lambda x: x.fillna(x.mean()))
 
 # save
-reef_grid_sst.to_csv('../compiled_data/grid_covariate_data/grid_with_sst_metrics.csv', index = False)
-# reef_grid_sst = pd.read_csv('../compiled_data/grid_covariate_data/grid_with_sst_metrics.csv')
+# reef_grid_sst.to_csv('../compiled_data/grid_covariate_data/grid_with_sst_metrics.csv', index = False)
 
 # load reef grid
 reefsDF = pd.read_csv('../compiled_data/spatial_data/grid.csv')
@@ -166,3 +160,7 @@ winter_condition_offset(df = reef_grid_sst, crw_vs_region_name = 'wake', offset_
 # save data --------------------------------------------------
 reef_grid_sst.to_csv('../compiled_data/grid_covariate_data/grid_with_sst_metrics.csv', index = False)
 
+# Delete directory of weekly CRW files
+for m in files:
+    os.remove(path + m)
+os.rmdir(path)
