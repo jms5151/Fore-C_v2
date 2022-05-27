@@ -120,6 +120,11 @@ ga_pac_scenarios <- add_scenario_levels(
   , scenarios_df = ga_pac_scenarios
 )
 
+# see if this fixes the problem
+for(k in 1:length(ga_pac_scenarios)){
+  ga_pac_scenarios$Response_level[ga_pac_scenarios$Response_level == ga_pac_development_levels[k] <- ga_pac_development_levels[k]
+}
+
 save(ga_pac_scenarios
      , file = paste0(scenarios_inputs_dir, "ga_pac_scenarios.RData"))
 

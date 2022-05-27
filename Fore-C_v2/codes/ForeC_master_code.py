@@ -40,14 +40,15 @@ runpy.run_path(path_name = './codes/Grid_covariates_ocean_color_dynamic.py')
 runpy.run_path(path_name = './codes/Grid_concat_dynamic_covariates.py')
 
 # Forecasting --------------------------------------------------------
-# # After first forecast, each week only need to update two weeks of predictions
+
+# run model predictions
 runpy.run_path(path_name = './codes/Run_model_forecasts.py')
 
-# # create code to update forecasts?
-# # source("./codes/Update_model_forecasts.R")
+# create model scenarios
+runpy.run_path(path_name = './codes/Create_scenarios.py')
 
-# # run scenarios
-# # source("./codes/Run_scenarios.R")
+# run scenarios
+runpy.run_path(path_name = './codes/Run_model_scenarios.py')
 
 # # Create shiny outputs -----------------------------------------------
 # source("./codes/Shiny_inputs_aggregate_predictions.R")

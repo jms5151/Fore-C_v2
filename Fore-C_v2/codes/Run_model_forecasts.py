@@ -5,12 +5,8 @@ Created on Thu Dec  9 11:27:48 2021
 @author: jamie
 """
 
-import os
 import pandas as pd
-import numpy as np
-from sklearn.ensemble import RandomForestRegressor
 import joblib
-import runpy
 
 # import custom predict function
 from codes.custom_functions.fun_quant_forest_predict import qf_predict_new, update_forecasts, combine_regional_forecasts
@@ -23,16 +19,6 @@ WS_Pacific_Model = joblib.load("../model_objects/ws_pac_acr.joblib")
 
 # load predictor data
 covariates = pd.read_csv('../compiled_data/forecast_inputs/grid_with_dynamic_predictors.csv')
-
-# # set up directory filepaths
-# forecast_dir = "../compiled_data/forecast_inputs/"
-
-# # list all csv files in forecast directory
-# all_files = os.listdir(forecast_dir)
-# csv_files = list(filter(lambda f: f.endswith('.csv'), all_files))
-
-# should run in parallel for faster processing
-# may want to update file saving function, to update rather than fully re-write
 
 # run forecasts by region-disease --------------------------------------------
 ga_gbr_forecasts = qf_predict_new(
