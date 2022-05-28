@@ -43,7 +43,6 @@ colnames(ga_pac) <- gsub("Poritidae_|_Poritidae", "", colnames(ga_pac))
 ga_pac_basevals_ID <- ga_pac[, c('ID'
                                  , 'Median_colony_size'
                                  , 'mean_cover'
-                                 , 'H_abund'
                                  , 'BlackMarble_2016_3km_geo.3'
                                  , 'value')]
 
@@ -95,46 +94,20 @@ ga_pac_scenarios <- add_scenario_levels(
   , scenarios_df = ga_pac_scenarios
 )
 
-# herbivorous fish
-ga_pac_herb_fish_levels <- seq(from = 0.1, to = 0.7, by = 0.1)
-
-ga_pac_scenarios <- add_scenario_levels(
-  df = ga_pac
-  , scenario_levels = ga_pac_herb_fish_levels
-  , col_name = 'H_abund'
-  , response_name = 'Fish'
-  , scenarios_df = ga_pac_scenarios
-)
-
 # coastal development
-ga_pac_development_levels_scaled <- seq(from = 0.1, to = 1, by = 0.1)
 ga_pac_development_levels <- seq(from = 1, to = 255, length.out = length(ga_pac_development_levels_scaled))# 
 
 ga_pac_scenarios <- add_scenario_levels(
   df = ga_pac
   , scenario_levels = ga_pac_development_levels
-  # not sure if this will work, check later
-  # , scenario_levels_scaled = ga_pac_development_levels_scaled
   , col_name = 'BlackMarble_2016_3km_geo.3'
   , response_name = 'Development'
   , scenarios_df = ga_pac_scenarios
 )
 
-# see if this fixes the problem
-for(k in 1:length(ga_pac_scenarios)){
-  ga_pac_scenarios$Response_level[ga_pac_scenarios$Response_level == ga_pac_development_levels[k] <- ga_pac_development_levels[k]
-}
 
 save(ga_pac_scenarios
      , file = paste0(scenarios_inputs_dir, "ga_pac_scenarios.RData"))
-
-# ## USE LATER ## ---------------------------------------------
-# # pre-calculate disease risk change
-# ga_pac_scenarios$disease_risk_change <- round((ga_pac_scenarios$estimate - ga_pac_scenarios$value) * 100)
-# ga_pac_scenarios$disease_risk_change[ga_pac_scenarios$disease_risk_change < -100] <- 0
-# # save data to run and then replace with same name
-# save(ga_pac_scenarios, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ga_pac_scenarios.RData")
-## -----------------------------------------------------------
 
 # WS Pacific -------------------------------------
 ws_pac <- subset(ws_nowcast, Region != "gbr")
@@ -150,11 +123,10 @@ colnames(ws_pac) <- gsub("Acroporidae_|_Acroporidae", "", colnames(ws_pac))
 ws_pac_basevals_ID <- ws_pac[, c('ID'
                                  , 'Median_colony_size'
                                  , 'Long_Term_Kd_Median'
-                                 , 'Parrotfish_abund'
+                                 , 'mean_cover'
                                  , 'H_abund'
                                  , 'value')]
 
-# ws_pac_basevals_ID$value <- round(ws_pac_basevals_ID$value*100)
 ws_pac_basevals_ID$value <- round(ws_pac_basevals_ID$value)
 save(ws_pac_basevals_ID, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ws_pac_basevals_ID.RData")
 
@@ -202,14 +174,14 @@ ws_pac_scenarios <- add_scenario_levels(
   , scenarios_df = ws_pac_scenarios
 )
 
-# parrotfish
-ws_pac_parrotfish_levels <- seq(from = 0.0, to = 0.06, by = 0.01)
+# coral cover
+ws_pac_coral_cover_levels <- seq(from = 5, to = 65, by = 10) 
 
 ws_pac_scenarios <- add_scenario_levels(
   df = ws_pac
-  , scenario_levels = ws_pac_parrotfish_levels
-  , col_name = 'Parrotfish_abund'
-  , response_name = 'Parrotfish'
+  , scenario_levels = ws_pac_coral_cover_levels
+  , col_name = 'mean_cover'
+  , response_name = 'Coral cover'
   , scenarios_df = ws_pac_scenarios
 )
 
@@ -230,18 +202,14 @@ save(ws_pac_scenarios
 # GA GBR -----------------------------------------
 ga_gbr <- subset(ga_nowcast, Region == "gbr")
 
-ga_gbr_vars <- gsub("Coral_cover", "Coral_cover_all", ga_gbr_vars)
-
 ga_gbr <- ga_gbr %>%
-  left_join(nowcast_predictor_data[, c("ID", "Region", ga_gbr_vars)]) %>%
-  mutate("Coral_cover" = Coral_cover_all)
+  left_join(nowcast_predictor_data[, c("ID", "Region", ga_gbr_vars)])
 
 # Base values ---------------
 # Save base values for each pixel for covariates with sliders
 ga_gbr_basevals_ID <- ga_gbr[, c('ID'
                                  , 'Fish_abund'
-                                 , 'Three_Week_Kd_Variability'
-                                 , 'Coral_cover'
+                                 , 'Long_Term_Kd_Variability'
                                  , 'value')]
 
 save(ga_gbr_basevals_ID, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/ga_gbr_basevals_ID.RData")
@@ -303,19 +271,8 @@ ga_gbr_turbidity_levels <- seq(from = 0, to = 2, by = 0.1)
 ga_gbr_scenarios <- add_scenario_levels(
   df = ga_gbr
   , scenario_levels = ga_gbr_turbidity_levels
-  , col_name = 'Three_Week_Kd_Variability'
+  , col_name = 'Long_Term_Kd_Variability'
   , response_name = 'Turbidity'
-  , scenarios_df = ga_gbr_scenarios
-)
-
-# coral cover
-ga_gbr_coral_cover_levels <- seq(from = 5, to = 95, by = 10) 
-
-ga_gbr_scenarios <- add_scenario_levels(
-  df = ga_gbr
-  , scenario_levels = ga_gbr_coral_cover_levels
-  , col_name = 'Coral_cover'
-  , response_name = 'Coral cover'
   , scenarios_df = ga_gbr_scenarios
 )
 

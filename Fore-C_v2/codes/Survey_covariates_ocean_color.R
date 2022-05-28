@@ -3,7 +3,7 @@ library(tidyverse)
 library(modelr)
 
 # load data
-oc <- read.csv("raw_data/covariate_data/ocean_color/oc_matchup_columns_20211006_new_acute_metrics_survey_locations_new_cols_land.csv", head = T)
+oc <- read.csv("../raw_data/covariate_data/ocean_color/oc_matchup_columns_20211006_new_acute_metrics_survey_locations_new_cols_land.csv", head = T)
 
 # format 
 oc$Date <- as.Date(oc$Date, "%m/%d/%Y")

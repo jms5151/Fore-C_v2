@@ -36,14 +36,16 @@ lats <- oc$dim$lat$vals
 # create duplicate grid
 reef_grid_lt_oc <- reefsDF
 
+### Long term kd median and kd 90th seem to have the opposite labels, so treat
+# kd median as the 90th and vice versa
 # Long term kd median
-ltkdm <- ncvar_get(oc, varid = "long_term_kd490_median")
+ltkdm <- ncvar_get(oc, varid = "long_term_kd490_90th")
 reef_grid_lt_oc$Long_Term_Kd_Median <- extract_oc_data(variableMatrix = ltkdm,
                                                        reefgrid = reef_grid_lt_oc)
 # Long term kd 90th
-ltkd90 <- ncvar_get(oc, varid = "long_term_kd490_90th")
+ltkd90 <- ncvar_get(oc, varid = "long_term_kd490_median")
 Long_Term_Kd_90th <- extract_oc_data(variableMatrix = ltkd90,
-                                     reefgrid = reef_grid_lt_oc)
+                                                     reefgrid = reef_grid_lt_oc)
 # Long term kd variability
 reef_grid_lt_oc$Long_Term_Kd_Variability <- Long_Term_Kd_90th - reef_grid_lt_oc$Long_Term_Kd_Median
 

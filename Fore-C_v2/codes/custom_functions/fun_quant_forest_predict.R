@@ -38,11 +38,13 @@ qf_predict <- function(df, regionGBRtrue, family, final_mod, name, save_dir, fil
 # scenarios predictions
 qf_predict_scenarios <- function(df, regionGBRtrue, family, final_mod){
   # subset data by region and variables in model
-  if(regionGBRtrue == TRUE){
+  if(regionGBRtrue == TRUE & family == 'plating'){
     coral_cov <- paste0("Coral_cover_", family)
     df$Coral_cover <- pull(df, coral_cov)
     df2 <- subset(df, Region == "gbr")
-  } else {
+  } else if (regionGBRtrue == TRUE & family == 'all'){
+    df2 <- subset(df, Region == "gbr")
+    } else {
     # col_size <- paste0("Median_colony_size_", family)
     # df$Median_colony_size <- pull(df, col_size)
     # cv_size <- paste0("CV_colony_size_", family)

@@ -52,8 +52,8 @@ ga_pac_scenarios <- qf_predict_scenarios(df = ga_pac_scenarios
                                          )
 
 # adjust development levels to match shiny app (scaled values)
-ga_pac_development_levels_scaled <- seq(from = 0.1, to = 1, by = 0.1)
-ga_pac_development_levels <- round(seq(from = 1, to = 255, length.out = length(ga_pac_development_levels_scaled)))
+ga_pac_development_levels <- unique(ga_pac_scenarios$Response_level[ga_pac_scenarios$Response == 'Development'])
+ga_pac_development_levels_scaled <- seq(from = 0.1, to = 1, length.out = length(ga_pac_development_levels))
 
 for(i in 1:length(ga_pac_development_levels)){
   ga_pac_scenarios$Response_level[
