@@ -26,7 +26,7 @@ def qf_new_data_subset(df, regionGBRtrue, family, final_mod):
     df = df.dropna()
     return df
 
-def qf_predict(df, final_mod):
+def qf_predict(df, final_mod, id_vars):
     df2 = df.copy(deep = True)
     list_covars = final_mod.feature_names_in_.tolist()
     df2 = df2[list_covars]
@@ -53,15 +53,13 @@ def qf_predict(df, final_mod):
                                      0.90:'Upr'}, 
                           inplace = True)
     
-    id_vars = ["ID", "Latitude", "Longitude", "Region", "Date", "ensemble", "type"]
-    
     # concat original data frame of id vars with predictions
-    dz_final = pd.concat([df[id_vars].reset_index(drop=True), RF_actual_pred.reset_index(drop=True)], axis = 1) 
+    dz_final = pd.concat([df[id_vars].reset_index(drop = True), RF_actual_pred.reset_index(drop = True)], axis = 1) 
     
     return dz_final
 
 
-def qf_predict_new(df, regionGBRtrue, family, final_mod):
+def qf_predict_new(df, regionGBRtrue, family, final_mod, id_vars):
     x = qf_new_data_subset(df = df, regionGBRtrue = regionGBRtrue, family = family, final_mod = final_mod)
     x2 = qf_predict(df = x, final_mod = final_mod)
     return x2    
@@ -107,3 +105,39 @@ def combine_regional_forecasts(gbr_df, pac_df):
     
     # return df
     return forecast
+
+
+# scenarios predictions
+def qf_scenarios_data_subset(df, regionGBRtrue, family, final_mod):
+    # add family names back in
+    if regionGBRtrue == True:
+        coral_cov = 'Coral_cover_' + family
+        df[coral_cov] = df['Coral_cover']
+        df = df[df['Region'] == 'gbr']
+    else:
+        coral_cov = family + '_mean_cover'
+        df[coral_cov] = df['mean_cover']
+        col_size = 'Median_colony_size_' + family
+        df[col_size] = df['Median_colony_size']
+        df = df[df['Region'] != 'gbr']
+    df['predicted'] = df['value']
+    id_vars = ["ID", "Latitude", "Longitude", "Region", "Date", "predicted", "Response", "Response_level"]
+    list_covars = final_mod.feature_names_in_.tolist()
+    cols_to_keep = id_vars + list_covars
+    df = df[cols_to_keep]
+    df = df.dropna()
+    return df
+
+def qf_predict_scenarios(df, regionGBRtrue, family, final_mod, id_vars):
+    x = qf_scenarios_data_subset(df = df, regionGBRtrue = regionGBRtrue, family = family, final_mod = final_mod)
+    x2 = qf_predict(df = x, final_mod = final_mod, id_vars = id_vars)
+    if regionGBRtrue == True:
+        x2['disease_risk_change'] = (x2['value'] - x2['predicted']).round()
+    else:
+        x2['disease_risk_change'] = (x2['value'].multiply(100) - x2['predicted']).round()
+        risk_ind = x2.index[x2['disease_risk_change'] < -100].tolist()
+        x2.loc[risk_ind, 'disease_risk_change'] = -100
+    return x2   
+    
+    
+    

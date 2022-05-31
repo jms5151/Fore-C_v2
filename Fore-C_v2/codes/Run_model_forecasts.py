@@ -20,12 +20,16 @@ WS_Pacific_Model = joblib.load("../model_objects/ws_pac_acr.joblib")
 # load predictor data
 covariates = pd.read_csv('../compiled_data/forecast_inputs/grid_with_dynamic_predictors.csv')
 
+# forecast id variables
+forecast_id_vars = ["ID", "Latitude", "Longitude", "Region", "Date", "ensemble", "type"]
+
 # run forecasts by region-disease --------------------------------------------
 ga_gbr_forecasts = qf_predict_new(
     df = covariates
     , regionGBRtrue = True
     , family = 'all'
     , final_mod = GA_GBR_Model
+    , id_vars = forecast_id_vars
     )
 
 ga_pac_forecasts = qf_predict_new(
@@ -33,6 +37,7 @@ ga_pac_forecasts = qf_predict_new(
     , regionGBRtrue = False
     , family = 'Poritidae'
     , final_mod = GA_Pacific_Model
+    , id_vars = forecast_id_vars
     )
 
 ws_pac_forecasts = qf_predict_new(
@@ -40,6 +45,7 @@ ws_pac_forecasts = qf_predict_new(
     , regionGBRtrue = False
     , family = 'Acroporidae'
     , final_mod = WS_Pacific_Model
+    , id_vars = forecast_id_vars
     )
 
 ws_gbr_forecasts = qf_predict_new(
@@ -47,6 +53,7 @@ ws_gbr_forecasts = qf_predict_new(
     , regionGBRtrue = True
     , family = 'plating'
     , final_mod = WS_GBR_Model
+    , id_vars = forecast_id_vars
     )
 
 # combine data and format

@@ -61,3 +61,4 @@ final_cols <- colnames(
 grid_with_static_covariates <- grid_with_static_covariates[, final_cols]
 
 save(grid_with_static_covariates, file = "../compiled_data/grid_covariate_data/grid_with_static_covariates.RData")
+write.csv(grid_with_static_covariates, '../compiled_data/grid_covariate_data/grid_with_static_covariates.csv', row.names = F)

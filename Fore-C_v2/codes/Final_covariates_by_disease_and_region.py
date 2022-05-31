@@ -5,48 +5,24 @@ Created on Thu Dec  9 12:16:50 2021
 @author: jamie
 """
 
-# Initial co-variates to test in models for each disease and region
+import joblib
 
-# Growth anomalies Pacific -----------------------
-ga_pac_vars = ["Month",
-                 "Median_colony_size",
-                 "CV_colony_size",
-                 "Poritidae_mean_cover",
-                 "H_abund",
-                 "SST_90dMean",
-                 "Winter_condition",
-                 "Hot_snaps",
-                 "BlackMarble_2016_3km_geo.3",
-                 "Long_Term_Kd_Median"
-                 ]
+# open final model objects
+GA_GBR_Model = joblib.load("../model_objects/ga_gbr.joblib")
+GA_Pacific_Model = joblib.load("../model_objects/ga_pac.joblib")
+WS_GBR_Model = joblib.load("../model_objects/ws_gbr.joblib")
+WS_Pacific_Model = joblib.load("../model_objects/ws_pac_acr.joblib")
 
-# Growth anomalies GBR --------------------------
-ga_gbr_vars = ["Month",
-                 "Coral_cover",
-                 "Fish_abund",
-                 "SST_90dMean",
-                 "Winter_condition",
-                 "Hot_snaps",
-                 "Long_Term_Kd_Median",
-                 "Long_Term_Kd_Variability",
-                 "Three_Week_Kd_Median",
-                 "Three_Week_Kd_Variability"
-                ]
+# Growth anomalies GBR 
+ga_gbr_vars = GA_GBR_Model.feature_names_in_
 
-# White syndromes Pacific (Acroporidae) -------
-ws_pac_acr_vars = ["Month",
-                     "Median_colony_size",
-                     "Winter_condition",
-                     "Long_Term_Kd_Median",
-                     "Three_Week_Kd_Median"
-                   ]
+# Growth anomalies Pacific
+ga_pac_vars = GA_Pacific_Model.feature_names_in_
 
-# White syndreoms GBR -------------------------
-ws_gbr_vars = ["Month", 
-                 "Coral_cover", 
-                 "Fish_abund", 
-                 "Winter_condition",
-                 "Hot_snaps",
-                 "Three_Week_Kd_Variability"
-               ]
+# White syndreoms GBR 
+ws_gbr_vars = WS_GBR_Model.feature_names_in_
+
+# White syndromes Pacific (Acroporidae)
+ws_pac_acr_vars = WS_Pacific_Model.feature_names_in_
+
 

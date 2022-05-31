@@ -95,7 +95,7 @@ ga_pac_scenarios <- add_scenario_levels(
 )
 
 # coastal development
-ga_pac_development_levels <- seq(from = 1, to = 255, length.out = length(ga_pac_development_levels_scaled))# 
+ga_pac_development_levels <- seq(from = 1, to = 255, length.out = 11)# 
 
 ga_pac_scenarios <- add_scenario_levels(
   df = ga_pac
