@@ -53,7 +53,7 @@ agg_to_manage_zones_forecasts <- function(forecast, zone_polygon_with_id, diseas
   as.data.frame(x_agg)
 }
 
-agg_to_manage_zones_scenarios <- function(predictions, zone_polygon_with_id, fileName){
+agg_to_manage_zones_scenarios <- function(predictions, zone_polygon_with_id){
   aggregated_forecast <- merge(predictions,
                                zone_polygon_with_id,
                                by.x = "ID",
