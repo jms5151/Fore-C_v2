@@ -9,6 +9,20 @@ source("./codes/custom_functions/fun_add_scalebar_to_map.R")
 # source data
 source("./codes/Shiny_inputs_update_polygons.R")
 
+# load shapefiles from python code
+# This works!!:)
+# library(sf)
+# files <- list.files('../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/', full.names = T)
+# files <- c(files, list.files('../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/', full.names = T))
+# files <- files[grep('.shp', files)]
+# 
+# fileNames <- gsub('.*Forecasts|.*Scenarios|.shp', '', files)
+# fileNames <- gsub('/', '', fileNames, fixed=TRUE)
+# 
+# for(i in 1:length(files)){
+#   x <- st_read(files[i])
+#   assign(fileNames[i], x)  
+# }
 
 # create maps ------------------------------------------------------------------
 bins <- seq(from = 0,

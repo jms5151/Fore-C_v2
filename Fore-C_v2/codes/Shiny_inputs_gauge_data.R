@@ -5,6 +5,10 @@ library(plotly)
 load("../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ga_forecast.RData")
 load("../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ws_forecast.RData")
 
+# for taking data from python, this works
+# ga_forecast <- read.csv("../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ga_forecast.csv")
+# ws_forecast <- read.csv("../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ws_forecast.csv")
+
 # figure out which date to use
 nowcast_date_indexes <- which(ga_forecast$Date == max(ga_forecast$Date[ga_forecast$type == "nowcast"]))
 current_nowcast_date <- ga_forecast[nowcast_date_indexes[1], "Date"][[1]]

@@ -5,13 +5,7 @@ Created on Tue May 31 21:29:35 2022
 @author: jamie
 """
 
-def agg_to_manage_zones_forecasts(forecast, management_df, dz):
-    # merge datasets
-    df = forecast.merge(management_df, left_on = 'ID', right_on = 'PixelID')
-    # drop columns
-    df = df.drop(['PixelID', 'Latitude', 'Longitude', 'drisk'], axis = 1) 
-    # get quantile values
-    df2 = df.groupby(['PolygonID', 'Region', 'Date', 'type']).quantile(0.90).reset_index()
+def add_drisk(df2, dz):
     # set thresholds by disease-region
     if dz == 'ga':
         nostress_threshold = 5
@@ -22,7 +16,6 @@ def agg_to_manage_zones_forecasts(forecast, management_df, dz):
         nostress_threshold = 1
         watch_threshold = 5
         warning_threshold = 10
-    
     # assign risk level
     df2['drisk'] = ''
     # no stress
@@ -56,14 +49,30 @@ def agg_to_manage_zones_forecasts(forecast, management_df, dz):
     return df2
 
 
-def agg_to_manage_zones_scenarios(scenario, management_df):
+def agg_to_manage_zones_forecasts(forecast, management_df, dz):
+    # merge datasets
+    df = forecast.merge(management_df, left_on = 'ID', right_on = 'PixelID')
+    # set ID as PolygonID
+    df['ID'] = df['PolygonID']
+    # drop columns
+    df = df.drop(['PolygonID', 'PixelID', 'Latitude', 'Longitude', 'drisk'], axis = 1) 
+    # get quantile values
+    df2 = df.groupby(['ID', 'Region', 'Date', 'type']).quantile(0.90).reset_index()
+    # assign drisk
+    df3 = add_drisk(df2 = df2, dz = dz)
+    # return dataframe
+    return df3
+
+def agg_to_manage_zones_scenarios(scenario, management_df, dz):
     # merge data
     df = scenario.merge(management_df, left_on = 'ID', right_on = 'PixelID')
     # get median values by group
     df = df.groupby(['PolygonID', 'Region', 'Response', 'Response_level']).median().reset_index()
     # format columns
     df['ID'] = df['PolygonID']
-    df = df.drop(['PolygonID', 'Latitude', 'Longitude', 'PixelID'], axis = 1)
-    # return data
-    return df
+    df2 = df.drop(['PolygonID', 'Latitude', 'Longitude', 'PixelID'], axis = 1)
+    # assign drisk
+    df3 = add_drisk(df2 = df2, dz = dz)
+    # return dataframe
+    return df3
     

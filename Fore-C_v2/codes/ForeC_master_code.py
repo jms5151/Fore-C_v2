@@ -55,6 +55,8 @@ runpy.run_path(path_name = './codes/Shiny_inputs_aggregate_predictions.py')
 
 runpy.run_path(path_name = './codes/Shiny_inputs_aggregate_scenarios.py')
 
+runpy.run_path(path_name = './codes/Shiny_inputs_update_polygons.py')
+
 # runpy.run_path(path_name = "./codes/Shiny_inputs_maps.R")
 
 # runpy.run_path(path_name = "./codes/Shiny_inputs_gauge_data.R")

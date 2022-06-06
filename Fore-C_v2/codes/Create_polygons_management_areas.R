@@ -50,6 +50,9 @@ polygons_GBRMPA_park_zoning <- spTransform(gbr_park_zoning, CRS("+init=epsg:4326
 save(polygons_GBRMPA_park_zoning,
      file = "../compiled_data/spatial_data/polygons_GBRMPA_park_zoning.Rds")
 
+shapefile(polygons_GBRMPA_park_zoning, 
+          filename = '../compiled_data/spatial_data/polygons_GBRMPA_park_zoning.shp')
+
 # GUAM ------------------------------------------------------------------------
 # Guam MPA layer from https://www.oc.nps.edu/CMSP/Guam/
 guam_mpas <- open_and_sp_transform_shp(shpFilepath = "../compiled_data/spatial_data/Guam_shapefiles/Guam_MPA_Boundaries.shp",
@@ -112,3 +115,6 @@ polygons_management_areas <- do.call(rbind, management_zone_polys_list)
 # save data
 save(polygons_management_areas, 
      file = "../compiled_data/spatial_data/polygons_management_areas.Rds")
+
+shapefile(polygons_management_areas, 
+          filename = '../compiled_data/spatial_data/polygons_management_areas.shp')

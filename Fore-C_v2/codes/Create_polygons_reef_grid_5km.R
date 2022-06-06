@@ -31,3 +31,5 @@ leaflet() %>%
 # save spatial polygon
 save(polygons_5km, file = "../compiled_data/spatial_data/spatial_grid.Rds")
 
+shapefile(polygons_5km, 
+          filename = '../compiled_data/spatial_data/spatial_grid.shp')
