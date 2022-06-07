@@ -12,10 +12,10 @@ import joblib
 from codes.custom_functions.fun_quant_forest_predict import qf_predict_new, update_forecasts, combine_regional_forecasts
 
 # load model objects
-GA_GBR_Model = joblib.load("../model_objects/ga_gbr.joblib")
-GA_Pacific_Model = joblib.load("../model_objects/ga_pac.joblib")
-WS_GBR_Model = joblib.load("../model_objects/ws_gbr.joblib")
-WS_Pacific_Model = joblib.load("../model_objects/ws_pac_acr.joblib")
+GA_GBR_Model = joblib.load('../model_objects/ga_gbr.joblib')
+GA_Pacific_Model = joblib.load('../model_objects/ga_pac.joblib')
+WS_GBR_Model = joblib.load('../model_objects/ws_gbr.joblib')
+WS_Pacific_Model = joblib.load('../model_objects/ws_pac_acr.joblib')
 
 # load predictor data
 covariates = pd.read_csv('../compiled_data/forecast_inputs/grid_with_dynamic_predictors.csv')

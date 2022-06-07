@@ -19,7 +19,8 @@ ws_gbr_scenarios = pd.read_csv('../compiled_data/scenarios_inputs/ws_gbr_scenari
 ws_pac_scenarios = pd.read_csv('../compiled_data/scenarios_inputs/ws_pac_scenarios.csv')
  
 # output directory path
-scenarios_save_dir = '../compiled_data/scenarios_outputs/'
+# scenarios_save_dir = '../compiled_data/scenarios_outputs/'
+scenarios_save_dir = '../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/'
 
 # Check whether the specified path exists or not
 isExist = os.path.exists(scenarios_save_dir)

@@ -22,7 +22,8 @@ management_area_poly_pix_ids = pd.read_csv('../uh-noaa-shiny-app/forec_shiny_app
 gbrmpa_park_zones_poly_pix_ids = pd.read_csv('../uh-noaa-shiny-app/forec_shiny_app_data/Static_data/pixels_in_gbrmpa_park_zones_polygons.csv')
 
 # aggregate for weekly time series plots --------------------------------------
-# management zones
+# management zones - overall
+# GA
 ga_management = agg_to_manage_zones_forecasts(
     forecast = ga_forecast
     , management_df = management_area_poly_pix_ids
@@ -31,6 +32,7 @@ ga_management = agg_to_manage_zones_forecasts(
 
 ga_management.to_csv(forecast_file_dir + 'ga_nowcast_aggregated_to_management_zones.csv', index = False)
 
+# WS
 ws_management = agg_to_manage_zones_forecasts(
     forecast = ws_forecast
     , management_df = management_area_poly_pix_ids
@@ -39,7 +41,53 @@ ws_management = agg_to_manage_zones_forecasts(
 
 ws_management.to_csv(forecast_file_dir + 'ws_nowcast_aggregated_to_management_zones.csv', index = False)
 
+# management zones - split by disease and region
+# GA Pacific
+ga_pac_forecast = ga_forecast[ga_forecast['Region'] != 'gbr']
+
+ga_pac_management = agg_to_manage_zones_forecasts(
+    forecast = ga_pac_forecast
+    , management_df = management_area_poly_pix_ids
+    , dz = 'ga'
+    )
+
+ga_pac_management.to_csv(forecast_file_dir + 'ga_pac_nowcast_aggregated_to_management_zones.csv', index = False)
+
+# GA GBR
+ga_gbr_forecast = ga_forecast[ga_forecast['Region'] == 'gbr']
+
+ga_gbr_management = agg_to_manage_zones_forecasts(
+    forecast = ga_gbr_forecast
+    , management_df = management_area_poly_pix_ids
+    , dz = 'ga'
+    )
+
+ga_gbr_management.to_csv(forecast_file_dir + 'ga_gbr_nowcast_aggregated_to_management_zones.csv', index = False)
+
+# WS Pacific
+ws_pac_forecast = ws_forecast[ws_forecast['Region'] != 'gbr']
+
+ws_pac_management = agg_to_manage_zones_forecasts(
+    forecast = ws_pac_forecast
+    , management_df = management_area_poly_pix_ids
+    , dz = 'ws'
+    )
+
+ws_pac_management.to_csv(forecast_file_dir + 'ws_pac_nowcast_aggregated_to_management_zones.csv', index = False)
+
+# WS GBR
+ws_gbr_forecast = ws_forecast[ws_forecast['Region'] == 'gbr']
+
+ws_gbr_management = agg_to_manage_zones_forecasts(
+    forecast = ws_gbr_forecast
+    , management_df = management_area_poly_pix_ids
+    , dz = 'ws'
+    )
+
+ws_gbr_management.to_csv(forecast_file_dir + 'ws_gbr_nowcast_aggregated_to_management_zones.csv', index = False)
+
 # GBRMPA zones
+# GA
 ga_gbrmpa = agg_to_manage_zones_forecasts(
     forecast = ga_forecast
     , management_df = gbrmpa_park_zones_poly_pix_ids
@@ -48,6 +96,7 @@ ga_gbrmpa = agg_to_manage_zones_forecasts(
 
 ga_gbrmpa.to_csv(forecast_file_dir + 'ga_gbr_nowcast_aggregated_to_gbrmpa_park_zones.csv', index = False)
 
+# WS
 ws_gbrmpa = agg_to_manage_zones_forecasts(
     forecast = ws_forecast
     , management_df = gbrmpa_park_zones_poly_pix_ids
@@ -64,7 +113,7 @@ def max_drisk_df(ga_df, ws_df):
     ga_df['GA'] = ga_df['drisk']
     ws_df['WS'] = ws_df['drisk']
     # combine
-    reef_df = ga_df[['ID', 'Date', 'type', 'GA']].merge(ws_df[['ID', 'Date', 'type', 'WS']])
+    reef_df = ga_df[['ID', 'Region', 'Date', 'type', 'GA']].merge(ws_df[['ID', 'Date', 'Region', 'type', 'WS']])
     reef_df['drisk'] = reef_df[['GA', 'WS']].max(axis = 1)
     # return new dataframe
     return reef_df
@@ -125,9 +174,33 @@ management_nowcast = max_drisk_df(ga_df = ga_management, ws_df = ws_management)
 management_nowcast = management_nowcast.loc[management_nowcast['Date'] == nowcast_date, ['ID', 'drisk']]
 management_nowcast.to_csv(save_dir + 'polygons_management_zoning.csv', index = False)
 
+# GA GBR
+ga_gbr_management_nowcast = ga_gbr_management.loc[ga_gbr_management['Date'] == nowcast_date, ['ID', 'drisk']]
+ga_gbr_management.to_csv(save_dir + 'ga_gbr_polygons_management_zoning.csv', index = False)
+
+# GA Pacific
+ga_pac_management_nowcast = ga_pac_management.loc[ga_pac_management['Date'] == nowcast_date, ['ID', 'drisk']]
+ga_pac_management.to_csv(save_dir + 'ga_pac_polygons_management_zoning.csv', index = False)
+
+# WS GBR
+ws_gbr_management_nowcast = ws_gbr_management.loc[ws_gbr_management['Date'] == nowcast_date, ['ID', 'drisk']]
+ws_gbr_management.to_csv(save_dir + 'ws_gbr_polygons_management_zoning.csv', index = False)
+
+# WS Pacific
+ws_pac_management_nowcast = ws_pac_management.loc[ws_pac_management['Date'] == nowcast_date, ['ID', 'drisk']]
+ws_pac_management.to_csv(save_dir + 'ws_pac_polygons_management_zoning.csv', index = False)
+
 # GBRMPA zone data ------------------------------------------------------------
 gbrmpa_nowcast = max_drisk_df(ga_df = ga_gbrmpa, ws_df = ga_gbrmpa)
 
 # subset to nowcast date
 gbrmpa_nowcast = gbrmpa_nowcast.loc[gbrmpa_nowcast['Date'] == nowcast_date, ['ID', 'drisk']]
 gbrmpa_nowcast.to_csv(save_dir + 'polygons_GBRMPA_zoning.csv', index = False)
+
+# GA GBR
+ga_gbrmpa_nowcast = ga_gbrmpa.loc[ga_gbrmpa['Date'] == nowcast_date, ['ID', 'drisk']]
+ga_gbrmpa_nowcast.to_csv(save_dir + 'ws_gbr_polygons_GBRMPA_zoning.csv', index = False)
+
+# WS GBR
+ws_gbrmpa_nowcast = ws_gbrmpa.loc[ws_gbrmpa['Date'] == nowcast_date, ['ID', 'drisk']]
+ws_gbrmpa_nowcast.to_csv(save_dir + 'ws_gbr_polygons_GBRMPA_zoning.csv', index = False)

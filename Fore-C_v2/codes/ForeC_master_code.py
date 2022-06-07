@@ -57,13 +57,5 @@ runpy.run_path(path_name = './codes/Shiny_inputs_aggregate_scenarios.py')
 
 runpy.run_path(path_name = './codes/Shiny_inputs_update_polygons.py')
 
-# runpy.run_path(path_name = "./codes/Shiny_inputs_maps.R")
-
-# runpy.run_path(path_name = "./codes/Shiny_inputs_gauge_data.R")
-
-# only needs to be run once
-# source("./codes/Shiny_inputs_placeholder_plots.R")
-
-# Create CRW outputs -------------------------------------------------
-# this code needs updating
-source("./codes/Output_forecasts_for_CRW.R")
+# Create CRW outputs ? ------------------------------------------------
+# source("./codes/Output_forecasts_for_CRW.R")

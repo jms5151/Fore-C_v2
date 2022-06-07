@@ -4,6 +4,7 @@ Created on Mon Jun  6 13:28:09 2022
 
 @author: jamie
 """
+import geopandas as gpd
 
 # custom function to join shapefile with datafile of drisk by ID
 def create_new_polygon_layers(shpfile, datafile):

@@ -271,3 +271,18 @@ scenarios_ws_pac_map <- reefs_basemap %>%
   hideGroup("WS Pacific management area nowcast")
 
 save(scenarios_ws_pac_map, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/scenarios_ws_pac_map.Rds")
+
+# Historical disease surveys map -----------------------------------------------
+# historicalMap = leaflet() %>%
+#   addTiles(urlTemplate = "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}") %>%
+#   addCircleMarkers(data = historical_data,
+#                    lat = ~Latitude,
+#                    lng = ~Longitude,
+#                    radius = ~sqrt(N),
+#                    color = ~'white',
+#                    popup = ~survey_text,
+#                    clusterOptions = markerClusterOptions()) %>%
+#   addScaleBar() %>%
+#   setView(lng = -180, lat = 16.4502 , zoom = 3)
+
+# save(scenarios_ws_pac_map, file = "../uh-noaa-shiny-app/forec_shiny_app_data/Static_data/historicalMap.Rds")

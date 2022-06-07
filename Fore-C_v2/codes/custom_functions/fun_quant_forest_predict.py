@@ -61,7 +61,7 @@ def qf_predict(df, final_mod, id_vars):
 
 def qf_predict_new(df, regionGBRtrue, family, final_mod, id_vars):
     x = qf_new_data_subset(df = df, regionGBRtrue = regionGBRtrue, family = family, final_mod = final_mod)
-    x2 = qf_predict(df = x, final_mod = final_mod)
+    x2 = qf_predict(df = x, final_mod = final_mod, id_vars = id_vars)
     return x2    
 
 def update_forecasts(df_filepath, new_df):

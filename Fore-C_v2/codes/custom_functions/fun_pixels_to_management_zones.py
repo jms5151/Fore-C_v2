@@ -68,11 +68,13 @@ def agg_to_manage_zones_scenarios(scenario, management_df, dz):
     df = scenario.merge(management_df, left_on = 'ID', right_on = 'PixelID')
     # get median values by group
     df = df.groupby(['PolygonID', 'Region', 'Response', 'Response_level']).median().reset_index()
-    # format columns
+    # format column names
     df['ID'] = df['PolygonID']
     df2 = df.drop(['PolygonID', 'Latitude', 'Longitude', 'PixelID'], axis = 1)
     # assign drisk
     df3 = add_drisk(df2 = df2, dz = dz)
+    # update column names
+    df3 = df3.rename(columns = {'predicted': 'value', 'Lwr': 'LwrEstimate', 'Upr': 'UprEstimate', 'value': 'estimate'})
     # return dataframe
     return df3
     
