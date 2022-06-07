@@ -8,8 +8,8 @@ Created on Tue May 31 09:38:12 2022
 import pandas as pd
 
 # load management information
-management_area_poly_pix_ids = pd.read_csv('../uh-noaa-shiny-app/forec_shiny_app_data/Static_data/pixels_in_management_areas_polygons.csv')
-gbrmpa_park_zones_poly_pix_ids = pd.read_csv('../uh-noaa-shiny-app/forec_shiny_app_data/Static_data/pixels_in_gbrmpa_park_zones_polygons.csv')
+management_area_poly_pix_ids = pd.read_csv('../compiled_data/spatial_data/pixels_in_management_areas_polygons.csv')
+gbrmpa_park_zones_poly_pix_ids = pd.read_csv('../compiled_data/spatial_data/pixels_in_gbrmpa_park_zones_polygons.csv')
 
 
 # subset and format data for scenarios

@@ -58,9 +58,6 @@ for i in range(len(listFiles)):
     x = create_new_polygon_layers(shpfile = shpName, datafile = df)
     # create filepath to save polygon layer
     save_path = listFiles[i].replace('csv', 'shp')
-    if 'scenarios' in listFiles[i]:
-            save_path = save_path.replace('compiled_data/map_data', 'uh-noaa-shiny-app/forec_shiny_app_data/Scenarios')
-    else:
-        save_path = save_path.replace('compiled_data/map_data', 'uh-noaa-shiny-app/forec_shiny_app_data/Forecasts')
+    save_path = save_path.replace('compiled_data/map_data', 'uh-noaa-shiny-app/forec_shiny_app_data/Forecasts')
     # save file
     x.to_file(save_path)  

@@ -18,8 +18,8 @@ ga_forecast = pd.read_csv(forecast_file_dir + 'ga_forecast.csv')
 ws_forecast = pd.read_csv(forecast_file_dir + 'ws_forecast.csv')
 
 # load management information
-management_area_poly_pix_ids = pd.read_csv('../uh-noaa-shiny-app/forec_shiny_app_data/Static_data/pixels_in_management_areas_polygons.csv')
-gbrmpa_park_zones_poly_pix_ids = pd.read_csv('../uh-noaa-shiny-app/forec_shiny_app_data/Static_data/pixels_in_gbrmpa_park_zones_polygons.csv')
+management_area_poly_pix_ids = pd.read_csv('../compiled_data/spatial_data/pixels_in_management_areas_polygons.csv')
+gbrmpa_park_zones_poly_pix_ids = pd.read_csv('../compiled_data/spatial_data/pixels_in_gbrmpa_park_zones_polygons.csv')
 
 # aggregate for weekly time series plots --------------------------------------
 # management zones - overall
@@ -199,7 +199,7 @@ gbrmpa_nowcast.to_csv(save_dir + 'polygons_GBRMPA_zoning.csv', index = False)
 
 # GA GBR
 ga_gbrmpa_nowcast = ga_gbrmpa.loc[ga_gbrmpa['Date'] == nowcast_date, ['ID', 'drisk']]
-ga_gbrmpa_nowcast.to_csv(save_dir + 'ws_gbr_polygons_GBRMPA_zoning.csv', index = False)
+ga_gbrmpa_nowcast.to_csv(save_dir + 'ga_gbr_polygons_GBRMPA_zoning.csv', index = False)
 
 # WS GBR
 ws_gbrmpa_nowcast = ws_gbrmpa.loc[ws_gbrmpa['Date'] == nowcast_date, ['ID', 'drisk']]
