@@ -50,7 +50,7 @@ ga_gbr = format_scenario_data(
 
 baseline_vals(
     df = ga_gbr
-    , covars = ['Fish_abund', 'Long_Term_Kd_Variability']
+    , covars = ['Fish_abund', 'Coral_cover', 'Long_Term_Kd_Variability']
     , dz_name = 'ga_gbr'
     , regionGBR = True
     )
@@ -69,8 +69,19 @@ ga_gbr_scenarios = add_scenario_levels(
   , scenarios_df = ga_gbr_scenarios
 )
 
+# coral cover
+ga_gbr_coral_cover_levels = list(range(5, 96, 10))
+
+ga_gbr_scenarios = add_scenario_levels(
+  df = ga_gbr
+  , scenario_levels = ga_gbr_coral_cover_levels
+  , col_name = 'Coral_cover'
+  , response_name = 'Coral cover'
+  , scenarios_df = ga_gbr_scenarios
+)
+
 # turbidity
-ga_gbr_turbidity_levels = np.arange(0.0, 2.1, 0.1).round(1).tolist()
+ga_gbr_turbidity_levels = np.arange(0.0, 1.1, 0.1).round(1).tolist()
 
 ga_gbr_scenarios = add_scenario_levels(
   df = ga_gbr
@@ -79,6 +90,7 @@ ga_gbr_scenarios = add_scenario_levels(
   , response_name = 'Turbidity'
   , scenarios_df = ga_gbr_scenarios
 )
+
 
 # save
 ga_gbr_filepath = scenarios_inputs_dir + 'ga_gbr_scenarios.csv'
@@ -94,7 +106,7 @@ ga_pac = format_scenario_data(
 
 baseline_vals(
     df = ga_pac
-    , covars = ['Median_colony_size', 'mean_cover', 'BlackMarble_2016_3km_geo.3']
+    , covars = ['Median_colony_size', 'BlackMarble_2016_3km_geo.3', 'H_abund', 'Long_Term_Kd_Median']
     , dz_name = 'ga_pac'
     , regionGBR = False
     )
@@ -113,17 +125,6 @@ ga_pac_scenarios = add_scenario_levels(
   , scenarios_df = ga_pac_scenarios
 )
 
-# coral cover
-ga_pac_coral_cover_levels = list(range(5, 66, 10))
-
-ga_pac_scenarios = add_scenario_levels(
-  df = ga_pac
-  , scenario_levels = ga_pac_coral_cover_levels
-  , col_name = 'mean_cover'
-  , response_name = 'Coral cover'
-  , scenarios_df = ga_pac_scenarios
-)
-
 # coastal development
 ga_pac_development_levels = list(range(0, 256, 23))
 
@@ -134,6 +135,29 @@ ga_pac_scenarios = add_scenario_levels(
   , response_name = 'Development'
   , scenarios_df = ga_pac_scenarios
 )
+
+# herbivorous fish
+ga_pac_herb_fish_levels = np.arange(0.1, 0.8, 0.1).round(1).tolist()
+
+ga_pac_scenarios = add_scenario_levels(
+  df = ga_pac
+  , scenario_levels = ga_pac_herb_fish_levels
+  , col_name = 'H_abund'
+  , response_name = 'Fish'
+  , scenarios_df = ga_pac_scenarios
+)
+
+# turbidity
+ga_pac_turbidity_levels = np.arange(0.0, 0.5, 0.1).round(1).tolist()
+
+ga_pac_scenarios = add_scenario_levels(
+  df = ga_pac
+  , scenario_levels = ga_pac_turbidity_levels
+  , col_name = 'Long_Term_Kd_Median'
+  , response_name = 'Turbidity'
+  , scenarios_df = ga_pac_scenarios
+)
+
 
 # save
 ga_pac_filepath = scenarios_inputs_dir + 'ga_pac_scenarios.csv'
@@ -158,7 +182,7 @@ baseline_vals(
 ws_gbr_scenarios = pd.DataFrame()
 
 # coral cover
-ws_gbr_coral_cover_levels = list(range(5, 96, 10))
+ws_gbr_coral_cover_levels = list(range(5, 86, 10))
 
 ws_gbr_scenarios = add_scenario_levels(
   df = ws_gbr
@@ -180,7 +204,7 @@ ws_gbr_scenarios = add_scenario_levels(
 )
 
 # turbidity
-ws_gbr_turbidity_levels = np.arange(0.0, 2.1, 0.1).round(1).tolist()
+ws_gbr_turbidity_levels = np.arange(0.0, 1.1, 0.1).round(1).tolist()
 
 ws_gbr_scenarios = add_scenario_levels(
   df = ws_gbr
@@ -204,7 +228,7 @@ ws_pac = format_scenario_data(
 
 baseline_vals(
     df = ws_pac
-    , covars = ['Median_colony_size', 'Long_Term_Kd_Median', 'mean_cover', 'H_abund']
+    , covars = ['Median_colony_size', 'Parrotfish_abund', 'Long_Term_Kd_Median', 'H_abund', 'mean_cover']
     , dz_name = 'ws_pac'
     , regionGBR = False
     )
@@ -220,6 +244,17 @@ ws_pac_scenarios = add_scenario_levels(
   , scenario_levels = ws_pac_coral_size_levels
   , col_name = 'Median_colony_size'
   , response_name = 'Coral size'
+  , scenarios_df = ws_pac_scenarios
+  )
+
+# Parrotfish density
+ws_pac_parrotfish_levels = np.arange(0.0, 0.07, 0.01).round(1).tolist()
+
+ws_pac_scenarios = add_scenario_levels(
+  df = ws_pac
+  , scenario_levels = ws_pac_parrotfish_levels
+  , col_name = 'Parrotfish_abund'
+  , response_name = 'Parrotfish density'
   , scenarios_df = ws_pac_scenarios
   )
 

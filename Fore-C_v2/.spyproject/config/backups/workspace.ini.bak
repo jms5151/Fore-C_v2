@@ -6,5 +6,5 @@ save_non_project_files = False
 
 [main]
 version = 0.2.0
-recent_files = ['codes\\ForeC_master_code.py', 'codes\\Run_model_forecasts.py', 'codes\\custom_functions\\fun_quant_forest_predict.py', 'codes\\Shiny_inputs_update_polygons.py', 'codes\\custom_functions\\fun_join_shapefile_with_drisk_data.py']
+recent_files = ['codes\\ForeC_master_code.py', 'codes\\Run_model_forecasts.py', 'codes\\custom_functions\\fun_quant_forest_predict.py', 'codes\\Models_save_best.py', 'codes\\Create_scenarios.py']
 

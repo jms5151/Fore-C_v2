@@ -1,5 +1,7 @@
 # Create SMOTE datasets for unbalanced data
 
+set.seed(12093248)
+
 # set destination directory for smote datasets
 dest_dir <- "../compiled_data/survey_data/smote_datasets/"
 
@@ -23,7 +25,7 @@ surveys_to_test_train <- function(df, regionGBR, family, dz_vars, yVar, threshol
     df = df
     , regionGBR = regionGBR
     , family = family
-    , dz_vars = dz_vars
+    , dz_vars = c(dz_vars, 'cold_snaps') # add cold snaps for validation of V2 product
     )
   # Step 2. Remove surveys that are conducted too closely in space and time
   x2 <- filter_pseudo_replicates(df = x)
@@ -42,7 +44,7 @@ smote_across_thresholds <- function(df, regionGBR, family, dz_vars, yVar, thresh
       df = df
       , regionGBR = regionGBR
       , family = family
-      , dz_vars = dz_vars
+      , dz_vars = c(dz_vars, 'cold_snaps') # add cold snaps for validation of V2 product
       , yVar = yVar
       , threshold = i
       )

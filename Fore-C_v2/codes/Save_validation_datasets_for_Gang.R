@@ -49,7 +49,6 @@ validation_df$point.ID <- as.numeric(row.names(validation_df))
 xx <- extract(polygons_5km, cbind(validation_df$Longitude, validation_df$Latitude))
 
 # join data and format
-
 x <- validation_df %>%
   left_join(xx) %>%
   mutate(pixelID = layer)
@@ -57,4 +56,32 @@ x <- validation_df %>%
 x <- x[, c('Latitude', 'Longitude', 'Date', 'pixelID')]
 
 # save 
-write.csv(x, file = paste0(save_dir, 'forec_validation_df.csv'), row.names = F)
+write.csv(x, file = paste0(save_dir, 'forec_validation_df_', Sys.Date(), '.csv'), row.names = F)
+
+
+# same but for Scott --------------------------------------
+for(i in 1:nrow(best_models_final)){
+  # format filenames for best models
+  thsh <- ifelse(nchar(best_models_final$threshold[i]) == 2, best_models_final$threshold[i], paste0('0', best_models_final$threshold[i]))
+  dz_name <- ifelse(best_models_final$name[i] == 'ws_pac', 'ws_pac_acr', best_models_final$name[i])
+  test_name <- paste0(smote_dir, dz_name, '_smote_test_', thsh, '.csv')
+  
+  # load file
+  df_test <- read.csv(test_name)
+  
+  # format
+  df_test$Date <- paste(df_test$Year, df_test$Month, df_test$Day, sep = '-')
+  df_test$Date <- as.Date(df_test$Date, '%Y-%m-%d')
+  
+  # assign new name
+  assign(dz_name, df_test)
+}  
+
+cols_to_keep <- c('Latitude', 'Longitude', 'Date', 'Winter_condition', 'Hot_snaps', 'cold_snaps')
+
+ws_gbr <- ws_gbr[, cols_to_keep]
+write.csv(ws_gbr, paste0(save_dir, 'forec_ws_gbr_validation_df_', Sys.Date(), '.csv'), row.names = F)
+
+ws_pac <- ws_pac_acr[, cols_to_keep]
+write.csv(ws_pac, paste0(save_dir, 'forec_ws_pacific_validation_df_', Sys.Date(), '.csv'), row.names = F)
+

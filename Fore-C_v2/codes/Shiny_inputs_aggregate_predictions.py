@@ -138,11 +138,11 @@ reef_nowcast_5km.to_csv(save_dir + 'nowcast_polygons_5km.csv', index = False)
 reef_1Mforecast_5km = reef_forecast.loc[reef_forecast['Date'] == one_month_forecast_date, ['ID', 'drisk']]
 reef_1Mforecast_5km.to_csv(save_dir + 'one_month_forecast_polygons_5km.csv', index = False)
 
-# subset one month forecast data for 5 km map
+# subset two month forecast data for 5 km map
 reef_2Mforecast_5km = reef_forecast.loc[reef_forecast['Date'] == two_month_forecast_date, ['ID', 'drisk']]
 reef_2Mforecast_5km.to_csv(save_dir + 'two_month_forecast_polygons_5km.csv', index = False)
 
-# subset one month forecast data for 5 km map
+# subset three month forecast data for 5 km map
 reef_3Mforecast_5km = reef_forecast.loc[reef_forecast['Date'] == three_month_forecast_date, ['ID', 'drisk']]
 reef_3Mforecast_5km.to_csv(save_dir + 'three_month_forecast_polygons_5km.csv', index = False)
 

@@ -12,9 +12,9 @@ source("./codes/Final_covariates_by_disease_and_region.R")
 # load training data for PDP plots ----------------
 smote_dir <- '../compiled_data/survey_data/smote_datasets/'
 ga_gbr_data <- read.csv(paste0(smote_dir, 'ga_gbr_smote_train_15.csv'))
-ga_pac_data <- read.csv(paste0(smote_dir, 'ga_pac_smote_train_15.csv'))
+ga_pac_data <- read.csv(paste0(smote_dir, 'ga_pac_smote_train_20.csv'))
 ws_gbr_data <- read.csv(paste0(smote_dir, 'ws_gbr_smote_train_10.csv'))
-ws_pac_acr_data <- read.csv(paste0(smote_dir, 'ws_pac_acr_smote_train_05.csv'))
+ws_pac_acr_data <- read.csv(paste0(smote_dir, 'ws_pac_acr_smote_train_10.csv'))
 
 # objects to loop through ------------------------------------------------------
 mods_list <- list(GA_GBR_Model,

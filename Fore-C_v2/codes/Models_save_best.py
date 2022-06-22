@@ -34,9 +34,9 @@ for i in range(4):
 
     # determine response variables based on whether or not column names include "p"
     if 'p' in train_df.columns:
-        response = 'p'
+        response = 'p' # prevalence
     else:
-        response = 'Y'
+        response = 'Y' # abundance
         
     # list covariates
     df_covars = x.iloc[i].Model_variables.split(", ")
@@ -54,32 +54,32 @@ for i in range(4):
     fileName = model_objects_dir + x.name[i] + str('.joblib')
     joblib.dump(qrf, fileName)
     
-    # plots: not essential, so comment in/out as desired
-    # import matplotlib.pyplot as plt
-    # from sklearn.inspection import PartialDependenceDisplay
-    fig, ax = plt.subplots(figsize=(14, 10))
-    ax.set_title(x.name[i])
-    pdpfig = PartialDependenceDisplay.from_estimator(qrf, X_train, df_covars, ax = ax)
+#     # plots: not essential, so comment in/out as desired
+#     # import matplotlib.pyplot as plt
+#     # from sklearn.inspection import PartialDependenceDisplay
+#     fig, ax = plt.subplots(figsize=(14, 10))
+#     ax.set_title(x.name[i])
+#     pdpfig = PartialDependenceDisplay.from_estimator(qrf, X_train, df_covars, ax = ax)
 
-#     fig2, ax2 = plt.subplots(figsize=(14, 10))
-#     ax2.set_title(x.name[i])
-#     pdp_plot2 = PartialDependenceDisplay.from_estimator(qrf, X_train, df_covars, ax = ax2, kind = 'both')
+# #     fig2, ax2 = plt.subplots(figsize=(14, 10))
+# #     ax2.set_title(x.name[i])
+# #     pdp_plot2 = PartialDependenceDisplay.from_estimator(qrf, X_train, df_covars, ax = ax2, kind = 'both')
 
-    # variable importance plot (https://scikit-learn.org/stable/auto_examples/ensemble/plot_forest_importances.html)
-    importances = qrf.feature_importances_
-    std = np.std([tree.feature_importances_ for tree in qrf.estimators_], axis=0)
+#     # variable importance plot (https://scikit-learn.org/stable/auto_examples/ensemble/plot_forest_importances.html)
+#     importances = qrf.feature_importances_
+#     std = np.std([tree.feature_importances_ for tree in qrf.estimators_], axis=0)
 
-    importances = qrf.feature_importances_
-    feature_names = qrf.feature_names_in_
-    forest_importances = pd.Series(importances, index=feature_names)
+#     importances = qrf.feature_importances_
+#     feature_names = qrf.feature_names_in_
+#     forest_importances = pd.Series(importances, index=feature_names)
 
-    fig, ax = plt.subplots()
-    forest_importances.plot.bar(yerr = std, ax = ax)
-    ax.set_title("Feature importances using MDI")
-    ax.set_ylabel("Mean decrease in impurity")
-    fig.tight_layout()
-    fig_filepath = str('../../Figures/Quantile_forests/variable_importance/') + x.name[i] + str('.pdf')
-    fig.savefig(fig_filepath) 
+#     fig, ax = plt.subplots()
+#     forest_importances.plot.bar(yerr = std, ax = ax)
+#     ax.set_title("Feature importances using MDI")
+#     ax.set_ylabel("Mean decrease in impurity")
+#     fig.tight_layout()
+#     fig_filepath = str('../../Figures/Quantile_forests/variable_importance/') + x.name[i] + str('.pdf')
+#     fig.savefig(fig_filepath) 
 
 
 

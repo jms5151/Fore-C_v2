@@ -9,6 +9,7 @@ import pandas as pd
 import joblib
 
 # import custom predict function
+# double check that update_forecasts function has failsafe in case processing stops partway through
 from codes.custom_functions.fun_quant_forest_predict import qf_predict_new, update_forecasts, combine_regional_forecasts
 
 # load model objects
