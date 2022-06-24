@@ -46,6 +46,47 @@ for(j in 1:length(mods_names_list)){
                fig_dir = figDirVarImp)
   }
 
+varImpPlot(WS_GBR_Model
+           , scale = TRUE
+           , main = ''
+           , xlab = ''
+           , pch = 16
+           , cex = 1.1
+           , pt.cex = 1.5
+           , type = 1 # variable importance, 2 = node impurity
+           , labels = ''
+           )
+title(
+  main = 'White syndromes\nGreat Barrier Reef, Australia'
+  , xlab = 'Variable importance (% increase MSE)'
+  )
+
+# mtext("Experimenter pre-conditioning", 1, at=par("usr")[1])
+
+x <- as.data.frame(WS_GBR_Model$importance)
+x$covars <- gsub('_', ' ', rownames(x))
+x$covars <- gsub('Fish abund', 'Fish density', x$covars)
+x$covars <- gsub('Three Week Kd Variability', 'Seasonal turbidity variability', x$covars)
+x$VarImp <- x$`%IncMSE`
+
+library(ggplot2)
+
+ggplot(x, aes(x = reorder(covars, VarImp), y=VarImp)) + 
+  geom_point(size = 3) +
+  ggtitle('White syndromes\nGreat Barrier Reef, Australia') +
+  ylab('Variable importance (% increase MSE)') +
+  xlab('') +
+  ylim(20, 70) +
+  coord_flip() +
+  theme_bw() +
+  theme(
+    panel.grid.major.x = element_blank()
+    , panel.grid.minor.x = element_blank()
+    , axis.text.y = element_text(vjust = -2.5, hjust = 0, margin = margin(l = 1, r = -120))
+    , axis.ticks.y = element_blank()
+    ) 
+
+
 # PDP plots --------------------------------------------------------------------
 library(randomForest)
 
