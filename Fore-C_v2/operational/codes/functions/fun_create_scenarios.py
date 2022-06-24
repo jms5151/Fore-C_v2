@@ -8,12 +8,11 @@ Last update: 2022-June-23
 import pandas as pd # v1.4.2
 
 # set filepaths
-from operational.codes.filepaths import input_path
+from operational.codes.filepaths import input_path, shiny_path
 
 # load management information
 management_area_poly_pix_ids = pd.read_csv(input_path + 'pixels_in_management_areas_polygons.csv')
 gbrmpa_park_zones_poly_pix_ids = pd.read_csv(input_path + 'pixels_in_gbrmpa_park_zones_polygons.csv')
-
 
 # subset and format data for scenarios
 def format_scenario_data(df, regionGBR, nowcast_data, taxa):
@@ -49,9 +48,9 @@ def baseline_vals(df, covars, dz_name, regionGBR):
     # baseline values for 5 km pixels
     covars.extend(['ID', 'value'])
     df = df[covars] # keep ID, value, and covars for sliders
-    df.loc[:,'value'] = df.loc[:,'value'].round()
+    df = df.round({'value': 0})
     # save 
-    fileName1 = '../uh-noaa-shiny-app/forec_shiny_app_data/Scenarios/' + dz_name + '_basevals_ID.csv'
+    fileName1 = shiny_path + 'Scenarios/' + dz_name + '_basevals_ID.csv'
     df.to_csv(fileName1, index = False)
 
     # aggregate baseline values for management areas and save
@@ -72,6 +71,6 @@ def add_scenario_levels(df, scenario_levels, col_name, response_name, scenarios_
         df[col_name] = i
         df['Response'] = response_name
         df['Response_level'] = i
-        scenarios_df = scenarios_df.append(df)
+        scenarios_df = pd.concat([scenarios_df, df])
     return scenarios_df
 

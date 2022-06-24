@@ -19,12 +19,12 @@ import runpy
 from operational.codes.functions.fun_create_delete_directories import create_dir, delete_dir
 
 # set filepaths
-from operational.codes.filepaths import tmp_path
+from operational.codes.filepaths import tmp_path, input_path, models_path
 
 # Create directory for temporary files
 create_dir(tmp_path)
 
-# ONLY run first time after cloning repository to unzip files
+# Only need to run after cloning repository / pulling updated data fiels (unzip files)
 runpy.run_path(path_name = './operational/codes/Unzip_files.py')
 
 # Co-variates data pre-processing for grid --------------------------- 
@@ -59,3 +59,7 @@ runpy.run_path(path_name = './operational/codes/Shiny_inputs_update_polygons.py'
 # Delete temporary files ---------------------------------------------
 delete_dir(tmp_path + 'map_data/')
 delete_dir(tmp_path)
+
+# delete input data and model files if pushing to github
+delete_dir(input_path)
+delete_dir(models_path)

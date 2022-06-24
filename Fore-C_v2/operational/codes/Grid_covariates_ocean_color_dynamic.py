@@ -22,7 +22,7 @@ oc_dates = pd.to_datetime(oc_dates, format = '%Y-%m-%d')
 oc_doy = oc_dates.strftime('%j')
 
 # load ocean color data
-oc_long_term = nc.Dataset(input_path + 'long_term_metrics_20210531.nc')
+oc_long_term = nc.Dataset(input_path + 'long_term_metrics_20220531.nc')
 oc_pixel_id = nc.Dataset(input_path + 'reef_grid_pixel_id.nc')
 
 # create an array of ids
@@ -53,7 +53,7 @@ for i in range(len(oc_doy)):
     tmp_df['Three_Week_Kd_Median'] = median_values
     tmp_df['Three_week_kd490_90th'] = kd90th_values
     # add to ocean color dataset
-    oc_metrics = oc_metrics.append(tmp_df)
+    oc_metrics = pd.concat([oc_metrics, tmp_df])
 
 # add new column for variability
 oc_metrics['Three_Week_Kd_Variability'] = oc_metrics['Three_week_kd490_90th'] - oc_metrics['Three_Week_Kd_Median']

@@ -5,7 +5,6 @@ Last update: 2022-June-23
 """
 
 # load module
-import os
 import zipfile
 
 # function to unzip file
@@ -16,7 +15,3 @@ def unzip_dir(zip_filepath, dest_filepath):
 # unzip
 unzip_dir(zip_filepath = './operational/model_objects.zip', dest_filepath = './operational/')
 unzip_dir(zip_filepath = './operational/input_data.zip', dest_filepath = './operational/')
-
-# remove compressed files
-os.remove('./operational/model_objects.zip')
-os.remove('./operational/input_data.zip')

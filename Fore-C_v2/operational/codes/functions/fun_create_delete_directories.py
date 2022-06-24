@@ -13,5 +13,5 @@ def create_dir(path):
 def delete_dir(path):
     files = os.listdir(path)
     for m in files:
-        os.remove(tmp_path + m)
+        os.remove(path + m)
     os.rmdir(path)

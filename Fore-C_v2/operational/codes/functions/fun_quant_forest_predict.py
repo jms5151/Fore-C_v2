@@ -77,15 +77,14 @@ def update_forecasts(df_filepath, new_df):
         # remove forecasts
         old_df.drop(old_df[old_df['type'] == 'forecast'].index, inplace = True)
         # add updated forecasts
-        updated_forecast = old_df.append(new_df)
+        updated_forecast = pd.concat([old_df,new_df])
     else:
         updated_forecast = new_df
     return updated_forecast
 
 def combine_regional_forecasts(gbr_df, pac_df):
     # combine, group, and summarise
-    forecast = gbr_df.append(
-        pac_df
+    forecast = pd.concat([gbr_df, pac_df]
         ).drop(
             ['ensemble'], axis=1
             ).groupby(

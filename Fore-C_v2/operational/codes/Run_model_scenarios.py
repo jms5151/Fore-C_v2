@@ -5,7 +5,6 @@ Last update: 2022-June-23
 """
 
 # load modules
-import os
 import pandas as pd # v1.4.2
 
 # set filepaths
@@ -42,7 +41,6 @@ ga_gbr_scenario_predictions = qf_predict_scenarios(
 
 ga_gbr_filepath = scenarios_save_dir + 'ga_gbr_scenarios.csv'
 ga_gbr_scenario_predictions.to_csv(ga_gbr_filepath, index = False)
-
 
 # GA Pacific -----------
 ga_pac_scenario_predictions = qf_predict_scenarios(

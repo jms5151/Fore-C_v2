@@ -24,7 +24,7 @@ scenario maps need:
 """
 
 # load modules
-import glob 
+import os
 import pandas as pd # v1.4.2
 import geopandas as gpd # v 0.6.1
 
@@ -43,13 +43,13 @@ gbrmpa_shp = gpd.read_file(input_path + 'polygons_GBRMPA_park_zoning.shp')
 
 # load model outputs ----------------------------------------------------------
 
-# list files ending with .csv and that don't begin with a dot:
-listFiles = glob.glob(map_data_dir + '*.csv')
+# list files
+listFiles = os.listdir(map_data_dir)
 
 # loop through each file and create shapefile for leaflet maps
 for i in range(len(listFiles)):
     # open file
-    df = pd.read_csv(listFiles[i])
+    df = pd.read_csv(map_data_dir + listFiles[i])
     # set shapefile based on level of df
     if '5km' in listFiles[i]:
         shpName = reef_grid_shp
@@ -61,6 +61,6 @@ for i in range(len(listFiles)):
     x = create_new_polygon_layers(shpfile = shpName, datafile = df)
     # create filepath to save polygon layer
     save_path = listFiles[i].replace('csv', 'shp')
-    save_path = save_path.replace(map_data_dir, shiny_forecast_dir)
+    save_path = shiny_forecast_dir + '/' + save_path
     # save file
     x.to_file(save_path)  

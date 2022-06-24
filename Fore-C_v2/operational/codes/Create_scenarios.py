@@ -5,7 +5,6 @@ Last update: 2022-June-23
 """
 
 # load modules
-import os 
 import pandas as pd # v1.4.2
 import numpy as np # v1.21.5
 
@@ -14,6 +13,10 @@ from operational.codes.filepaths import tmp_path, shiny_path
 
 # import custom functions
 from operational.codes.functions.fun_create_scenarios import format_scenario_data, baseline_vals, add_scenario_levels
+
+# load management information
+management_area_poly_pix_ids = pd.read_csv(input_path + 'pixels_in_management_areas_polygons.csv')
+gbrmpa_park_zones_poly_pix_ids = pd.read_csv(input_path + 'pixels_in_gbrmpa_park_zones_polygons.csv')
 
 # load data
 grid_with_dynamic_predictors = pd.read_csv(tmp_path + 'grid_with_dynamic_predictors.csv')

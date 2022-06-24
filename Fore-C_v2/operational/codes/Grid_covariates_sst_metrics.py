@@ -88,7 +88,8 @@ for j in files:
                 cfs_df['type'] = 'forecast'
                 cfs_df['temp_metric_name'] = metric_name
                 cfs_df['value'] = tmp_metric
-                tmp_df = tmp_df.append(cfs_df, ignore_index = True)
+                tmp_df = pd.concat([tmp_df, cfs_df])
+
     else:
       tmp_metric = metric_array.copy() 
       # make flagged values NaNs
@@ -106,7 +107,7 @@ for j in files:
       tmp_df['temp_metric_name'] = metric_name
       tmp_df['value'] = tmp_metric[0,]
     # combine data
-    sst_metrics = sst_metrics.append(tmp_df)
+    sst_metrics = pd.concat([sst_metrics, tmp_df])
     # close nc file
     x.close()
     # print progress

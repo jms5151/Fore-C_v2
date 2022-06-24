@@ -5,10 +5,11 @@ Last update: 2022-June-23
 """
 
 # load module
+import os
 import pandas as pd # v 1.4.2
 
 # set filepaths
-from operational.codes.filepaths import input_path, shiny_path
+from operational.codes.filepaths import tmp_path, input_path, shiny_path
 # destination directories
 save_dir = tmp_path + 'map_data/'
 os.makedirs(save_dir)
