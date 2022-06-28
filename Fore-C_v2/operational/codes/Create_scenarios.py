@@ -9,7 +9,7 @@ import pandas as pd # v1.4.2
 import numpy as np # v1.21.5
 
 # set filepaths
-from operational.codes.filepaths import tmp_path, shiny_path
+from operational.codes.filepaths import input_path, tmp_path, shiny_path
 
 # import custom functions
 from operational.codes.functions.fun_create_scenarios import format_scenario_data, baseline_vals, add_scenario_levels

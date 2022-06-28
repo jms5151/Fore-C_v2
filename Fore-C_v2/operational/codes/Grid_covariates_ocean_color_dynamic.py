@@ -55,6 +55,9 @@ for i in range(len(oc_doy)):
     # add to ocean color dataset
     oc_metrics = pd.concat([oc_metrics, tmp_df])
 
+# close nc filesoc_long_term.close()
+oc_pixel_id.close()
+
 # add new column for variability
 oc_metrics['Three_Week_Kd_Variability'] = oc_metrics['Three_week_kd490_90th'] - oc_metrics['Three_Week_Kd_Median']
 
