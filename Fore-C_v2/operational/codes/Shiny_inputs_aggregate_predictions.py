@@ -151,23 +151,28 @@ reef_3Mforecast_5km = reef_forecast.loc[reef_forecast['Date'] == three_month_for
 reef_3Mforecast_5km.to_csv(save_dir + 'three_month_forecast_polygons_5km.csv', index = False)
 
 # separate by disease for scenarios page - 5 km ------------------------------
+
+# subset to nowcast only
+ga_nowcast = ga_forecast.loc[ga_forecast['Date'] == nowcast_date, ]
+ws_nowcast = ws_forecast.loc[ws_forecast['Date'] == nowcast_date, ]
+
 # GA GBR
-ga_gbr_5km = ga_forecast[ga_forecast['Region'] == 'gbr']
+ga_gbr_5km = ga_nowcast[ga_nowcast['Region'] == 'gbr']
 ga_gbr_5km = ga_gbr_5km[['ID', 'drisk']]
 ga_gbr_5km.to_csv(save_dir + 'ga_gbr_nowcast_polygons_5km.csv', index = False)
 
 # GA Pacific
-ga_pac_5km = ga_forecast[ga_forecast['Region'] != 'gbr']
+ga_pac_5km = ga_nowcast[ga_forecast['Region'] != 'gbr']
 ga_pac_5km = ga_pac_5km[['ID', 'drisk']]
 ga_pac_5km.to_csv(save_dir + 'ga_pac_nowcast_polygons_5km.csv', index = False)
 
 # WS GBR
-ws_gbr_5km = ws_forecast[ws_forecast['Region'] == 'gbr']
+ws_gbr_5km = ws_nowcast[ws_forecast['Region'] == 'gbr']
 ws_gbr_5km = ws_gbr_5km[['ID', 'drisk']]
 ws_gbr_5km.to_csv(save_dir + 'ws_gbr_nowcast_polygons_5km.csv', index = False)
 
 # WS Pacific
-ws_pac_5km = ws_forecast[ws_forecast['Region'] != 'gbr']
+ws_pac_5km = ws_nowcast[ws_forecast['Region'] != 'gbr']
 ws_pac_5km = ws_pac_5km[['ID', 'drisk']]
 ws_pac_5km.to_csv(save_dir + 'ws_pac_nowcast_polygons_5km.csv', index = False)
 
