@@ -87,7 +87,6 @@ ga_gbr_scenarios = add_scenario_levels(
   , scenarios_df = ga_gbr_scenarios
 )
 
-
 # save
 ga_gbr_filepath = tmp_path + 'ga_gbr_scenarios.csv'
 ga_gbr_scenarios.to_csv(ga_gbr_filepath, index = False)
@@ -122,7 +121,7 @@ ga_pac_scenarios = add_scenario_levels(
 )
 
 # coastal development
-ga_pac_development_levels = list(range(0, 256, 23))
+ga_pac_development_levels = list(range(0, 256, 25))
 
 ga_pac_scenarios = add_scenario_levels(
   df = ga_pac
@@ -144,7 +143,7 @@ ga_pac_scenarios = add_scenario_levels(
 )
 
 # turbidity
-ga_pac_turbidity_levels = np.arange(0.0, 0.5, 0.1).round(1).tolist()
+ga_pac_turbidity_levels = np.arange(0.0, 0.6, 0.1).round(1).tolist()
 
 ga_pac_scenarios = add_scenario_levels(
   df = ga_pac
@@ -153,7 +152,6 @@ ga_pac_scenarios = add_scenario_levels(
   , response_name = 'Turbidity'
   , scenarios_df = ga_pac_scenarios
 )
-
 
 # save
 ga_pac_filepath = tmp_path + 'ga_pac_scenarios.csv'
@@ -244,7 +242,7 @@ ws_pac_scenarios = add_scenario_levels(
   )
 
 # Parrotfish density
-ws_pac_parrotfish_levels = np.arange(0.0, 0.07, 0.01).round(1).tolist()
+ws_pac_parrotfish_levels = np.arange(0.0, 0.065, 0.01).tolist()
 
 ws_pac_scenarios = add_scenario_levels(
   df = ws_pac

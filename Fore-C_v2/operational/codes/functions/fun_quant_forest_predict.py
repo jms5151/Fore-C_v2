@@ -80,6 +80,8 @@ def update_forecasts(df_filepath, new_df):
         updated_forecast = pd.concat([old_df,new_df])
     else:
         updated_forecast = new_df
+    # Ensure there are no duplicates 
+    updated_forecast = updated_forecast.drop_duplicates()
     return updated_forecast
 
 def combine_regional_forecasts(gbr_df, pac_df):

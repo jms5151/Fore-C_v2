@@ -9,6 +9,7 @@ import pandas as pd # v 1.4.2
 
 # set filepaths
 from operational.codes.filepaths import input_path, shiny_path
+
 # destination directory
 scenarios_file_dir = shiny_path + 'Scenarios/'
 

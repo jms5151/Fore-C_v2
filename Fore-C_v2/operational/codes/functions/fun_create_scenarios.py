@@ -6,6 +6,7 @@ Last update: 2022-June-23
 
 # load module
 import pandas as pd # v1.4.2
+import numpy as np # v1.21.5
 
 # set filepaths
 from operational.codes.filepaths import input_path, shiny_path
@@ -63,6 +64,7 @@ def baseline_vals(df, covars, dz_name, regionGBR):
         df3 = agg_for_management_areas(df = df, management_df = gbrmpa_park_zones_poly_pix_ids)
         fileName3 = fileName1.replace('ID', 'gbrmpa')
         df3.to_csv(fileName3, index = False)
+        
 
 
 # function for creating scenarios
@@ -72,5 +74,14 @@ def add_scenario_levels(df, scenario_levels, col_name, response_name, scenarios_
         df['Response'] = response_name
         df['Response_level'] = i
         scenarios_df = pd.concat([scenarios_df, df])
+        scenarios_df = scenarios_df.drop_duplicates()
     return scenarios_df
 
+# adjust development levels
+def adjust_dev_levels(df):
+    original_scale = list(range(0,256,25))
+    shiny_scale = np.arange(0.0, 1.1, 0.1).round(1).tolist()
+    for i in range(len(original_scale)):
+        ind = df.index[(df['Response'] == 'Development') & (df['Response_level'] == original_scale[i])].tolist()
+        df.loc[ind, 'Response_level'] = shiny_scale[i]
+    return(df)

@@ -7,6 +7,7 @@ Last update: 2022-June-23
 # load modules
 import pandas as pd # v1.4.2
 
+
 # set filepaths
 from operational.codes.filepaths import tmp_path, shiny_path
 
@@ -15,6 +16,7 @@ from operational.codes.Final_covariates_by_disease_and_region import GA_GBR_Mode
 
 # load functions
 from operational.codes.functions.fun_quant_forest_predict import qf_predict_scenarios
+from operational.codes.functions.fun_create_scenarios import adjust_dev_levels
 
 # load scenarios
 ga_gbr_scenarios = pd.read_csv(tmp_path + 'ga_gbr_scenarios.csv')
@@ -50,6 +52,9 @@ ga_pac_scenario_predictions = qf_predict_scenarios(
     , final_mod = GA_Pacific_Model
     , id_vars = scenarios_id_vars
     )
+
+# replace response levels of development to correspond with shiny app slider (0-1)
+ga_pac_scenario_predictions = adjust_dev_levels(df = ga_pac_scenario_predictions)
 
 ga_pac_filepath = scenarios_save_dir + 'ga_pac_scenarios.csv'
 ga_pac_scenario_predictions.to_csv(ga_pac_filepath, index = False)
