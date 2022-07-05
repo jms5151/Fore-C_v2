@@ -56,6 +56,9 @@ runpy.run_path(path_name = './operational/codes/Shiny_inputs_aggregate_scenarios
 
 runpy.run_path(path_name = './operational/codes/Shiny_inputs_update_polygons.py')
 
+# CRW outputs --------------------------------------------------------
+runpy.run_path(path_name = './operational/codes/Output_forecasts_for_CRW.py')
+
 # Delete temporary files ---------------------------------------------
 delete_dir(tmp_path + 'map_data/')
 delete_dir(tmp_path)

@@ -2,8 +2,11 @@
 library(tidyverse)
 
 # load data
-load("../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ga_forecast.RData")
-load("../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ws_forecast.RData")
+# load("../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ga_forecast.RData")
+# load("../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ws_forecast.RData")
+
+ga_forecast <- read.csv("../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ga_forecast.csv")
+ws_forecast <- read.csv("../uh-noaa-shiny-app/forec_shiny_app_data/Forecasts/ws_forecast.csv")
 
 # output directory
 output_dir <- "../compiled_data/output_for_crw/"
@@ -88,10 +91,13 @@ for(i in regions){
   if(file.exists(ts_filepath) == TRUE){
     x_old <- read.csv(ts_filepath)
     x_old <- subset(x_old, Prediction == "Nowcast")
+    x_old <- x_old[!duplicated(x_old),]
     x_old$Data_date <- as.Date(x_old$Data_date, "%Y-%m-%d")
     max_x_old_date <- max(x_old$Data_date[x_old$Prediction == "Nowcast"])
     x_new <- subset(x, Data_date > max_x_old_date)
-    x <- bind_rows(x_old, x)
+    # x_new <- as.data.frame(x_new)
+    x_new$Data_date <- as.Date(x_new$Data_date, "%Y-%m-%d")
+    x <- bind_rows(x_old, x_new)
   }
   write.csv(x, ts_filepath, row.names = F)
 }
