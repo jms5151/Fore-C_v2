@@ -8,6 +8,7 @@ Last update: 2022-July-05
 import os
 import pandas as pd # v 1.4.2
 import numpy as np
+from datetime import date
 
 # set filepaths
 from operational.codes.filepaths import shiny_path, crw_path
