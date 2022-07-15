@@ -4,6 +4,7 @@ load('../compiled_data/survey_data/validation_data/v3_forecasts_aggregated.RData
 # load libraries
 library(ggplot2)
 library(cowplot)
+library(wesanderson)
 
 # may want to end Prediction precision so high numbers = more precise
 # for the pacific, this is just 1 - prediction_precision
@@ -17,13 +18,13 @@ forec_forecasts_agg$groupLabels <- gsub('Pacific', 'U.S. Pacific', forec_forecas
 # Accuracy plots 
 accuracy_plot <- ggplot(forec_forecasts_agg, aes(x = Lead_time, y = Prediction_accuracy, group = Lead_time, fill = groupLabels)) +
   geom_boxplot() +
+  scale_fill_manual(values = wes_palette('Zissou1', n = 4)) +
   facet_wrap(~groupLabels, scales = 'free', ncol = 1) + 
   # set unique ylimits by facet, with equal below and above one
   scale_y_continuous(limits = function(x){c(-max(x, 1), max(x, 1))}) +
   theme_bw() +
   theme(
     legend.position = 'none'
-    # , plot.title = element_text(size = 12, hjust = 0.5, face = 'bold')
     , panel.spacing = unit(2, "lines")
     , strip.text.x = element_blank()
   ) +
@@ -37,12 +38,12 @@ accuracy_plot <- ggplot(forec_forecasts_agg, aes(x = Lead_time, y = Prediction_a
 precision_plot <- ggplot(forec_forecasts_agg, aes(x = Lead_time, y = Prediction_precision, group = Lead_time, fill = groupLabels)) +
   geom_boxplot() +
   facet_wrap(~groupLabels, scales = 'free', ncol = 1) + 
+  scale_fill_manual(values = wes_palette('Zissou1', n = 4)) +
   # set unique ylimits and position axis on right side of plot
   scale_y_continuous(position = 'right', limits = function(x){c(0, max(x, 1))}) +
   theme_bw() +
   theme(
     legend.position = 'none'
-    # , plot.title = element_text(size = 12, hjust = 0.5, face = 'bold')
     , panel.spacing = unit(2, "lines")
     , strip.text.x = element_blank()
   ) +
@@ -56,17 +57,18 @@ precision_plot <- ggplot(forec_forecasts_agg, aes(x = Lead_time, y = Prediction_
 ap_plot <- plot_grid(accuracy_plot, precision_plot, ncol = 2)
 
 # set margins and add text
-p2 <- p + 
-  annotate("text", x = 0.25, y = 1.04, size = 7, label = 'White syndromes') +
-  annotate("text", x = 0.75, y = 1.04, size = 7, label = 'Growth anomalies') +
-  annotate("text", x = 0, y = 0.78, size = 7, label = 'Great Barrier Reef\n', angle = 90) +
-  annotate("text", x = 0, y = 0.28, size = 7, label = 'U.S. Pacific\n', angle = 90) +
-  theme(plot.margin = unit(c(1, 0.5, 0.5, 1), "cm")) 
-
-# p2
+ap_plot_final <- ap_plot + 
+  annotate("text", x = 0.28, y = 1.03, size = 6, label = 'Accuracy') +
+  annotate("text", x = 0.72, y = 1.03, size = 6, label = 'Precision') +
+  annotate("text", x = 0.5, y = 0.98, size = 5, label = 'Growth anomalies, Great Barrier Reef') +
+  annotate("text", x = 0.5, y = 0.74, size = 5, label = 'Growth anomalies, U.S. Pacific') +
+  annotate("text", x = 0.5, y = 0.49, size = 5, label = 'White syndromes, Great Barrier Reef') +
+  annotate("text", x = 0.5, y = 0.25, size = 5, label = 'White syndromes, U.S. Pacific') +
+  annotate("text", x = 0.5, y = 0, size = 4, label = 'Lead time') +
+  theme(plot.margin = unit(c(1, 0.1, 1, 0.1), "cm")) 
 
 # save plot
-ggsave(filename = '../../Figures/paper_figures/final/v2_vs_v3.pdf', height = 7, width = 10,
-       plot = p2)
+ggsave(filename = '../../Figures/paper_figures/final/v3_lead_time_forecasts.pdf', height = 8, width = 8.5,
+       plot = ap_plot_final)
 
 
