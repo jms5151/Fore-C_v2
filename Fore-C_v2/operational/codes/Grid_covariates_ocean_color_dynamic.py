@@ -10,10 +10,10 @@ import pandas as pd # v1.4.2
 import numpy as np # v1.21.5
 
 # load reef grid
-reefsDF = pd.read_csv('./operational/input_data/grid.csv')
+reefsDF = pd.read_csv('../input_data/grid.csv')
 
 # set filepaths
-from operational.codes.filepaths import tmp_path, input_path
+from filepaths import tmp_path, input_path
 
 # load SST data to get matching dates
 oc_dates = pd.read_csv(tmp_path + 'grid_with_sst_metrics.csv')

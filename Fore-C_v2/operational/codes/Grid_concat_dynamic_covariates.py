@@ -7,7 +7,7 @@ Last update: 2022-Apr-29
 import pandas as pd # v1.4.2
 
 # set filepaths
-from operational.codes.filepaths import tmp_path, input_path
+from filepaths import tmp_path, input_path
 
 # load data
 grid_with_static_covariates = pd.read_csv(input_path + 'grid_with_static_covariates.csv')

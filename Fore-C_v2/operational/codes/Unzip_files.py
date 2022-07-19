@@ -13,5 +13,5 @@ def unzip_dir(zip_filepath, dest_filepath):
         zip_ref.extractall(dest_filepath)
 
 # unzip
-unzip_dir(zip_filepath = './operational/model_objects.zip', dest_filepath = './operational/')
-unzip_dir(zip_filepath = './operational/input_data.zip', dest_filepath = './operational/')
+unzip_dir(zip_filepath = '../model_objects.zip', dest_filepath = '../')
+unzip_dir(zip_filepath = '../input_data.zip', dest_filepath = '../')

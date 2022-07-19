@@ -11,11 +11,11 @@ import pandas as pd # v1.4.2
 import numpy as np # v1.21.5
 
 # load functions
-from operational.codes.functions.fun_ftp_download import list_ftp_files
-from operational.codes.functions.fun_winter_condition_offset import winter_condition_offset
+from functions.fun_ftp_download import list_ftp_files
+from functions.fun_winter_condition_offset import winter_condition_offset
 
 # set temporary filepath
-from operational.codes.filepaths import tmp_path
+from filepaths import tmp_path, input_path
 
 # list weekly SST files --------------------------------------
 
@@ -121,7 +121,7 @@ reef_grid_sst = sst_metrics.pivot_table(index = ['ID', 'Date', 'ensemble', 'type
                                           , values = 'value').reset_index()
 
 # load reef grid
-reefsDF = pd.read_csv('./operational/input_data/grid.csv')
+reefsDF = pd.read_csv(input_path + 'grid.csv')
 
 # merge sst data with reef grid
 reef_grid_sst = reef_grid_sst.merge(reefsDF, on = 'ID', how = 'left')

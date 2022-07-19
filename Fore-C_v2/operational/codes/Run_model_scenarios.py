@@ -7,16 +7,15 @@ Last update: 2022-June-23
 # load modules
 import pandas as pd # v1.4.2
 
-
 # set filepaths
-from operational.codes.filepaths import tmp_path, shiny_path
+from filepaths import tmp_path, shiny_path
 
 # load model objects
-from operational.codes.Final_covariates_by_disease_and_region import GA_GBR_Model, GA_Pacific_Model, WS_GBR_Model, WS_Pacific_Model
+from Final_covariates_by_disease_and_region import GA_GBR_Model, GA_Pacific_Model, WS_GBR_Model, WS_Pacific_Model
 
 # load functions
-from operational.codes.functions.fun_quant_forest_predict import qf_predict_scenarios
-from operational.codes.functions.fun_create_scenarios import adjust_dev_levels
+from functions.fun_quant_forest_predict import qf_predict_scenarios
+from functions.fun_create_scenarios import adjust_dev_levels
 
 # load scenarios
 ga_gbr_scenarios = pd.read_csv(tmp_path + 'ga_gbr_scenarios.csv')

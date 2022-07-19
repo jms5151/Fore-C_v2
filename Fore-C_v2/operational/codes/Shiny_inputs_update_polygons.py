@@ -29,12 +29,12 @@ import pandas as pd # v1.4.2
 import geopandas as gpd # v 0.6.1
 
 # set filepaths
-from operational.codes.filepaths import input_path, tmp_path, shiny_path
+from filepaths import input_path, tmp_path, shiny_path
 map_data_dir = tmp_path + 'map_data/'
 shiny_forecast_dir = shiny_path + 'Forecasts'
 
 # load function
-from operational.codes.functions.fun_join_shapefile_with_drisk_data import create_new_polygon_layers
+from functions.fun_join_shapefile_with_drisk_data import create_new_polygon_layers
 
 # load shapefiles -------------------------------------------------------------
 reef_grid_shp = gpd.read_file(input_path + 'spatial_grid.shp')

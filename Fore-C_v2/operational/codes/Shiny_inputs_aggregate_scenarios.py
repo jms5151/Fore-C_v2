@@ -8,13 +8,13 @@ Last update: 2022-June-23
 import pandas as pd # v 1.4.2
 
 # set filepaths
-from operational.codes.filepaths import input_path, shiny_path
+from filepaths import input_path, shiny_path
 
 # destination directory
 scenarios_file_dir = shiny_path + 'Scenarios/'
 
 # load functions
-from operational.codes.functions.fun_pixels_to_management_zones import agg_to_manage_zones_scenarios
+from functions.fun_pixels_to_management_zones import agg_to_manage_zones_scenarios
 
 # load data
 ga_gbr_scenarios = pd.read_csv(scenarios_file_dir + 'ga_gbr_scenarios.csv')

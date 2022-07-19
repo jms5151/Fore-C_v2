@@ -16,48 +16,48 @@ Created by Jamie M. Caldwell. Contact: jamie.sziklay@gmail.com
 import runpy
 
 # load functions 
-from operational.codes.functions.fun_create_delete_directories import create_dir, delete_dir
+from functions.fun_create_delete_directories import create_dir, delete_dir
 
 # set filepaths
-from operational.codes.filepaths import tmp_path, input_path, models_path
+from filepaths import tmp_path, input_path, models_path
 
 # Create directory for temporary files
 create_dir(tmp_path)
 
 # Only need to run after cloning repository / pulling updated data fiels (unzip files)
-runpy.run_path(path_name = './operational/codes/Unzip_files.py')
+runpy.run_path(path_name = 'Unzip_files.py')
 
 # Co-variates data pre-processing for grid --------------------------- 
 
 # compile NRT & forecasted SST metrics
-runpy.run_path(path_name = './operational/codes/Grid_covariates_sst_metrics.py')
+runpy.run_path(path_name = 'Grid_covariates_sst_metrics.py')
 
 # compile seasonal ocean color metrics
-runpy.run_path(path_name = './operational/codes/Grid_covariates_ocean_color_dynamic.py')
+runpy.run_path(path_name = 'Grid_covariates_ocean_color_dynamic.py')
 
 # compile predictor data
-runpy.run_path(path_name = './operational/codes/Grid_concat_dynamic_covariates.py')
+runpy.run_path(path_name = 'Grid_concat_dynamic_covariates.py')
 
 # Forecasting --------------------------------------------------------
 
 # run model predictions
-runpy.run_path(path_name = './operational/codes/Run_model_forecasts.py')
+runpy.run_path(path_name = 'Run_model_forecasts.py')
 
 # create model scenarios
-runpy.run_path(path_name = './operational/codes/Create_scenarios.py')
+runpy.run_path(path_name = 'Create_scenarios.py')
 
 # run scenarios
-runpy.run_path(path_name = './operational/codes/Run_model_scenarios.py')
+runpy.run_path(path_name = 'Run_model_scenarios.py')
 
 # Create shiny outputs -----------------------------------------------
-runpy.run_path(path_name = './operational/codes/Shiny_inputs_aggregate_predictions.py')
+runpy.run_path(path_name = 'Shiny_inputs_aggregate_predictions.py')
 
-runpy.run_path(path_name = './operational/codes/Shiny_inputs_aggregate_scenarios.py')
+runpy.run_path(path_name = 'Shiny_inputs_aggregate_scenarios.py')
 
-runpy.run_path(path_name = './operational/codes/Shiny_inputs_update_polygons.py')
+runpy.run_path(path_name = 'Shiny_inputs_update_polygons.py')
 
 # CRW outputs --------------------------------------------------------
-runpy.run_path(path_name = './operational/codes/Output_forecasts_for_CRW.py')
+runpy.run_path(path_name = 'Output_forecasts_for_CRW.py')
 
 # Delete temporary files ---------------------------------------------
 delete_dir(tmp_path + 'map_data/')

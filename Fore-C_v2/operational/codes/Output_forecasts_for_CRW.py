@@ -11,7 +11,7 @@ import numpy as np
 from datetime import date
 
 # set filepaths
-from operational.codes.filepaths import shiny_path, crw_path
+from filepaths import shiny_path, crw_path
 
 # load data
 ga_forecast = pd.read_csv(shiny_path + 'Forecasts/ga_forecast.csv')
@@ -78,25 +78,24 @@ def format_ts_predictions(df, diseaseName):
     # format data
     df = df.rename(columns = {'Date':'Data_date'})
     df = df.loc[df['Data_date'] >= cutoff_date]
-    df = df.groupby(['Region', 'Data_date'])[('value', 'Lwr', 'Upr')].quantile(0.90).reset_index()
-    df = df.rename(columns = {'value': diseaseName + '_value'
-                              , 'Lwr': diseaseName + '_lwr'
-                              , 'Upr': diseaseName + '_upr'})
+    df = df.groupby(['Region', 'Data_date'])[['value', 'Lwr', 'Upr']].quantile(0.90).reset_index()
+    df = df.rename(columns = {'value': diseaseName + '75'
+                              , 'Lwr': diseaseName + '50'
+                              , 'Upr': diseaseName + '90'})
     df['Prediction'] = np.where(df['Data_date'] <= current_nowcast_date, 'Nowcast', 'Forecast')
     return(df)
-
 
 ga_ts = format_ts_predictions(df = ga_forecast, diseaseName = 'GA')
 
 ws_ts = format_ts_predictions(df = ws_forecast, diseaseName = 'WS')
 
-predictions_ts = pd.concat([ga_ts, ws_ts])
+predictions_ts = pd.merge(left = ga_ts, right = ws_ts)
 
 # save
 regions = predictions_ts['Region'].unique()
 
 for i in regions:
-  x = reef_forecast[reef_forecast['Region'] == i]
+  x = predictions_ts[predictions_ts['Region'] == i]
   ts_filepath = crw_path + 'forec_YTD_regional_disease_predictions_' + i + '.csv'
   if os.path.exists(ts_filepath):
     x_old = pd.read_csv(ts_filepath)

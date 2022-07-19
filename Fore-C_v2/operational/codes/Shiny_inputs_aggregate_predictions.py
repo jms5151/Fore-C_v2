@@ -9,7 +9,7 @@ import os
 import pandas as pd # v 1.4.2
 
 # set filepaths
-from operational.codes.filepaths import tmp_path, input_path, shiny_path
+from filepaths import tmp_path, input_path, shiny_path
 
 # destination directories
 save_dir = tmp_path + 'map_data/'
@@ -17,7 +17,7 @@ os.makedirs(save_dir)
 forecast_file_dir = shiny_path + 'Forecasts/'
 
 # load functions
-from operational.codes.functions.fun_pixels_to_management_zones import agg_to_manage_zones_forecasts
+from functions.fun_pixels_to_management_zones import agg_to_manage_zones_forecasts
 
 # load data
 ga_forecast = pd.read_csv(forecast_file_dir + 'ga_forecast.csv')
@@ -157,27 +157,30 @@ ga_nowcast = ga_forecast.loc[ga_forecast['Date'] == nowcast_date, ]
 ws_nowcast = ws_forecast.loc[ws_forecast['Date'] == nowcast_date, ]
 
 # GA GBR
-ga_gbr_5km = ga_nowcast[ga_nowcast['Region'] == 'gbr']
+ga_gbr_5km = ga_nowcast.loc[ga_nowcast['Region'] == 'gbr']
 ga_gbr_5km = ga_gbr_5km[['ID', 'drisk']]
 ga_gbr_5km.to_csv(save_dir + 'ga_gbr_nowcast_polygons_5km.csv', index = False)
 
 # GA Pacific
-ga_pac_5km = ga_nowcast[ga_forecast['Region'] != 'gbr']
+ga_pac_5km = ga_nowcast.loc[ga_nowcast['Region'] != 'gbr']
 ga_pac_5km = ga_pac_5km[['ID', 'drisk']]
 ga_pac_5km.to_csv(save_dir + 'ga_pac_nowcast_polygons_5km.csv', index = False)
 
 # WS GBR
-ws_gbr_5km = ws_nowcast[ws_forecast['Region'] == 'gbr']
+ws_gbr_5km = ws_nowcast.loc[ws_nowcast['Region'] == 'gbr']
 ws_gbr_5km = ws_gbr_5km[['ID', 'drisk']]
 ws_gbr_5km.to_csv(save_dir + 'ws_gbr_nowcast_polygons_5km.csv', index = False)
 
 # WS Pacific
-ws_pac_5km = ws_nowcast[ws_forecast['Region'] != 'gbr']
+ws_pac_5km = ws_nowcast.loc[ws_nowcast['Region'] != 'gbr']
 ws_pac_5km = ws_pac_5km[['ID', 'drisk']]
 ws_pac_5km.to_csv(save_dir + 'ws_pac_nowcast_polygons_5km.csv', index = False)
 
 # Management scale data -------------------------------------------------------
-management_nowcast = max_drisk_df(ga_df = ga_management, ws_df = ws_management)
+ga_management_nowcast = ga_management.loc[ga_management['Date'] == nowcast_date, ['ID', 'Region', 'Date', 'type', 'drisk']]
+ws_management_nowcast = ws_management.loc[ws_management['Date'] == nowcast_date, ['ID', 'Region', 'Date', 'type', 'drisk']]
+
+management_nowcast = max_drisk_df(ga_df = ga_management_nowcast, ws_df = ws_management_nowcast)
 
 # subset to nowcast date
 management_nowcast = management_nowcast.loc[management_nowcast['Date'] == nowcast_date, ['ID', 'drisk']]
@@ -185,19 +188,19 @@ management_nowcast.to_csv(save_dir + 'polygons_management_zoning.csv', index = F
 
 # GA GBR
 ga_gbr_management_nowcast = ga_gbr_management.loc[ga_gbr_management['Date'] == nowcast_date, ['ID', 'drisk']]
-ga_gbr_management.to_csv(save_dir + 'ga_gbr_polygons_management_zoning.csv', index = False)
+ga_gbr_management_nowcast.to_csv(save_dir + 'ga_gbr_polygons_management_zoning.csv', index = False)
 
 # GA Pacific
 ga_pac_management_nowcast = ga_pac_management.loc[ga_pac_management['Date'] == nowcast_date, ['ID', 'drisk']]
-ga_pac_management.to_csv(save_dir + 'ga_pac_polygons_management_zoning.csv', index = False)
+ga_pac_management_nowcast.to_csv(save_dir + 'ga_pac_polygons_management_zoning.csv', index = False)
 
 # WS GBR
 ws_gbr_management_nowcast = ws_gbr_management.loc[ws_gbr_management['Date'] == nowcast_date, ['ID', 'drisk']]
-ws_gbr_management.to_csv(save_dir + 'ws_gbr_polygons_management_zoning.csv', index = False)
+ws_gbr_management_nowcast.to_csv(save_dir + 'ws_gbr_polygons_management_zoning.csv', index = False)
 
 # WS Pacific
 ws_pac_management_nowcast = ws_pac_management.loc[ws_pac_management['Date'] == nowcast_date, ['ID', 'drisk']]
-ws_pac_management.to_csv(save_dir + 'ws_pac_polygons_management_zoning.csv', index = False)
+ws_pac_management_nowcast.to_csv(save_dir + 'ws_pac_polygons_management_zoning.csv', index = False)
 
 # GBRMPA zone data ------------------------------------------------------------
 gbrmpa_nowcast = max_drisk_df(ga_df = ga_gbrmpa, ws_df = ga_gbrmpa)
