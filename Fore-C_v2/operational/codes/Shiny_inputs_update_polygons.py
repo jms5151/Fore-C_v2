@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Update polygons for Shiny app maps
-Last update: 2022-June-23
+Last update: 2022-July-20
 
 forecast maps need:
     1. nowcast_polygons_5km

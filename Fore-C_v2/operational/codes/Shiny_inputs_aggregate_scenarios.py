@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Aggregate scenario predictions to different regional management zones
-Last update: 2022-June-23
+Last update: 2022-July-20
 """
 
 # load module
