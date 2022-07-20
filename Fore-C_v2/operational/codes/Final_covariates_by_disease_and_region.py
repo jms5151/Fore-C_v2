@@ -8,7 +8,7 @@ Last update: 2022-June-23
 import joblib # v1.1.0
 
 # set filepaths
-from operational.codes.filepaths import models_path
+from filepaths import models_path
 
 # load model objects
 GA_GBR_Model = joblib.load(models_path + 'ga_gbr.joblib')

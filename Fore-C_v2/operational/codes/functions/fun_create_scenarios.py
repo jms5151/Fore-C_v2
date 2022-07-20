@@ -9,7 +9,7 @@ import pandas as pd # v1.4.2
 import numpy as np # v1.21.5
 
 # set filepaths
-from operational.codes.filepaths import input_path, shiny_path
+from filepaths import input_path, shiny_path
 
 # load management information
 management_area_poly_pix_ids = pd.read_csv(input_path + 'pixels_in_management_areas_polygons.csv')

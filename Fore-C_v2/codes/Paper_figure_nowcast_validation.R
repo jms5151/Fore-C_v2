@@ -15,8 +15,8 @@ ga_gbr_plt <- ggplot(v3_ga_gbr, aes(x = Observed, y = Predicted)) +
   theme_bw() +
   xlim(0, 80) +
   ylim(0, 80) +
-  ylab('Predicted abundance') +
-  xlab('Observed abundance') +
+  ylab('Predicted density') +
+  xlab('Observed density') +
   theme(legend.position = 'none')
 
 # V3 GA Pacific scatterplot ---------------------------------
@@ -42,11 +42,11 @@ ws_gbr_plt <- ggplot(ws_gbr_nowcast, aes(x = Observed, y = Predicted, col = Vers
   scale_color_manual(values = c('#CC0033', '#003333')) + # , "#FC4E07"
   scale_y_continuous(
     # Features of the first axis
-    name = 'Predicted abundance',
+    name = 'Predicted density',
     # Add a second axis and specify its features
     sec.axis = sec_axis( trans=~./2, name = 'Predicted risk level')
   ) +
-  xlab('Observed abundance') +
+  xlab('Observed density') +
   xlim(0, ylimMax) +
   theme(legend.position = 'none') +
   theme(legend.position = c(0.9, 0.8),

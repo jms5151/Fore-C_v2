@@ -1,9 +1,10 @@
 # Model predictions for withheld validation data for nowcasts
 
 # load library
-library(ggplot2)
 library(tidyverse)
 library(quantregForest)
+library(ncdf4)
+library(httr)
 
 # hard code directory and file loading -----------------------------------------
 
@@ -188,11 +189,6 @@ save(v3_ga_gbr, file = '../compiled_data/survey_data/validation_data/v3_ga_gbr.R
 # -----------------------------------------------------------------------------#
 # FORECAST PREDICTIONS --------------------------------------------------------#
 # -----------------------------------------------------------------------------#
-# load libraries
-library(ncdf4)
-library(tidyverse)
-library(httr)
-
 # get SST forecasts for lead weeks 1 - 12 ------------
 # source custom function 
 source("./codes/custom_functions/fun_ftp_download.R")
@@ -204,6 +200,7 @@ files <- list_ftp_files(ftp_path = forecast_filepath)
 # format files
 files <- files[grep('.nc', files)]
 files <- gsub('.*href=\"|nc.*', '', files)
+files <- files[!grepl('recs01251', files)] # remove an erroneous file
 
 # create and save empty data frame
 sst_metrics <- data.frame()
@@ -268,8 +265,6 @@ sst_wide <- sst_metrics %>%
 # overwrite above file
 save(sst_wide, file = save_path)
 
-load('../compiled_data/survey_data/validation_data/sst_cfs_forecasts_validation.RData')
-
 # add CRW unique id to other predictor data (loaded at top of code) 
 sst_wide_with_id <- sst_wide %>%
   select(-c(CRW_Latitude, CRW_Longitude, CRW_date)) %>%
@@ -291,11 +286,6 @@ format_forecast_data <- function(df){
   df_forecast <- df %>% 
     select(-all_of(sst_cols_to_remove)) %>%
     inner_join(sst_wide_with_id)
-  
-  # # check that all surveys are included, there should be 12 * 28 = 336 rows per survey
-  # test <- df_forecast %>%
-  #   group_by(UniqueID) %>%
-  #   summarise(N = length(UniqueID))
   
   # add lead time and ensemble for nowcast
   df$Lead_time <- 0
@@ -350,16 +340,6 @@ predictNewCFS <- function(final_model, new_df, regionName, diseaseName){
   as.data.frame(x2)
 }
 
-test <- lapply(x[1:3], function(x) 
-  predictNewCFS(
-    final_model = GA_GBR_Model
-    , new_df = x
-    , regionName = 'GBR'
-    , diseaseName = 'Growth anomalies'
-    )
-  )
-
-test2 <- do.call('rbind', test)
 # Make predictions -------------------------------------
 
 # Growth anomalies - GBR, V3 predictions
