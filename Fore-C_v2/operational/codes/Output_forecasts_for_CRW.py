@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Format data for NOAA CRW regional virtual stations
-Last update: 2022-July-05
+Last update: 2023-March-31
 """
 
 # load module
@@ -70,7 +70,17 @@ for i in regions:
     x.to_csv(crw_path + 'forec_5km_nowcasts_and_forcasts_' + i + '.csv', index = False)
 
 # time series ------------------------------------------------------------------
-
+def update_vs_region(df):
+    # separate NWHI from Hawaii
+    nwhi_ind = df.index[(df.Latitude > 22.5) & (df.Latitude < 30) & (df.Longitude > -175.5) & (df.Longitude < -161)].tolist()
+    df.loc[nwhi_ind , 'Region'] = 'nwhi'
+    # separate guam and cnmi, first change all pixels to guam, then rename cnmi pixels
+    guam_cnmi_ind = df.index[df.Region == 'guam_cnmi'].tolist()
+    df.loc[guam_cnmi_ind, 'Region'] = 'guam'
+    cnmi_ind = df.index[(df.Latitude > 13) & (df.Latitude < 13.5) & (df.Longitude > 144) & (df.Longitude < 145.5)].tolist()
+    df.loc[cnmi_ind, 'Region'] = 'cnmi'
+    return(df)
+        
 def format_ts_predictions(df, diseaseName):
     # determine first day of year
     yr = date.today().year
@@ -85,8 +95,10 @@ def format_ts_predictions(df, diseaseName):
     df['Prediction'] = np.where(df['Data_date'] <= current_nowcast_date, 'Nowcast', 'Forecast')
     return(df)
 
+ga_forecast = update_vs_region(df = ga_forecast)
 ga_ts = format_ts_predictions(df = ga_forecast, diseaseName = 'GA')
 
+ws_forecast = update_vs_region(df = ws_forecast)
 ws_ts = format_ts_predictions(df = ws_forecast, diseaseName = 'WS')
 
 predictions_ts = pd.merge(left = ga_ts, right = ws_ts)
