@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 Format data for NOAA CRW regional virtual stations
-Last update: 2023-March-31
+Last update: 2023-April-07
 """
 
 # load module
-import os
 import pandas as pd # v 1.4.2
 import numpy as np
-from datetime import date
 
 # set filepaths
 from filepaths import shiny_path, crw_path
@@ -82,12 +80,7 @@ def update_vs_region(df):
     return(df)
         
 def format_ts_predictions(df, diseaseName):
-    # determine first day of year
-    yr = date.today().year
-    cutoff_date = str(yr) + '-01-01'
-    # format data
     df = df.rename(columns = {'Date':'Data_date'})
-    df = df.loc[df['Data_date'] >= cutoff_date]
     df = df.groupby(['Region', 'Data_date'])[['value', 'Lwr', 'Upr']].quantile(0.90).reset_index()
     df = df.rename(columns = {'value': diseaseName + '75'
                               , 'Lwr': diseaseName + '50'
@@ -108,12 +101,5 @@ regions = predictions_ts['Region'].unique()
 
 for i in regions:
   x = predictions_ts[predictions_ts['Region'] == i]
-  ts_filepath = crw_path + 'forec_YTD_regional_disease_predictions_' + i + '.csv'
-  if os.path.exists(ts_filepath):
-    x_old = pd.read_csv(ts_filepath)
-    x_old = x_old[x_old['Prediction'] == 'Nowcast']
-    x_old = x_old.drop_duplicates() # not sure this is needed
-    max_x_old_date = x_old['Data_date'].max()
-    x_new = x[x['Data_date'] > max_x_old_date]
-    x = pd.concat([x_old, x_new])
+  ts_filepath = crw_path + 'forec_regional_24wk_disease_predictions_' + i + '.csv'
   x.to_csv(ts_filepath, index = False)
