@@ -60,12 +60,8 @@ values = ['Nowcast', '4 week forecast', '8 week forecast', '12 week forecast']
 # create a new column and use np.select to assign values to it using our lists as arguments
 reef_forecast['Prediction'] = np.select(conditions, values)
 
-# save by region
-regions = reef_forecast['Region'].unique()
-
-for i in regions:
-    x = reef_forecast[reef_forecast['Region'] == i]
-    x.to_csv(crw_path + 'forec_5km_nowcasts_and_forcasts_' + i + '.csv', index = False)
+# save
+reef_forecast.to_csv(crw_path + 'forec_5km_nowcasts_and_forcasts.csv', index = False)
 
 # time series ------------------------------------------------------------------
 def update_vs_region(df):
