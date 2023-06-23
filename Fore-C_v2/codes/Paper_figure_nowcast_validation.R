@@ -3,10 +3,14 @@ validation_files <- list.files('../compiled_data/survey_data/validation_data/', 
 validation_files <- validation_files[grep('.RData', validation_files)]
 lapply(validation_files, load, .GlobalEnv)
 
+# format
+v2_ws_gbr$Version <- 'V1'
+
 # load libraries
 library(ggplot2)
 library(tidyverse)
-library(cowplot)
+library(egg)
+library(ggpubr)
 
 # V3 GA GBR scatterplot --------------------------------------
 ga_gbr_plt <- ggplot(v3_ga_gbr, aes(x = Observed, y = Predicted)) +
@@ -17,6 +21,8 @@ ga_gbr_plt <- ggplot(v3_ga_gbr, aes(x = Observed, y = Predicted)) +
   ylim(0, 80) +
   ylab('Predicted density') +
   xlab('Observed density') +
+  ggtitle('Growth anomalies') +
+  theme(plot.title = element_text(hjust = 0.5, size = 18)) +
   theme(legend.position = 'none')
 
 # V3 GA Pacific scatterplot ---------------------------------
@@ -27,7 +33,7 @@ ga_pac_plt <- ggplot(v3_ga_pac, aes(x = Observed, y = Predicted)) +
   xlim(0, 1) +
   ylim(0, 1) +
   ylab('Predicted prevalence') +
-  xlab('Observed prevalence')
+  xlab('Observed prevalence') 
 
 # V2 & V3 WS GBR scatterplot ---------------------------------
 # adjust for second y-axis (divide by two when specifying values on plot)
@@ -39,7 +45,7 @@ ws_gbr_plt <- ggplot(ws_gbr_nowcast, aes(x = Observed, y = Predicted, col = Vers
   geom_errorbar(aes(ymin = V3_Q50, ymax = V3_Q90), col = '#003333', width=0) + # #00AFBB
   geom_point(alpha = 0.6) +
   theme_bw() +
-  scale_color_manual(values = c('#CC0033', '#003333')) + # , "#FC4E07"
+  scale_color_manual(values = c('orange', '#003333')) + # , "#FC4E07"
   scale_y_continuous(
     # Features of the first axis
     name = 'Predicted density',
@@ -48,10 +54,13 @@ ws_gbr_plt <- ggplot(ws_gbr_nowcast, aes(x = Observed, y = Predicted, col = Vers
   ) +
   xlab('Observed density') +
   xlim(0, ylimMax) +
+  ggtitle('White syndromes') +
+  theme(plot.title = element_text(hjust = 0.5, size = 18)) +
   theme(legend.position = 'none') +
   theme(legend.position = c(0.9, 0.8),
         legend.background = element_rect(fill = "white", color = "black")
   )
+
 
 # V2 & V3 WS Pacific scatterplot ----------------------------
 # adjust for second y-axis (multiply by max value when specifying values on plot)
@@ -71,28 +80,25 @@ ws_pac_plt <- ggplot(ws_pac_nowcast, aes(x = Observed, y = Predicted, col = Vers
     sec.axis = sec_axis( trans=~.*v2predMax, name = 'Predicted risk level')
   ) +
   xlab('Observed prevalence') +
-  theme(legend.position = 'none') 
+  theme(legend.position = 'none') +
+  theme(legend.position = c(0.9, 0.4),
+        legend.background = element_rect(fill = "white", color = "black")
+  )
 
 
 # combine for plots & add labels
-p <- plot_grid(
-  ws_gbr_plt
-  , ga_gbr_plt
-  , ws_pac_plt 
-  , ga_pac_plt 
-  # , labels = c('A', 'B', 'C', 'D')
-  # , label_size = 12
-  )
+p <- ggarrange(  ws_gbr_plt
+            , ga_gbr_plt
+            , ws_pac_plt 
+            , ga_pac_plt 
+            , ncol = 2
+            )
 
-# set margins and add text
-p2 <- p + 
-  annotate("text", x = 0.25, y = 1.04, size = 7, label = 'White syndromes') +
-  annotate("text", x = 0.75, y = 1.04, size = 7, label = 'Growth anomalies') +
-  annotate("text", x = 0, y = 0.78, size = 7, label = 'Great Barrier Reef\n', angle = 90) +
-  annotate("text", x = 0, y = 0.28, size = 7, label = 'U.S. Pacific\n', angle = 90) +
-  theme(plot.margin = unit(c(1, 0.5, 0.5, 1), "cm")) 
+# silly but can't have two left arguments, so make long space
+p2 <- annotate_figure(p, left = text_grob('U.S. Pacific                                 GBR', size = 18, rot = 90))
 
 # save plot
-ggsave(filename = '../../Figures/paper_figures/final/v2_vs_v3.pdf', height = 7, width = 10,
-       plot = p2)
-
+ggsave(filename = '../../Figures/paper_figures/final/v1v2_vs_v3.pdf'
+       , height = 7
+       , width = 10
+       , plot = p2)
