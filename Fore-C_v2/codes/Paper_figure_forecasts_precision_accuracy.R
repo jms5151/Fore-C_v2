@@ -21,8 +21,8 @@ forec_forecasts_agg$groupLabels <- factor(forec_forecasts_agg$groupLabels, level
 
 # Accuracy plots 
 accuracy_plot <- ggplot(forec_forecasts_agg, aes(x = Lead_time, y = Prediction_accuracy, group = Lead_time, fill = groupLabels)) +
-  geom_boxplot() +
-  scale_fill_manual(values = rev(wes_palette('Zissou1', n = 4))) +
+  geom_boxplot(alpha=0.7, fill = '#003333') +
+  # scale_fill_manual(values = rev(wes_palette('Zissou1', n = 4))) +
   facet_wrap(~groupLabels, scales = 'free', ncol = 1) + 
   # set unique ylimits by facet, with equal below and above one
   scale_y_continuous(limits = function(x){c(-max(x, 1), max(x, 1))}) +
@@ -40,9 +40,9 @@ accuracy_plot <- ggplot(forec_forecasts_agg, aes(x = Lead_time, y = Prediction_a
 
 # Precision plots 
 precision_plot <- ggplot(forec_forecasts_agg, aes(x = Lead_time, y = Prediction_precision, group = Lead_time, fill = groupLabels)) +
-  geom_boxplot() +
+  geom_boxplot(alpha=0.7, fill = '#003333') +
   facet_wrap(~groupLabels, scales = 'free', ncol = 1) + 
-  scale_fill_manual(values = rev(wes_palette('Zissou1', n = 4))) +
+  # scale_fill_manual(values = rev(wes_palette('Zissou1', n = 4))) +
   # set unique ylimits and position axis on right side of plot
   scale_y_continuous(position = 'right', limits = function(x){c(0, max(x, 1))}) +
   theme_bw() +

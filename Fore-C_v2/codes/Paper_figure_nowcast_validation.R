@@ -4,7 +4,7 @@ validation_files <- validation_files[grep('.RData', validation_files)]
 lapply(validation_files, load, .GlobalEnv)
 
 # format
-v2_ws_gbr$Version <- 'V1'
+# v2_ws_gbr$Version <- 'V1'
 
 # load libraries
 library(ggplot2)
@@ -14,6 +14,7 @@ library(ggpubr)
 
 # V3 GA GBR scatterplot --------------------------------------
 ga_gbr_plt <- ggplot(v3_ga_gbr, aes(x = Observed, y = Predicted)) +
+  geom_abline(slope = 1, intercept = 0, color = 'grey') +
   geom_errorbar(aes(ymin = V3_Q50, ymax = V3_Q90), color = '#003333') + #
   geom_point(alpha = 0.6, color = '#003333') +
   theme_bw() +
@@ -23,10 +24,11 @@ ga_gbr_plt <- ggplot(v3_ga_gbr, aes(x = Observed, y = Predicted)) +
   xlab('Observed density') +
   ggtitle('Growth anomalies') +
   theme(plot.title = element_text(hjust = 0.5, size = 18)) +
-  theme(legend.position = 'none')
+  theme(legend.position = 'none') 
 
 # V3 GA Pacific scatterplot ---------------------------------
 ga_pac_plt <- ggplot(v3_ga_pac, aes(x = Observed, y = Predicted)) +
+  geom_abline(slope = 1, intercept = 0, color = 'grey') +
   geom_errorbar(aes(ymin = V3_Q50, ymax = V3_Q90), color = '#003333') +
   geom_point(alpha = 0.6, color = '#003333') +
   theme_bw() +
@@ -42,6 +44,7 @@ ws_gbr_nowcast <- bind_rows(v2_ws_gbr, v3_ws_gbr)
 ylimMax <- ceiling(max(ws_gbr_nowcast$V3_Q90, na.rm = T))
 
 ws_gbr_plt <- ggplot(ws_gbr_nowcast, aes(x = Observed, y = Predicted, col = Version)) +
+  geom_abline(slope = 1, intercept = 0, color = 'grey') +
   geom_errorbar(aes(ymin = V3_Q50, ymax = V3_Q90), col = '#003333', width=0) + # #00AFBB
   geom_point(alpha = 0.6) +
   theme_bw() +
@@ -69,10 +72,11 @@ v2_ws_pac$Predicted <- v2_ws_pac$Predicted/v2predMax
 ws_pac_nowcast <- bind_rows(v2_ws_pac, v3_ws_pac)
 
 ws_pac_plt <- ggplot(ws_pac_nowcast, aes(x = Observed, y = Predicted, col = Version)) +
+  geom_abline(slope = 1, intercept = 0, color = 'grey') +
   geom_errorbar(aes(ymin = V3_Q50, ymax = V3_Q90), col = '#003333') +
   geom_point(alpha = 0.6) +
   theme_bw() +
-  scale_color_manual(values = c('#CC0033', '#003333')) +##E7B800 , "#FC4E07"
+  scale_color_manual(values = c('orange', '#003333')) +##E7B800 , "#FC4E07"
   scale_y_continuous(
     # Features of the first axis
     name = 'Predicted prevalence',
@@ -80,14 +84,11 @@ ws_pac_plt <- ggplot(ws_pac_nowcast, aes(x = Observed, y = Predicted, col = Vers
     sec.axis = sec_axis( trans=~.*v2predMax, name = 'Predicted risk level')
   ) +
   xlab('Observed prevalence') +
-  theme(legend.position = 'none') +
-  theme(legend.position = c(0.9, 0.4),
-        legend.background = element_rect(fill = "white", color = "black")
-  )
+  theme(legend.position = 'none')
 
 
 # combine for plots & add labels
-p <- ggarrange(  ws_gbr_plt
+p <- egg::ggarrange(  ws_gbr_plt
             , ga_gbr_plt
             , ws_pac_plt 
             , ga_pac_plt 
@@ -98,7 +99,7 @@ p <- ggarrange(  ws_gbr_plt
 p2 <- annotate_figure(p, left = text_grob('U.S. Pacific                                 GBR', size = 18, rot = 90))
 
 # save plot
-ggsave(filename = '../../Figures/paper_figures/final/v1v2_vs_v3.pdf'
+ggsave(filename = '../../Figures/paper_figures/final/v2_vs_v3.pdf'
        , height = 7
        , width = 10
        , plot = p2)

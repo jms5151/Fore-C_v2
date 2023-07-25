@@ -2,7 +2,7 @@
 
 # load libraries ----------------------
 # library(tidyverse)
-# library(data.table) 
+# library(data.table)
 # library(taxizedb)
 # library(stringr)
 
@@ -23,7 +23,7 @@ guamCodes <- read.csv("../raw_data/survey_data/species_codes.csv", stringsAsFact
 guam.gps <- read.csv("../raw_data/survey_data/guam_sites_with_gps.csv", stringsAsFactors = F, head = T)
 
 # Great Barrier Reef (GBR) Reef Health and Impact Surveys (RHIS) data
-gbr <- read.csv("raw_data/survey_data/GBRMPA_RHIS_01012009-18092020.csv", stringsAsFactors = F, head = T)
+gbr <- read.csv("../raw_data/survey_data/GBRMPA_RHIS_01012009-18092020.csv", stringsAsFactors = F, head = T)
 
 # format ----------------------------
 # column names - make first letter capitalized and all others lowercase
