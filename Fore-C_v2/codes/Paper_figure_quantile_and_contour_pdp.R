@@ -68,8 +68,17 @@ genPDPdata <- function(mod, df){
 }
 
 
-pdpMultiplot <- function(mod, df){
+pdpMultiplot <- function(mod, df, plotTitle, region){
   x <- genPDPdata(mod = mod, df = df)
+  if(region == 'GBR'){
+    yTitle <- 'Predicted density'
+  } else {
+    yTitle <- 'Predicted prevalence'
+    # transform y-axis from 0-1 to 0-100%
+    x$Median <- x$Median * 100
+    x$Lwr <- x$Lwr * 100
+    x$Upr <- x$Upr * 100
+  }
   ggplot(x, aes(x = Variable_value, y = Median)) + 
     geom_line() + 
     geom_line(aes(y = Lwr), color = 'red', lty = 2) +
@@ -77,18 +86,19 @@ pdpMultiplot <- function(mod, df){
     facet_wrap(~covar_labels, scales = 'free_x') +
     theme_bw() + 
     xlab('') +
-    ylab('Disease risk')
+    ylab(yTitle) +
+    ggtitle(plotTitle)
 }
 
 # plot and save
-pdpMultiplot(mod = GA_Pacific_Model, df = ga_pac_data)
-ggsave(filename = '../../Figures/paper_figures/ga_pac_pdp_multi.pdf', width = 8, height = 5.5)
+pdpMultiplot(mod = GA_Pacific_Model, df = ga_pac_data, plotTitle = 'Growth anomalies, U.S. Pacific', region = 'Pacific')
+ggsave(filename = '../../Figures/paper_figures/final/ga_pac_pdp_multi.pdf', width = 8, height = 5.5)
 
-pdpMultiplot(mod = WS_Pacific_Model, df = ws_pac_acr_data)
-ggsave(filename = '../../Figures/paper_figures/ws_pac_pdp_multi.pdf', width = 8, height = 5.5)
+pdpMultiplot(mod = WS_Pacific_Model, df = ws_pac_acr_data, plotTitle = 'White syndromes, U.S. Pacific', region = 'Pacific')
+ggsave(filename = '../../Figures/paper_figures/final/ws_pac_pdp_multi.pdf', width = 8, height = 5.5)
 
-pdpMultiplot(mod = GA_GBR_Model, df = ga_gbr_data)
-ggsave(filename = '../../Figures/paper_figures/ga_gbr_pdp_multi.pdf', width = 8, height = 5.5)
+pdpMultiplot(mod = GA_GBR_Model, df = ga_gbr_data, plotTitle = 'Growth anomalies, GBR', region = 'GBR')
+ggsave(filename = '../../Figures/paper_figures/final/ga_gbr_pdp_multi.pdf', width = 8, height = 5.5)
 
-pdpMultiplot(mod = WS_GBR_Model, df = ws_gbr_data)
-ggsave(filename = '../../Figures/paper_figures/ws_gbr_pdp_multi.pdf', width = 8, height = 5.5)
+pdpMultiplot(mod = WS_GBR_Model, df = ws_gbr_data, plotTitle = 'White syndromes, GBR', region = 'GBR')
+ggsave(filename = '../../Figures/paper_figures/final/ws_gbr_pdp_multi.pdf', width = 8, height = 5.5)

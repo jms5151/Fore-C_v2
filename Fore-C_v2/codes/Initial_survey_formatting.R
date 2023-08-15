@@ -1,10 +1,10 @@
 ## Initial formatting of survey data
 
 # load libraries ----------------------
-# library(tidyverse)
-# library(data.table)
-# library(taxizedb)
-# library(stringr)
+library(tidyverse)
+library(data.table)
+library(taxizedb)
+library(stringr)
 
 # load data ---------------------------
 # NOAA Ecosystem Science Division data

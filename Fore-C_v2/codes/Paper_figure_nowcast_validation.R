@@ -27,13 +27,15 @@ ga_gbr_plt <- ggplot(v3_ga_gbr, aes(x = Observed, y = Predicted)) +
   theme(legend.position = 'none') 
 
 # V3 GA Pacific scatterplot ---------------------------------
+v3_ga_pac[, c('Observed', 'V3_Q50', 'Predicted', 'V3_Q90')] <- v3_ga_pac[, c('Observed', 'V3_Q50', 'Predicted', 'V3_Q90')] * 100
+
 ga_pac_plt <- ggplot(v3_ga_pac, aes(x = Observed, y = Predicted)) +
   geom_abline(slope = 1, intercept = 0, color = 'grey') +
   geom_errorbar(aes(ymin = V3_Q50, ymax = V3_Q90), color = '#003333') +
   geom_point(alpha = 0.6, color = '#003333') +
   theme_bw() +
-  xlim(0, 1) +
-  ylim(0, 1) +
+  xlim(0, 100) +
+  ylim(0, 100) +
   ylab('Predicted prevalence') +
   xlab('Observed prevalence') 
 
@@ -67,6 +69,8 @@ ws_gbr_plt <- ggplot(ws_gbr_nowcast, aes(x = Observed, y = Predicted, col = Vers
 
 # V2 & V3 WS Pacific scatterplot ----------------------------
 # adjust for second y-axis (multiply by max value when specifying values on plot)
+# v3_ws_pac[, c('Observed', 'V3_Q50', 'Predicted', 'V3_Q90')] <- v3_ws_pac[, c('Observed', 'V3_Q50', 'Predicted', 'V3_Q90')] * 100
+
 v2predMax <- max(v2_ws_pac$Predicted)
 v2_ws_pac$Predicted <- v2_ws_pac$Predicted/v2predMax
 ws_pac_nowcast <- bind_rows(v2_ws_pac, v3_ws_pac)
@@ -80,6 +84,7 @@ ws_pac_plt <- ggplot(ws_pac_nowcast, aes(x = Observed, y = Predicted, col = Vers
   scale_y_continuous(
     # Features of the first axis
     name = 'Predicted prevalence',
+    labels = function(x) x * 100,
     # Add a second axis and specify its features
     sec.axis = sec_axis( trans=~.*v2predMax, name = 'Predicted risk level')
   ) +

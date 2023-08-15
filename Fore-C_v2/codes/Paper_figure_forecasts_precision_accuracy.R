@@ -15,6 +15,10 @@ forec_forecasts_agg$groupLabels <- paste(forec_forecasts_agg$Disease, forec_fore
 forec_forecasts_agg$groupLabels <- gsub('GBR', 'Great Barrier Reef', forec_forecasts_agg$groupLabels)
 forec_forecasts_agg$groupLabels <- gsub('Pacific', 'U.S. Pacific', forec_forecasts_agg$groupLabels)
 
+# Transform U.S. Pacific values from 0-1 to 0-100 
+forec_forecasts_agg$Prediction_accuracy <- ifelse(forec_forecasts_agg$Region == 'Pacific', forec_forecasts_agg$Prediction_accuracy * 100, forec_forecasts_agg$Prediction_accuracy)
+forec_forecasts_agg$Prediction_precision <- ifelse(forec_forecasts_agg$Region == 'Pacific', forec_forecasts_agg$Prediction_precision * 100, forec_forecasts_agg$Prediction_precision)
+
 # format order
 levs <- c('White syndromes, Great Barrier Reef', 'White syndromes, U.S. Pacific', 'Growth anomalies, Great Barrier Reef', 'Growth anomalies, U.S. Pacific')
 forec_forecasts_agg$groupLabels <- factor(forec_forecasts_agg$groupLabels, levels = levs)
